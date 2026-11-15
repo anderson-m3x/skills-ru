@@ -25,6 +25,7 @@ SKILL_ROOT = "skills"
 CATEGORIES = ("engineering", "productivity", "misc", "in-progress")
 PLACEHOLDERS = ("TODO-RU", "⟦", "⧼", "TRANSLATE-HERE")
 CYRILLIC = re.compile(r"[А-Яа-яЁё]")
+LINK = re.compile(r"\]\(([^)\s]+)\)")
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -42,6 +43,20 @@ def frontmatter(text: str) -> tuple[dict[str, str], str | None]:
             key, _, value = line.partition(":")
             meta[key.strip()] = value.strip().strip('"').strip("'")
     return meta, None
+
+
+def broken_links(skill_dir: Path, text: str) -> list[str]:
+    """Относительные ссылки внутри скилла должны вести на существующие файлы."""
+    broken: list[str] = []
+    for target in LINK.findall(text):
+        if target.startswith(("http://", "https://", "mailto:", "#", "tel:")):
+            continue
+        path_part = target.split("#", 1)[0].split("?", 1)[0]
+        if not path_part:
+            continue
+        if not (skill_dir / path_part).exists():
+            broken.append(target)
+    return broken
 
 
 def main() -> int:
@@ -91,9 +106,18 @@ def main() -> int:
                     errors.append(f"{rel}: остался маркер {marker}")
             if (skill_dir / "agents").exists():
                 errors.append(f"{skill_dir.name}: осталась папка agents/ (Codex-обвязка)")
+            for target in broken_links(skill_dir, text):
+                # Часть ссылок — примеры путей в чужом репозитории (например,
+                # `[текст](link)` в шаблоне или `./src/packages/README.md`),
+                # поэтому это предупреждение, а не ошибка.
+                warnings.append(f"{rel}: локальная ссылка {target} не найдена (возможно, пример пути)")
             if not skill_md.read_text(encoding="utf-8", errors="replace").endswith("\n"):
                 warnings.append(f"{rel}: нет перевода строки в конце файла")
-            skills.append((category, name, len(text)))
+            flag = meta.get("disable-model-invocation", "").strip().lower()
+            mode = "user" if flag in ("true", "yes", "on", "1") else "model"
+            if meta.get("user-invocable", "").strip().lower() in ("false", "no", "off", "0"):
+                mode = "—"
+            skills.append((category, name, len(text), mode))
 
     if category_dir := [p.name for p in root.iterdir() if p.is_dir()]:
         for known in category_dir:
@@ -107,7 +131,10 @@ def main() -> int:
             if rows:
                 print(f"  {category:<13} {len(rows):>2}  " + ", ".join(sorted(r[1] for r in rows)))
         total = sum(s[2] for s in skills)
+        model = sum(1 for s in skills if s[3] == "model")
+        user = sum(1 for s in skills if s[3] == "user")
         print(f"суммарный размер SKILL.md: {total / 1024:.0f} КБ")
+        print(f"model-invoked: {model}, user-invoked: {user}")
 
     for w in warnings:
         print(f"  ! {w}")
