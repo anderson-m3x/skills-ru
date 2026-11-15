@@ -35,6 +35,39 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
+def footer_source(text: str) -> str:
+    """Строка источника — последняя строка файла, начинающаяся с «Источник:»."""
+    for line in reversed(text.strip().splitlines()):
+        if line.strip().startswith("Источник:"):
+            return line.strip()
+    return ""
+
+
+def section_links(text: str, title: str) -> list[str]:
+    """Ссылки внутри раздела `## <title>` (до следующего заголовка второго уровня)."""
+    lines = text.splitlines()
+    inside = False
+    found: list[str] = []
+    for line in lines:
+        if line.startswith("## "):
+            inside = line.strip() == f"## {title}"
+            continue
+        if inside:
+            found.extend(LINK.findall(line))
+    return found
+
+
+def local_targets(links: list[str]) -> list[str]:
+    out: list[str] = []
+    for target in links:
+        if target.startswith(("http://", "https://", "mailto:", "#", "tel:")):
+            continue
+        path_part = target.split("#", 1)[0].split("?", 1)[0]
+        if path_part:
+            out.append(path_part)
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--repo", default=".")
@@ -67,6 +100,9 @@ def main() -> int:
     stats = {"upstream": 0, "own": 0, "missing": 0}
     existing: list[str] = []
 
+    root_readme_path = repo / "README.md"
+    root_readme = root_readme_path.read_text(encoding="utf-8", errors="replace") if root_readme_path.exists() else ""
+
     for cat, skill in skills:
         page = doc_root / cat / f"{skill}.md"
         rel = f"{DOC_ROOT}/{cat}/{skill}.md"
@@ -84,28 +120,32 @@ def main() -> int:
             if not re.search(rf"^##\s+{re.escape(section)}\s*$", body, re.M):
                 errors.append(f"{rel}: нет раздела «{section}»")
 
-        if "mattpocock/skills@" in text:
+        foot = footer_source(text)
+        m = re.search(r"mattpocock/skills@([0-9a-f]{7,40})", foot)
+        if m:
             stats["upstream"] += 1
-            m = re.search(r"mattpocock/skills@([0-9a-f]{7,40})", text)
-            sha = m.group(1) if m else ""
+            sha = m.group(1)
             if upstream_sha and sha != upstream_sha:
-                errors.append(f"{rel}: источник @{sha or '?'} отстаёт от состояния @{upstream_sha}")
-        elif "своё" in text.lower():
+                errors.append(f"{rel}: источник @{sha} отстаёт от состояния @{upstream_sha}")
+        elif "своё" in foot.lower():
             stats["own"] += 1
         else:
-            errors.append(f"{rel}: не указан источник (ни upstream, ни «своё»)")
+            errors.append(f"{rel}: в последней строке «Источник:» нет ни sha upstream, ни пометки «своё»")
 
-        for target in LINK.findall(text):
-            if target.startswith(("http://", "https://", "mailto:", "#", "tel:")):
+        # строго проверяем только «См. также»: остальные локальные ссылки могут быть примерами путей
+        for target in local_targets(section_links(text, "См. также")):
+            if not (page.parent / target).exists():
+                errors.append(f"{rel}: битая ссылка в «См. также»: {target}")
+        for target in local_targets(LINK.findall(text)):
+            if target in section_links(text, "См. также"):
                 continue
-            path_part = target.split("#", 1)[0].split("?", 1)[0]
-            if not path_part:
-                continue
-            if not (page.parent / path_part).exists():
-                errors.append(f"{rel}: битая ссылка {target}")
+            if not (page.parent / target).exists():
+                warnings.append(f"{rel}: локальная ссылка {target} не найдена (возможно, пример пути)")
 
         if not CYR.search(text):
             errors.append(f"{rel}: текст не переведён")
+        if f"(DOC/{cat}/{skill}.md)" not in root_readme:
+            errors.append(f"README.md: скилл {skill} не связан со страницей {rel}")
         for marker in PERSONAL:
             if marker in text:
                 errors.append(f"{rel}: личные данные в публичном файле ({marker})")

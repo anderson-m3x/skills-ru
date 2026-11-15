@@ -42,26 +42,26 @@ Copy-Item .\skills\*\* $env:USERPROFILE\.dsh\skills\ -Recurse
 
 | Скилл | Вызов | Назначение |
 |---|---|---|
-| `ask-matt` | user | Роутер: какой скилл/флоу подходит под ситуацию |
-| `grill-with-docs` | user | Грилл-сессия + построение доменной модели, `GLOSSARY.md` и ADR по ходу |
-| `triage` | user | Проводит issues через конечный автомат ролей триажа |
-| `improve-codebase-architecture` | user | Скан кодовой базы на «углубления», HTML-отчёт, затем грилл выбранного кандидата |
-| `setup-matt-pocock-skills` | user | Настройка репозитория (трекер, метки, доменные доки) — один раз на проект |
+| [`ask-matt`](DOC/engineering/ask-matt.md) | user | Роутер: какой скилл/флоу подходит под ситуацию |
+| [`grill-with-docs`](DOC/engineering/grill-with-docs.md) | user | Грилл-сессия + построение доменной модели, `GLOSSARY.md` и ADR по ходу |
+| [`triage`](DOC/engineering/triage.md) | user | Проводит issues через конечный автомат ролей триажа |
+| [`improve-codebase-architecture`](DOC/engineering/improve-codebase-architecture.md) | user | Скан кодовой базы на «углубления», HTML-отчёт, затем грилл выбранного кандидата |
+| [`setup-matt-pocock-skills`](DOC/engineering/setup-matt-pocock-skills.md) | user | Настройка репозитория (трекер, метки, доменные доки) — один раз на проект |
 | [`to-spec`](DOC/engineering/to-spec.md) | user | Разговор → спека, публикуется в трекер |
 | [`to-tickets`](DOC/engineering/to-tickets.md) | user | План/спека → tracer-bullet тикеты с блокирующими связями |
 | [`implement`](DOC/engineering/implement.md) | user | Реализация по спеке/тикетам через `tdd` и `code-review` |
-| `implement-spec` | user | Спека целиком в одной ветке, субагенты на «готовом фронте» задач |
-| `wayfinder` | user | Карта решенческих тикетов для объёма больше одной сессии |
-| `retro` | user | Улучшения окружения агента после сессии, самое критичное — первым |
-| `prototype` | model | Одноразовый прототип: HTML для логики/состояния или варианты UI |
+| [`implement-spec`](DOC/engineering/implement-spec.md) | user | Спека целиком в одной ветке, субагенты на «готовом фронте» задач |
+| [`wayfinder`](DOC/engineering/wayfinder.md) | user | Карта решенческих тикетов для объёма больше одной сессии |
+| [`retro`](DOC/engineering/retro.md) | user | Улучшения окружения агента после сессии, самое критичное — первым |
+| [`prototype`](DOC/engineering/prototype.md) | model | Одноразовый прототип: HTML для логики/состояния или варианты UI |
 | [`diagnosing-bugs`](DOC/engineering/diagnosing-bugs.md) | model | Цикл диагностики: красная петля → минимизация → гипотезы → фикс → регрессия |
-| `research` | model | Исследование по первоисточникам, результат — markdown со ссылками |
+| [`research`](DOC/engineering/research.md) | model | Исследование по первоисточникам, результат — markdown со ссылками |
 | [`tdd`](DOC/engineering/tdd.md) | model | Red-green-refactor, вертикальными слайсами |
-| `domain-modeling` | model | Достраивание доменной модели, глоссарий и ADR |
+| [`domain-modeling`](DOC/engineering/domain-modeling.md) | model | Достраивание доменной модели, глоссарий и ADR |
 | [`codebase-design`](DOC/engineering/codebase-design.md) | model | Дисциплина «глубоких модулей» и чистых швов |
 | [`code-review`](DOC/engineering/code-review.md) | model | Ревью диффа по двум осям: Standards и Spec, параллельными субагентами |
-| `pr` | model | Форма тела PR: сводка, доказательства «до/после», оценка опасности мержа |
-| `wizard` | model | Интерактивный bash-визард для шагов, доступных только человеку |
+| [`pr`](DOC/engineering/pr.md) | model | Форма тела PR: сводка, доказательства «до/после», оценка опасности мержа |
+| [`wizard`](DOC/engineering/wizard.md) | model | Интерактивный bash-визард для шагов, доступных только человеку |
 
 ### Productivity — общие рабочие инструменты
 
@@ -69,24 +69,35 @@ Copy-Item .\skills\*\* $env:USERPROFILE\.dsh\skills\ -Recurse
 |---|---|---|
 | [`grill-me`](DOC/productivity/grill-me.md) | user | Безжалостное интервью по плану до закрытия всех веток решений |
 | [`handoff`](DOC/productivity/handoff.md) | user | Сжать разговор в handoff-документ для другого агента |
-| `teach` | user | Обучение навыку за несколько сессий, текущая папка — учебное пространство |
-| `to-questionnaire` | user | Решение, которое нельзя принять одному → markdown-опросник |
-| `wait-what` | user | «Не дошло»: переобъяснение с недостающим контекстом и словарём |
+| [`teach`](DOC/productivity/teach.md) | user | Обучение навыку за несколько сессий, текущая папка — учебное пространство |
+| [`to-questionnaire`](DOC/productivity/to-questionnaire.md) | user | Решение, которое нельзя принять одному → markdown-опросник |
+| [`wait-what`](DOC/productivity/wait-what.md) | user | «Не дошло»: переобъяснение с недостающим контекстом и словарём |
 | [`grilling`](DOC/productivity/grilling.md) | model | Примитив интервью — движок под grill-me, triage, wayfinder и др. |
-| `writing-for-agents` | model | Как писать документы для агентов: скиллы, `AGENTS.md`, указатели |
+| [`writing-for-agents`](DOC/productivity/writing-for-agents.md) | model | Как писать документы для агентов: скиллы, `AGENTS.md`, указатели |
 
 ### Misc — редкие утилиты
 
 | Скилл | Назначение |
 |---|---|
-| `git-guardrails-claude-code` | Защита от опасных git-команд (адаптировано: правила вместо хуков Claude Code) |
-| `migrate-to-shoehorn` | Миграция тестов с `as` на `@total-typescript/shoehorn` |
-| `scaffold-exercises` | Структура каталогов упражнений: секции, задачи, решения |
-| `setup-pre-commit` | Husky pre-commit: lint-staged, Prettier, типы, тесты |
+| [`git-guardrails-claude-code`](DOC/misc/git-guardrails-claude-code.md) | Защита от опасных git-команд (адаптировано: правила вместо хуков Claude Code) |
+| [`migrate-to-shoehorn`](DOC/misc/migrate-to-shoehorn.md) | Миграция тестов с `as` на `@total-typescript/shoehorn` |
+| [`scaffold-exercises`](DOC/misc/scaffold-exercises.md) | Структура каталогов упражнений: секции, задачи, решения |
+| [`setup-pre-commit`](DOC/misc/setup-pre-commit.md) | Husky pre-commit: lint-staged, Prettier, типы, тесты |
 
 ### In-progress — бета upstream
 
-`chief-of-staff`, `claude-handoff`, `loop-me`, `setup-ts-deep-modules`, `software-factory`, `writing-beats`, `writing-fragments`, `writing-shape`.
+Скиллы в статусе бета: публичны, но могут меняться или исчезнуть. Страниц у автора нет — документация написана нами по `SKILL.md`.
+
+| Скилл | Назначение |
+|---|---|
+| [`chief-of-staff`](DOC/in-progress/chief-of-staff.md) | Долгая цель в одной сессии: субагенты, расписания и вики-память |
+| [`claude-handoff`](DOC/in-progress/claude-handoff.md) | Передача работы свежему фоновому агенту |
+| [`loop-me`](DOC/in-progress/loop-me.md) | Грилл самого себя в спеки workflow за несколько сессий |
+| [`setup-ts-deep-modules`](DOC/in-progress/setup-ts-deep-modules.md) | dependency-cruiser для границ пакетов в TypeScript |
+| [`software-factory`](DOC/in-progress/software-factory.md) | Словарь фабрики ПО: задачи и подключаемые сервисы |
+| [`writing-beats`](DOC/in-progress/writing-beats.md) | Статья как путешествие по битам |
+| [`writing-fragments`](DOC/in-progress/writing-fragments.md) | Сбор фрагментов текста в один документ |
+| [`writing-shape`](DOC/in-progress/writing-shape.md) | Форма статьи абзац за абзацем |
 
 ## Синхронизация с upstream
 
