@@ -29,7 +29,7 @@ CATEGORIES = ("engineering", "productivity", "misc", "in-progress")
 REQUIRED = ("Что делает", "Пример", "Грабли", "См. также")
 LINK = re.compile(r"\]\(([^)\s]+)\)")
 CYR = re.compile(r"[А-Яа-яЁё]")
-PERSONAL = (r"C:\\Users\\", r"D:\\DSH", "anderson-m3x/m3x-work", "ghp_", "github_pat_")
+PERSONAL = (r"C:\\Users\\", r"D:\\DSH", "ghp_", "github_pat_")
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
