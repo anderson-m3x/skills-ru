@@ -1,5 +1,5 @@
 ---
-name: handoff-compact
+name: handoff
 description: Сжать текущую беседу в handoff-документ, чтобы работу мог подхватить другой агент.
 argument-hint: "Для чего будет использоваться следующая сессия?"
 disable-model-invocation: true

@@ -18,36 +18,35 @@
 ## Ручной цикл
 
 ```powershell
-$py  = 'C:\Users\New\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe'
-$repo = 'C:\Users\New\Documents\skills-ru'
+# из каталога клона
 
 # 1. Что изменилось у Мэтта со времени последней синхронизации
-& $py "$repo\tools\sync_plan.py" --repo $repo
+python tools\sync_plan.py --apply-copy
 
-# 2. Перевести/скопировать/удалить по sync/pending.json (см. ниже правила)
-#    — новые и изменённые файлы: перевод на русский + адаптация под DSH
-#    — удалённые: удалить локально
-#    — неизменённые нами: sync_plan сам помечает их как copy (копируются как есть,
-#      потому что наш файл всё ещё идентичен старому upstream-блоку)
+# 2. Разобрать sync/pending.json (правила ниже):
+#    — translate: новые и изменённые файлы — перевести на русский и адаптировать под DSH;
+#    — copy: уже применены флагом --apply-copy;
+#    — delete: удалить локальные файлы.
 
 # 3. Проверка
-& $py "$repo\tools\validate_skills.py" --repo $repo
+python tools\validate_skills.py
+python tools\scan_untranslated.py
 
 # 4. Зафиксировать новое состояние и обновить ссылки
-& $py "$repo\tools\sync_commit.py" --repo $repo
-& $py "$repo\tools\install_links.py"
+python tools\sync_commit.py
+python tools\install_links.py --prune
 
 # 5. Коммит и пуш
-git -C $repo add -A
-git -C $repo commit -m "sync upstream <sha>"
-git -C $repo push origin main
+git add -A
+git commit -m "sync upstream <sha>"
+git push origin main
 ```
 
 `sync_plan.py` печатает человекочитаемую сводку и пишет `sync/pending.json`. `sync_commit.py` без `--to` берёт актуальный `upstream/main`, проверяет, что все пункты `pending.json` закрыты (файлы существуют/удалены, фронтматтер валиден), и только тогда перезаписывает `state.json`.
 
 ## Правила перевода и адаптации
 
-1. **Фронтматтер.** Ключи не переименовывать. `name` — латиницей, без изменений (кроме `handoff` → `handoff-compact`, см. `sync/renames.json`). Переводить значения `description` и `whenToUse`. Флаги `disable-model-invocation` / `user-invocable` DSH понимает, их сохранять.
+1. **Фронтматтер.** Ключи не переименовывать. `name` — латиницей, **как в upstream**: имена скиллов не меняются, иначе перестанет работать пофайловый учёт. Переводить значения `description` и `whenToUse`. Флаги `disable-model-invocation` / `user-invocable` DSH понимает, их сохранять.
 2. **Структура.** Заголовки, списки, таблицы, порядок разделов — как в оригинале. Код, команды, пути, имена файлов и API — без перевода. Комментарии в коде и человекочитаемые сообщения — переводить.
 3. **Терминология.** «скилл», «субагент», «тикет», «спека», «грилл-сессия» (grilling), «глубокий модуль» (deep module), «шов» (seam), «глоссарий», ADR, tracer bullet, PR, TDD — как есть.
 4. **Адаптация под DSH.**
@@ -61,13 +60,13 @@ git -C $repo push origin main
 
 ## Переименования
 
-`sync/renames.json`:
+По умолчанию имён не трогаем: `sync/renames.json` пуст (`{}`), и локальные пути совпадают с upstream. Механизм оставлен на случай, когда переименование неизбежно (например, конфликт с общепринятым именем скилла в экосистеме):
 
 ```json
-{ "skills/productivity/handoff": "skills/productivity/handoff-compact" }
+{ "skills/productivity/handoff": "skills/productivity/handoff-new-name" }
 ```
 
-Ключ — путь upstream (папка или файл), значение — локальный. После перевода `SKILL.md` из `handoff` нужно поправить фронтматтер: `name: handoff` → `name: handoff-compact`.
+Ключ — путь upstream (папка или файл), значение — локальный путь. В этом случае после перевода `SKILL.md` нужно поправить фронтматтер: `name` → новое локальное имя. Чем меньше таких исключений, тем проще синхронизация, поэтому по умолчанию файл пустой.
 
 ## Что не синхронизируется
 

@@ -1,6 +1,6 @@
 import json, pathlib, re, sys
 
-repo = pathlib.Path(r"C:\Users\New\Documents\skills-ru")
+repo = pathlib.Path(__file__).resolve().parent.parent
 CYR = set(range(0x0400, 0x0500))
 FENCE = re.compile(r"```.*?```", re.S)
 INLINE = re.compile(r"`[^`]*`")

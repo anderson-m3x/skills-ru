@@ -7,23 +7,23 @@
 - текст скиллов и их справочников переведён на русский (термины вроде TDD, ADR, tracer bullet, PR оставлены как принято);
 - упоминания Claude Code / Codex заменены на DSH: `CLAUDE.md` → `AGENTS.md`, «Task tool» → субагент (`subagent`), `claude --bg` → фоновый субагент, слэш-вызовы `/tdd` → «скилл `tdd`»;
 - удалена плагинная обвязка upstream (`.claude-plugin/`, `agents/openai.yaml`, `docs/`, `scripts/`, changesets) — она относилась к доставке в Claude Code и Codex, для DSH бесполезна;
-- скилл `handoff` переименован в **`handoff-compact`**, чтобы не конфликтовать с личным скиллом `handoff` (передача задач между машинами через `anderson-m3x/m3x-work`).
+- имена скиллов оставлены как в upstream: синхронизация опирается на совпадение путей, а переименование сделало бы учёт изменений хрупким.
 
 ## Установка в DSH
 
 Скиллы ставятся в глобальный корень DSH (`~/.dsh/skills`) — тогда они доступны во всех рабочих пространствах. Ссылки (junction) создаёт скрипт:
 
 ```powershell
-$py = 'C:\Users\New\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe'
-& $py C:\Users\New\Documents\skills-ru\tools\install_links.py --dry-run   # посмотреть
-& $py C:\Users\New\Documents\skills-ru\tools\install_links.py             # создать ссылки
+# из каталога клона; подойдёт любой Python 3.10+
+python tools\install_links.py --dry-run   # посмотреть
+python tools\install_links.py             # создать ссылки
 ```
 
 DSH сканирует `~/.dsh/skills` и следит за каталогом: новые и удалённые скиллы подхватываются без перезапуска. Проверка состава:
 
 ```powershell
-& $py C:\Users\New\Documents\skills-ru\tools\validate_skills.py
-& $py C:\Users\New\Documents\skills-ru\tools\scan_untranslated.py   # ищет оставшуюся английскую прозу
+python tools\validate_skills.py
+python tools\scan_untranslated.py   # ищет оставшуюся английскую прозу
 ```
 
 **Кто видит скилл.** Upstream делит скиллы на user-invoked и model-invoked через флаги фронтматтера, DSH понимает их так же: скиллы с `disable-model-invocation: true` (24 штуки — `grill-me`, `triage`, `to-spec`, `teach` и т. п.) не попадают в каталог модели и вызываются человеком, а model-invoked (15 штук — `tdd`, `code-review`, `diagnosing-bugs` и т. п.) агент подхватывает сам. Если нужен скилл из первой группы, зовите его явно.
@@ -31,7 +31,7 @@ DSH сканирует `~/.dsh/skills` и следит за каталогом: 
 Ручная альтернатива без junction — скопировать папки:
 
 ```powershell
-Copy-Item C:\Users\New\Documents\skills-ru\skills\productivity\* C:\Users\New\.dsh\skills\ -Recurse
+Copy-Item .\skills\*\* $env:USERPROFILE\.dsh\skills\ -Recurse
 ```
 
 ## Состав
@@ -68,7 +68,7 @@ Copy-Item C:\Users\New\Documents\skills-ru\skills\productivity\* C:\Users\New\.d
 | Скилл | Вызов | Назначение |
 |---|---|---|
 | `grill-me` | user | Безжалостное интервью по плану до закрытия всех веток решений |
-| `handoff-compact` | user | Сжать разговор в handoff-документ для другого агента |
+| `handoff` | user | Сжать разговор в handoff-документ для другого агента |
 | `teach` | user | Обучение навыку за несколько сессий, текущая папка — учебное пространство |
 | `to-questionnaire` | user | Решение, которое нельзя принять одному → markdown-опросник |
 | `wait-what` | user | «Не дошло»: переобъяснение с недостающим контекстом и словарём |

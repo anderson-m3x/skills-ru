@@ -31,9 +31,19 @@ def default_target() -> Path:
     return Path(os.environ.get("DSH_HOME", Path.home() / ".dsh")) / "skills"
 
 
+def is_link_like(path: Path) -> bool:
+    """Ссылка любого вида, включая битую: symlink, junction или reparse point."""
+    if path.is_symlink() or path.exists():
+        return True
+    try:
+        return bool(path.is_junction())
+    except (AttributeError, OSError):
+        return False
+
+
 def is_link_to(path: Path, repo: Path) -> bool:
-    """Ссылка (junction/symlink), ведущая внутрь репозитория."""
-    if not path.exists() and not path.is_symlink():
+    """Ссылка (junction/symlink), ведущая внутрь репозитория; битые тоже считаются."""
+    if not is_link_like(path):
         return False
     try:
         resolved = path.resolve()
@@ -99,12 +109,19 @@ def main() -> int:
 
     for skill in skills:
         link = target / skill.name
-        if link.exists() or link.is_symlink():
-            if is_link_to(link, repo):
+        if is_link_like(link):
+            if is_link_to(link, repo) and link.exists():
                 kept += 1
                 continue
-            conflicts.append(f"{link} — уже существует и не является ссылкой на репозиторий")
-            continue
+            if is_link_to(link, repo):
+                # битая ссылка на этот репозиторий — пересоздадим ниже
+                if args.dry_run:
+                    print(f"  ~ {link} (битая ссылка, будет пересоздана)")
+                else:
+                    remove_link(link)
+            else:
+                conflicts.append(f"{link} — уже существует и не является ссылкой на репозиторий")
+                continue
         if args.dry_run:
             print(f"  + {link} → {skill}")
             created += 1
