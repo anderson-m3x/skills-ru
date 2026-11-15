@@ -1,138 +1,138 @@
 ---
 name: diagnosing-bugs
-description: Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.
+description: Цикл диагностики для сложных багов и регрессий производительности. Использовать, когда пользователь говорит "diagnose"/"debug this" или сообщает, что что-то сломано, падает с ошибкой, не работает или стало медленным.
 ---
 
-# Diagnosing Bugs
+# Диагностика багов
 
-A discipline for hard bugs. Skip phases only when explicitly justified.
+Дисциплина для сложных багов. Пропускай фазы, только если это явно обосновано.
 
-When exploring the codebase, read `GLOSSARY.md` (if it exists) to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
+Когда изучаешь кодовую базу, прочитай `GLOSSARY.md` (если он существует), чтобы получить чёткую мысленную модель нужных модулей, и проверь ADR в той области, которую трогаешь.
 
-## Redact
+## Вымарывание секретов
 
-This skill has you show commands, outputs and captured artifacts. **Redact every secret first**: write `<REDACTED>` in its place. Build loops against env vars, so the credential stays in the environment rather than in what you show. Captured artifacts carry auth headers: quote only the lines that carry the signal.
+Этот скилл предполагает, что ты показываешь команды, вывод и снятые артефакты. **Сначала вымарай каждый секрет**: напиши на его месте `<REDACTED>`. Строй петли на переменных окружения, чтобы учётные данные оставались в окружении, а не в том, что ты показываешь. В снятых артефактах есть заголовки авторизации: цитируй только строки, которые несут сигнал.
 
-If the redacted output is not enough to diagnose the bug, say so and ask the user.
+Если вымаранного вывода не хватает, чтобы диагностировать баг, скажи об этом и спроси пользователя.
 
-## Phase 1: Build a feedback loop
+## Фаза 1: Построй петлю обратной связи
 
-**This is the skill.** Everything else is mechanical. If you have a **tight** pass/fail signal for the bug (one that goes red on _this_ bug), you will find the cause; bisection, hypothesis-testing, and instrumentation all just consume it. If you don't have one, no amount of staring at code will save you.
+**В этом вся суть скилла.** Всё остальное — механика. Если у тебя есть **плотная** петля с сигналом pass/fail по баге (такая, что краснеет именно на _этом_ баге), ты найдёшь причину; бисекция, проверка гипотез и инструментирование лишь расходуют её. Если её нет, никакое вглядывание в код не спасёт.
 
-Spend disproportionate effort here. **Be aggressive. Be creative. Refuse to give up.**
+Трать здесь несоразмерно много усилий. **Будь агрессивным. Будь изобретательным. Не сдавайся.**
 
-### Ways to construct one, in roughly this order
+### Способы её построить, примерно в этом порядке
 
-1. **Failing test** at whatever seam reaches the bug: unit, integration, e2e.
-2. **Curl / HTTP script** against a running dev server.
-3. **CLI invocation** with a fixture input, diffing stdout against a known-good snapshot.
-4. **Headless browser script** (Playwright / Puppeteer) that drives the UI and asserts on DOM/console/network.
-5. **Replay a captured trace.** Save a real network request / payload / event log to disk; replay it through the code path in isolation.
-6. **Throwaway harness.** Spin up a minimal subset of the system (one service, mocked deps) that exercises the bug code path with a single function call.
-7. **Property / fuzz loop.** If the bug is "sometimes wrong output", run 1000 random inputs and look for the failure mode.
-8. **Bisection harness.** If the bug appeared between two known states (commit, dataset, version), automate "boot at state X, check, repeat" so you can `git bisect run` it.
-9. **Differential loop.** Run the same input through old-version vs new-version (or two configs) and diff outputs.
-10. **HITL bash script.** Last resort. If a human must click, drive _them_ with `scripts/hitl-loop.template.sh` so the loop is still structured. Captured output feeds back to you.
+1. **Падающий тест** на любом шве, который дотягивается до бага: unit, integration, e2e.
+2. **Curl / HTTP-скрипт** против запущенного dev-сервера.
+3. **Вызов CLI** с фикстурным входом и диффом stdout против заведомо исправного снапшота.
+4. **Скрипт headless-браузера** (Playwright / Puppeteer), который прогоняет UI и проверяет DOM/консоль/сеть.
+5. **Проиграть снятый трейс.** Сохрани на диск реальный сетевой запрос / payload / журнал событий; проиграй его по этому пути кода в изоляции.
+6. **Одноразовый харнесс.** Подними минимальное подмножество системы (один сервис, замоканные зависимости), которое задействует путь кода бага одним вызовом функции.
+7. **Property / fuzz-петля.** Если баг в том, что «иногда неверный вывод», прогони 1000 случайных входов и поищи режим сбоя.
+8. **Харнесс для бисекции.** Если баг появился между двумя известными состояниями (коммит, набор данных, версия), автоматизируй «подняться в состоянии X, проверить, повторить», чтобы можно было прогнать через `git bisect run`.
+9. **Дифференциальная петля.** Прогони один и тот же вход через старую версию против новой (или два конфига) и сравни выводы.
+10. **HITL bash-скрипт.** Крайний вариант. Если человек должен кликать, веди _его_ через `scripts/hitl-loop.template.sh`, чтобы петля осталась структурированной. Снятый вывод возвращается к тебе.
 
-Build the right feedback loop, and the bug is 90% fixed.
+Построй правильную петлю обратной связи — и баг исправлен на 90%.
 
-### Tighten the loop
+### Уплотняй петлю
 
-Treat the loop as a product. Once you have _a_ loop, **tighten** it:
+Относись к петле как к продукту. Когда у тебя есть _какая-то_ петля, **уплотни** её:
 
-- Can I make it faster? (Cache setup, skip unrelated init, narrow the test scope.)
-- Can I make the signal sharper? (Assert on the specific symptom, not "didn't crash".)
-- Can I make it more deterministic? (Pin time, seed RNG, isolate filesystem, freeze network.)
+- Можно ли сделать её быстрее? (Кэшируй подготовку, пропускай не связанную инициализацию, сузь область теста.)
+- Можно ли сделать сигнал резче? (Проверяй конкретный симптом, а не «не упало».)
+- Можно ли сделать её более детерминированной? (Зафиксируй время, засей RNG, изолируй файловую систему, заморозь сеть.)
 
-A 30-second flaky loop is barely better than no loop; a 2-second deterministic one is tight, a debugging superpower.
+Петля, которая флакует 30 секунд, едва лучше отсутствия петли; детерминированная двухсекундная — это плотная петля и суперсила отладки.
 
-### Non-deterministic bugs
+### Недетерминированные баги
 
-The goal is not a clean repro but a **higher reproduction rate**. Loop the trigger 100×, parallelise, add stress, narrow timing windows, inject sleeps. A 50%-flake bug is debuggable; 1% is not, so keep raising the rate until it's debuggable.
+Цель — не чистое воспроизведение, а **более высокая частота воспроизведения**. Прогони триггер 100 раз, распараллель, добавь стресс, сузь временны́е окна, впрысни sleep-задержки. Баг, флакующий в 50% случаев, отлаживаем, а в 1% нет, поэтому поднимай частоту, пока он не станет отлаживаемым.
 
-### When you genuinely cannot build a loop
+### Когда петлю построить действительно не удаётся
 
-Stop and say so explicitly. List what you tried. Ask the user for: (a) access to whatever environment reproduces it, (b) a redacted captured artifact (HAR file, log dump, core dump, screen recording with timestamps), or (c) permission to add temporary production instrumentation. Do **not** proceed to hypothesise without a loop.
+Остановись и скажи это явно. Перечисли, что пробовал. Попроси у пользователя: (a) доступ к окружению, которое воспроизводит баг, (b) снятый артефакт с вымаранными секретами (HAR-файл, дамп логов, core dump, запись экрана с таймстемпами) или (c) разрешение добавить временное инструментирование в прод. **Не** переходи к гипотезам, пока нет петли.
 
-### Completion criterion: a tight loop that goes red
+### Критерий завершения: плотная петля, которая краснеет
 
-Phase 1 is done when the loop is **tight** and **red-capable**: you can name **one command** (a script path, a test invocation, a curl) that you have **already run at least once** (show the invocation and its output, redacted), and that is:
+Фаза 1 закончена, когда петля **плотная** и **способна краснеть**: ты можешь назвать **одну команду** (путь к скрипту, запуск теста, curl), которую ты **уже запускал хотя бы раз** (покажи вызов и его вывод, вымаранный), и которая:
 
-- [ ] **Red-capable**: it drives the actual bug code path and asserts the **user's exact symptom**, so it can go red on this bug and green once fixed. Not "runs without erroring"; it must be able to _catch this specific bug_.
-- [ ] **Deterministic**: same verdict every run (flaky bugs: a pinned, high reproduction rate, per above).
-- [ ] **Fast**: seconds, not minutes.
-- [ ] **Agent-runnable**: you can run it unattended; a human in the loop only via `scripts/hitl-loop.template.sh`.
+- [ ] **Способна краснеть**: она проходит реальный путь кода бага и проверяет **точный симптом пользователя**, так что может покраснеть на этом баге и позеленеть после исправления. Не «запускается без ошибок»; она должна уметь _поймать именно этот баг_.
+- [ ] **Детерминирована**: одинаковый вердикт при каждом прогоне (для флакующих багов — зафиксированная, высокая частота воспроизведения, как выше).
+- [ ] **Быстрая**: секунды, а не минуты.
+- [ ] **Запускаемая агентом**: ты можешь запускать её без присмотра; человек в петле — только через `scripts/hitl-loop.template.sh`.
 
-If you catch yourself reading code to build a theory before this command exists, **stop: jumping straight to a hypothesis is the exact failure this skill prevents.** No red-capable command, no Phase 2.
+Если ловишь себя на чтении кода ради построения теории до того, как эта команда появилась, **остановись: прыжок напрямую к гипотезе — ровно тот сбой, который этот скилл предотвращает.** Нет команды, способной краснеть, — нет Фазы 2.
 
-## Phase 2: Reproduce + minimise
+## Фаза 2: Воспроизведи и минимизируй
 
-Run the loop. Watch it go red as the bug appears.
+Запусти петлю. Смотри, как она краснеет при появлении бага.
 
-Confirm:
+Подтверди:
 
-- [ ] The loop produces the failure mode the **user** described, not a different failure that happens to be nearby. Wrong bug = wrong fix.
-- [ ] The failure is reproducible across multiple runs (or, for non-deterministic bugs, reproducible at a high enough rate to debug against).
-- [ ] You have captured the exact symptom (error message, wrong output, slow timing) so later phases can verify the fix actually addresses it.
+- [ ] Петля выдаёт режим сбоя, который описал **пользователь**, а не другой сбой, случившийся рядом. Не тот баг — не то исправление.
+- [ ] Сбой воспроизводится при нескольких прогонах (или, для недетерминированных багов, воспроизводится с достаточно высокой частотой, чтобы отлаживать по нему).
+- [ ] Ты снял точный симптом (сообщение об ошибке, неверный вывод, медленный тайминг), чтобы следующие фазы могли проверить, что исправление действительно его устраняет.
 
-### Minimise
+### Минимизируй
 
-Once it's red, shrink the repro to the **smallest scenario that still goes red**. Cut inputs, callers, config, data, and steps **one at a time**, re-running the loop after each cut, and keep only what's load-bearing for the failure.
+Когда петля красная, сожми репро до **наименьшего сценария, который всё ещё краснеет**. Режь входы, вызывающих, конфиг, данные и шаги **по одному**, перезапуская петлю после каждого сокращения, и оставляй только то, что несёт нагрузку для сбоя.
 
-Why bother: a minimal repro shrinks the hypothesis space in Phase 3 (fewer moving parts left to suspect) and becomes the clean regression test in Phase 5.
+Зачем: минимальное репро сужает пространство гипотез в Фазе 3 (меньше движущихся частей, на которые можно подозревать) и становится чистым регрессионным тестом в Фазе 5.
 
-Done when **every remaining element is load-bearing**: removing any one of them makes the loop go green.
+Готово, когда **каждый оставшийся элемент несущий**: удаление любого из них делает петлю зелёной.
 
-Do not proceed until you have reproduced **and** minimised.
+Не продолжай, пока не воспроизвёл **и** не минимизировал.
 
-## Phase 3: Hypothesise
+## Фаза 3: Гипотезы
 
-Generate **3–5 ranked hypotheses** before testing any of them. Single-hypothesis generation anchors on the first plausible idea.
+Сгенерируй **3–5 ранжированных гипотез** до того, как проверять хоть одну. Генерация одной гипотезы заякоривается на первой правдоподобной идее.
 
-Each hypothesis must be **falsifiable**: state the prediction it makes.
+Каждая гипотеза должна быть **опровержима**: сформулируй предсказание, которое она делает.
 
-> Format: "If <X> is the cause, then <changing Y> will make the bug disappear / <changing Z> will make it worse."
+> Формат: «Если причина — <X>, то <изменение Y> заставит баг исчезнуть / <изменение Z> сделает его хуже».
 
-If you cannot state the prediction, the hypothesis is a vibe: discard or sharpen it.
+Если ты не можешь сформулировать предсказание, гипотеза — это ощущение: отбрось её или заостри.
 
-**Show the ranked list to the user before testing.** They often have domain knowledge that re-ranks instantly ("we just deployed a change to #3"), or know hypotheses they've already ruled out. Cheap checkpoint, big time saver. Don't block on it; proceed with your ranking if the user is AFK.
+**Покажи ранжированный список пользователю до проверки.** У него часто есть предметное знание, которое мгновенно меняет ранги («мы только что задеплоили изменение в №3»), либо он знает гипотезы, которые уже исключил. Дешёвый чекпоинт, большая экономия времени. Не блокируйся на нём; продолжай со своим ранжированием, если пользователь AFK.
 
-## Phase 4: Instrument
+## Фаза 4: Инструментируй
 
-Each probe must map to a specific prediction from Phase 3. **Change one variable at a time.**
+Каждый зонд должен соответствовать конкретному предсказанию из Фазы 3. **Меняй по одной переменной за раз.**
 
-Tool preference:
+Предпочтения по инструментам:
 
-1. **Debugger / REPL inspection** if the env supports it. One breakpoint beats ten logs.
-2. **Targeted logs** at the boundaries that distinguish hypotheses.
-3. Never "log everything and grep".
+1. **Отладчик / инспекция в REPL**, если окружение это позволяет. Один брейкпоинт лучше десяти логов.
+2. **Точечные логи** на границах, которые различают гипотезы.
+3. Никогда не «логируй всё и грепай».
 
-**Tag every debug log** with a unique prefix, e.g. `[DEBUG-a4f2]`. Cleanup at the end becomes a single grep. Untagged logs survive; tagged logs die.
+**Помечай каждый отладочный лог** уникальным префиксом, например `[DEBUG-a4f2]`. Уборка в конце становится одним grep. Непомеченные логи выживают; помеченные умирают.
 
-**Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, query plan), then bisect. Measure first, fix second.
+**Ветка производительности.** Для регрессий производительности логи обычно не тот инструмент. Вместо них: зафиксируй базовое измерение (харнесс таймингов, `performance.now()`, профайлер, план запроса), затем биссекцию. Сначала измерь, потом исправляй.
 
-## Phase 5: Fix + regression test
+## Фаза 5: Исправь + регрессионный тест
 
-Write the regression test **before the fix**, but only if there is a **correct seam** for it.
+Напиши регрессионный тест **до исправления**, но только если для него есть **правильный шов**.
 
-A correct seam is one where the test exercises the **real bug pattern** as it occurs at the call site. If the only available seam is too shallow (single-caller test when the bug needs multiple callers, unit test that can't replicate the chain that triggered the bug), a regression test there gives false confidence.
+Правильный шов — тот, где тест задействует **реальный паттерн бага** в том виде, в каком он возникает в месте вызова. Если единственный доступный шов слишком поверхностный (тест с одним вызывающим, когда багу нужно несколько вызывающих; unit-тест, который не может повторить цепочку, запустившую баг), регрессионный тест там даёт ложную уверенность.
 
-**If no correct seam exists, that itself is the finding.** Note it. The codebase architecture is preventing the bug from being locked down. Flag this for the next phase.
+**Если правильного шва нет, это само по себе находка.** Отметь её. Архитектура кодовой базы мешает зафиксировать баг. Передай это в следующую фазу.
 
-If a correct seam exists:
+Если правильный шов есть:
 
-1. Turn the minimised repro into a failing test at that seam.
-2. Watch it fail. If you forced the red by mutating code or a fixture, `diff` against a pristine copy to prove the mutation landed before you trust it.
-3. Apply the fix.
-4. Watch it pass.
-5. Re-run the Phase 1 feedback loop against the original (un-minimised) scenario.
+1. Преврати минимизированное репро в падающий тест на этом шве.
+2. Посмотри, как он падает. Если ты вызвал красноту, изменив код или фикстуру, сделай `diff` с нетронутой копией, чтобы доказать, что изменение применилось, прежде чем доверять ему.
+3. Примени исправление.
+4. Посмотри, как он проходит.
+5. Перезапусти петлю обратной связи из Фазы 1 против исходного (неминимизированного) сценария.
 
-## Phase 6: Cleanup
+## Фаза 6: Уборка
 
-Required before declaring done:
+Обязательно перед объявлением завершения:
 
-- [ ] Original repro no longer reproduces (re-run the Phase 1 loop)
-- [ ] Regression test passes (or absence of seam is documented)
-- [ ] All `[DEBUG-...]` instrumentation removed (`grep` the prefix)
-- [ ] Throwaway prototypes deleted (or moved to a clearly-marked debug location)
-- [ ] The hypothesis that turned out correct is stated in the commit / PR message, so the next debugger learns
+- [ ] Исходное репро больше не воспроизводится (перезапусти петлю из Фазы 1)
+- [ ] Регрессионный тест проходит (или отсутствие шва задокументировано)
+- [ ] Всё инструментирование `[DEBUG-...]` удалено (сделай `grep` по префиксу)
+- [ ] Одноразовые прототипы удалены (или перенесены в явно помеченное отладочное место)
+- [ ] Гипотеза, оказавшаяся верной, сформулирована в сообщении коммита / PR, чтобы следующий отладчик научился

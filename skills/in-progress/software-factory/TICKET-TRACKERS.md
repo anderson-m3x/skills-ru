@@ -1,85 +1,85 @@
-# Ticket trackers
+# Трекеры задач
 
-> Surveyed 2026-10, and not guaranteed to be up to date. Use it to get oriented, then research the current options yourself: products, prices, limits and betas change fast.
+> Обзор на 2026-10, актуальность не гарантируется. Используйте его, чтобы сориентироваться, а затем исследуйте текущие варианты сами: продукты, цены, лимиты и беты меняются быстро.
 
-The ticket tracker is the factory's human interface. Each type below is a starting point: read what it is and when a factory picks it, then check the examples against the questions in [Researching further](#researching-further).
+Трекер задач — это человеческий интерфейс фабрики. Каждый тип ниже — отправная точка: прочитайте, что это и когда фабрика его выбирает, затем сверьте примеры с вопросами в разделе [Что исследовать дальше](#что-исследовать-дальше).
 
-## The types
+## Типы
 
-### 1. Git-host tracker
+### 1. Трекер в git-хосте
 
-The tracker built into the git host, so tickets, branches and PRs share one product, one permission model and one identity. A factory picks it when it is small, the team already lives on the git host, or the repo is public. This is the "All on GitHub" design: the git host's CI fills the orchestrator slot with no glue. Labels are the dependable router, because statuses live on a separate board. Outside developers file where the code is; non-developers need an account, so a feedback button files through the API. Self-hosted git hosts carry their tracker with them.
+Трекер, встроенный в git-хост, так что тикеты, ветки и PR делят один продукт, одну модель прав и одну идентичность. Фабрика выбирает его, когда она мала, команда уже живёт на git-хосте или репозиторий публичный. Это дизайн «All on GitHub»: CI git-хоста заполняет слот оркестратора без клея. Метки — надёжный маршрутизатор, потому что статусы живут на отдельной доске. Внешние разработчики заводят тикеты там, где код; неразработчикам нужен аккаунт, поэтому кнопка обратной связи заводит тикет через API. Git-хосты с самостоятельным хостингом несут свой трекер с собой.
 
-- [GitHub Issues](https://docs.github.com/en/copilot/concepts/agents/about-third-party-agents): the default; assign-to-agent for Copilot, Claude and Codex.
-- [GitLab Issues](https://about.gitlab.com/blog/how-to-use-a-work-item-created-trigger/): Duo Agent Platform flows triggered from work items.
-- [Forgejo](https://forgejo.org/2026-10-release-v17-0/): self-hosted, Actions-compatible.
+- [GitHub Issues](https://docs.github.com/en/copilot/concepts/agents/about-third-party-agents): вариант по умолчанию; assign-to-agent для Copilot, Claude и Codex.
+- [GitLab Issues](https://about.gitlab.com/blog/how-to-use-a-work-item-created-trigger/): потоки Duo Agent Platform, запускаемые из work items.
+- [Forgejo](https://forgejo.org/2026-10-release-v17-0/): самостоятельный хостинг, совместимость с Actions.
 
-To verify: which assign-to-agent features are still in preview and which plans include them; whether a native agent reads later comments or only the ticket at assignment (as of 2026-10, Copilot reads it at assignment only).
+Проверить: какие assign-to-agent возможности всё ещё в превью и какие тарифы их включают; читает ли нативный агент более поздние комментарии или только тикет на момент назначения (по состоянию на 2026-10 Copilot читает его только при назначении).
 
-### 2. Agent-native dev tracker
+### 2. Agent-native трекер для разработки
 
-A standalone SaaS tracker for software teams that treats agents as first-class assignees, with an agent API and its own coding agent. A factory picks it when product, support or design staff schedule work, the team already lives there, or it wants polished triage and planning views. The "Linear tickets" design. Statuses and workflows are first-class, so "moved to Ready" is a clean trigger. Agents appear as app users a human delegates to, and runs can stream progress into the ticket. Native agents here are the deepest of any type, so one can partly fill the orchestrator and runner slots too.
+Отдельный SaaS-трекер для софтверных команд, который считает агентов полноценными исполнителями, с API для агентов и собственным агентом-кодером. Фабрика выбирает его, когда работу планируют люди из продукта, поддержки или дизайна, команда уже там живёт или нужны отточенные виды триажа и планирования. Дизайн «Linear tickets». Статусы и workflow тут полноценные, так что «перемещено в Ready» — чистый триггер. Агенты появляются как пользователи-приложения, которым делегирует человек, а прогоны могут стримить прогресс в тикет. Нативные агенты здесь самые глубокие из всех типов, так что один может частично закрыть и слоты оркестратора и раннера.
 
-- [Linear](https://linear.app/developers/agents): the most agent-shaped tracker.
-- [Jira](https://support.atlassian.com/jira-software-cloud/docs/collaborate-on-work-items-with-ai-agents/): status-triggered agents; fits an org already on Atlassian.
-- [Shortcut](https://www.shortcut.com/help/integrations/using-ai-agents): assign a story or mention an agent in a comment.
-- [YouTrack](https://www.jetbrains.com/youtrack/): workflows-as-code; self-hosts.
+- [Linear](https://linear.app/developers/agents): самый агентный трекер.
+- [Jira](https://support.atlassian.com/jira-software-cloud/docs/collaborate-on-work-items-with-ai-agents/): агенты по триггеру на статус; подходит организации, уже сидящей на Atlassian.
+- [Shortcut](https://www.shortcut.com/help/integrations/using-ai-agents): назначьте историю или упомяните агента в комментарии.
+- [YouTrack](https://www.jetbrains.com/youtrack/): workflow как код; ставится самостоятельно.
 
-To verify: agent API status (Linear's was a developer preview as of 2026-10); how native agent runs are metered and priced; agent seat cost; acknowledgement deadlines on agent webhooks; which plan unlocks customer-facing forms; self-hosted edition end-of-life dates.
+Проверить: статус API для агентов (у Linear он был developer preview по состоянию на 2026-10); как тарифицируются и оцениваются прогоны нативных агентов; стоимость места агента; сроки подтверждения (acknowledgement) на вебхуках агентов; какой тариф открывает клиентские формы; даты окончания поддержки self-hosted редакций.
 
-### 3. Open-source dev tracker
+### 3. Open-source трекер для разработки
 
-A Linear-style tracker you can run on your own infrastructure, with a cloud edition beside it. A factory picks it when data stays in-house (air-gapped, regulated) or the user wants to read and patch the tracker's source while still buying it. Routing by states, labels and custom properties works much as in type 2; native agents are younger.
+Трекер в стиле Linear, который можно запустить на своей инфраструктуре, с облачной редакцией рядом. Фабрика выбирает его, когда данные остаются внутри (изолированный контур, регуляторика) или пользователь хочет читать и патчить исходники трекера, всё равно покупая его. Маршрутизация по состояниям, меткам и кастомным свойствам работает почти как в типе 2; нативные агенты моложе.
 
-- [Plane](https://developers.plane.so/dev-tools/agents/overview): Linear-like; bot users per app; agents reply in comments.
-- [Huly](https://github.com/hcengineering/huly-selfhost): all-in-one workspace with two-way GitHub sync; a heavy stack to operate.
-- [OpenProject](https://www.openproject.org/): mature, classic project management.
+- [Plane](https://developers.plane.so/dev-tools/agents/overview): похож на Linear; пользователи-боты на приложение; агенты отвечают в комментариях.
+- [Huly](https://github.com/hcengineering/huly-selfhost): рабочее пространство «всё в одном» с двусторонней синхронизацией с GitHub; тяжёлый стек в эксплуатации.
+- [OpenProject](https://www.openproject.org/): зрелое классическое управление проектами.
 
-To verify: agent feature status (Plane's was beta as of 2026-10); which edition carries guest roles and intake forms; licence; the self-hosted stack's operating cost.
+Проверить: статус агентных возможностей (у Plane они были в бете по состоянию на 2026-10); в какой редакции есть гостевые роли и формы приёма; лицензию; стоимость эксплуатации self-hosted стека.
 
-### 4. General work tool
+### 4. Универсальный рабочий инструмент
 
-A work-management or docs tool whose database or task list doubles as the tracker. A factory picks it when it serves a non-engineering team already living there, or tickets are mostly content, ops or research rather than code. Forms are the strength: anyone with a link files a ticket. Routing is flexible database properties, so every factory invents its own schema. Developer context (diffs, PRs) sits a click away on the git host. SaaS only.
+Инструмент управления работой или документов, чья база данных или список задач служит заодно трекером. Фабрика выбирает его, когда он обслуживает неинженерную команду, уже живущую там, или тикеты — в основном контент, операции и исследования, а не код. Сила — формы: любой со ссылкой заводит тикет. Маршрутизация — гибкие свойства базы данных, так что каждая фабрика изобретает свою схему. Контекст разработчика (диффы, PR) лежит в одном клике, на git-хосте. Только SaaS.
 
-- [Notion](https://www.notion.com/help/custom-agents): database-as-tracker; agents fire on database changes.
-- [Asana](https://asana.com/product/ai/ai-teammates): AI Teammates take assigned tasks.
-- [ClickUp](https://clickup.com/brain/cloud-agents): Cloud Agents return a PR in the task thread.
-- [Trello](https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/): boards and lists; webhooks plus Butler automation.
+- [Notion](https://www.notion.com/help/custom-agents): база данных как трекер; агенты срабатывают на изменения в базе.
+- [Asana](https://asana.com/product/ai/ai-teammates): AI Teammates берут назначенные задачи.
+- [ClickUp](https://clickup.com/brain/cloud-agents): Cloud Agents возвращают PR в обсуждение задачи.
+- [Trello](https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/): доски и списки; вебхуки плюс автоматизация Butler.
 
-To verify: webhook latency and granularity (as of 2026-10, Notion batched content updates, arriving a minute or two late); which plan includes agents.
+Проверить: задержку и гранулярность вебхуков (по состоянию на 2026-10 Notion батчил обновления контента, и они приходили на минуту-две позже); какой тариф включает агентов.
 
-### 5. Repo-native tracker
+### 5. Репозиторный трекер
 
-Tickets stored as files in the repo (JSONL, Markdown), edited by agents through a CLI or MCP server and merged like code. A factory picks it when one developer drives agents locally and wants the plan in git, or as a run's working memory beside a real tracker. A push to the git host is the only trigger, so the orchestrator diffs files to find what changed. Identity is the git host's. Outside filing is a commit or PR, the weakest of any type, so a factory graduates to a git-host tracker once others file tickets.
+Тикеты, хранящиеся файлами в репозитории (JSONL, Markdown), которые агенты правят через CLI или MCP-сервер и которые мержатся как код. Фабрика выбирает его, когда один разработчик гоняет агентов локально и хочет план в git, или как рабочую память прогона рядом с настоящим трекером. Единственный триггер — пуш в git-хост, поэтому оркестратор диффит файлы, чтобы найти изменения. Идентичность — от git-хоста. Внешняя подача — это коммит или PR, слабейший вариант из всех типов, так что фабрика переходит на трекер в git-хосте, как только тикеты начинают заводить другие.
 
-- [Beads](https://github.com/steveyegge/beads): JSONL with dependency tracking, so a run picks the next unblocked ticket.
-- [Backlog.md](https://github.com/MrLesk/Backlog.md): Markdown tasks with a Kanban view and MCP server.
+- [Beads](https://github.com/steveyegge/beads): JSONL с отслеживанием зависимостей, так что прогон берёт следующий незаблокированный тикет.
+- [Backlog.md](https://github.com/MrLesk/Backlog.md): задачи в Markdown с канбан-видом и MCP-сервером.
 
-### 6. Build-your-own
+### 6. Собственная разработка
 
-The factory's own app holds tickets in its own database, usually beside the orchestrator. The "Own tracker" design. A factory picks it when the tracker *is* the product (an internal platform, a customer-facing support factory) or no off-the-shelf model fits. Triggers become function calls; every trait in the questions below becomes code to write and maintain, which is why the skill favours buying. An [Airtable](https://airtable.com/developers/web/api/webhooks-overview) base with webhooks is a half-built middle.
+Приложение самой фабрики хранит тикеты в своей базе данных, обычно рядом с оркестратором. Дизайн «Own tracker». Фабрика выбирает его, когда трекер *и есть* продукт (внутренняя платформа, клиентская фабрика поддержки) или ни одна готовая модель не подходит. Триггеры становятся вызовами функций; каждая черта из вопросов ниже становится кодом, который надо писать и поддерживать, — поэтому скилл склоняется к покупке. База [Airtable](https://airtable.com/developers/web/api/webhooks-overview) с вебхуками — это наполовину собранная середина.
 
-## Researching further
+## Что исследовать дальше
 
-Check each candidate against these questions. They decide the slot:
+Проверьте каждого кандидата по этим вопросам. Они решают слот:
 
-- **Triggers**: which ticket changes (created, labelled, status moved, assigned, commented, mentioned) emit a webhook or event the orchestrator can turn into a run? How fast and how granular?
-- **Routing**: which labels, statuses or fields can a run read to know its kind (explore, implement, rework)?
-- **Thread**: can a human answer an agent in comments, and does that reply trigger the next run?
-- **Identity**: is there an API plus a bot identity, so runs act as themselves and humans tell agent from colleague? Does the bot cost a seat?
-- **Native agents**: can a ticket be assigned to an agent directly? Which agents, on which plan, metered how? What does it read: the ticket at assignment, or the whole thread?
-- **Outside filing**: how does a ticket source or customer create tickets: forms, email, chat, API? Which plan unlocks it?
-- **Hosting**: SaaS only, or self-hosted, and under which licence?
+- **Триггеры**: какие изменения тикета (создан, помечен меткой, статус перемещён, назначен, прокомментирован, упомянут) дают вебхук или событие, которое оркестратор может превратить в прогон? Как быстро и как гранулярно?
+- **Маршрутизация**: какие метки, статусы или поля может прочитать прогон, чтобы понять свой вид (исследовать, реализовать, доработать)?
+- **Обсуждение**: может ли человек ответить агенту в комментариях, и запускает ли этот ответ следующий прогон?
+- **Идентичность**: есть ли API плюс идентичность бота, чтобы прогоны действовали от себя, а люди отличали агента от коллеги? Стоит ли бот отдельного места?
+- **Нативные агенты**: можно ли назначить тикет агенту напрямую? Какие агенты, на каком тарифе, как тарифицируются? Что он читает: тикет на момент назначения или всё обсуждение?
+- **Внешняя подача**: как источник тикетов или клиент создаёт тикеты: формы, почта, чат, API? Какой тариф это открывает?
+- **Хостинг**: только SaaS или self-hosted, и под какой лицензией?
 
-Answers live in primary sources: the API and webhook reference (event lists, payloads, delivery and retry rules), the agent or app developer docs, the pricing page and plan comparison table, and the changelog or release notes. Prefer these over blog posts and comparison sites.
+Ответы живут в первоисточниках: справочник API и вебхуков (списки событий, payloads, правила доставки и ретраев), документация для разработчиков агента или приложения, страница цен и таблица сравнения тарифов, changelog или release notes. Предпочитайте их постам в блогах и сайтам-сравнениям.
 
-Stalest first: agent features and their preview or beta status, agent metering and credit prices, plan gating of agents and forms, rate limits, and acquisitions, shutdowns and end-of-life dates for self-hosted editions. Webhook event lists and routing models change slowly.
+Устаревает первым: агентные возможности и их статус превью или беты, тарификация агентов и цены в кредитах, тарифные ограничения на агентов и формы, лимиты запросов, а также поглощения, закрытия и даты окончания поддержки self-hosted редакций. Списки событий вебхуков и модели маршрутизации меняются медленно.
 
-## Durable gotchas
+## Устойчивые подводные камни
 
-Verify each still holds before relying on it:
+Проверьте, что каждое ещё в силе, прежде чем на это полагаться:
 
-- **GitHub's `GITHUB_TOKEN` trap**: changes made with the default `GITHUB_TOKEN` trigger no new workflow runs. A run that labels or comments on a ticket to trigger the next run acts through a GitHub App token.
-- **Assignment-time context**: some native agents read the ticket only when assigned, so later context goes on the PR.
-- **Agent webhooks expect a fast acknowledgement**: the orchestrator acknowledges at once and starts the run afterwards.
-- **Batched webhooks in general work tools** arrive late; a factory needing prompt runs triggers on property changes or picks another type.
+- **Ловушка `GITHUB_TOKEN` в GitHub**: изменения, сделанные дефолтным `GITHUB_TOKEN`, не запускают новых прогонов workflow. Прогон, который метит или комментирует тикет, чтобы запустить следующий прогон, действует через токен GitHub App.
+- **Контекст на момент назначения**: некоторые нативные агенты читают тикет только при назначении, так что более поздний контекст идёт в PR.
+- **Вебхуки агентов ждут быстрого подтверждения**: оркестратор подтверждает сразу и запускает прогон потом.
+- **Батчинг вебхуков в универсальных рабочих инструментах** приходит с опозданием; фабрике, которой нужны оперативные прогоны, лучше триггериться на изменения свойств или выбрать другой тип.

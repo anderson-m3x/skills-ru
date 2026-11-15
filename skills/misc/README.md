@@ -1,8 +1,8 @@
 # Misc
 
-Tools I keep around but rarely use, not promoted in the plugin.
+Инструменты, которые я держу под рукой, но использую редко; в общем наборе их не продвигают.
 
-- **[git-guardrails-claude-code](./git-guardrails-claude-code/SKILL.md)**: Set up Claude Code hooks to block dangerous git commands (push, reset --hard, clean, etc.) before they execute.
-- **[migrate-to-shoehorn](./migrate-to-shoehorn/SKILL.md)**: Migrate test files from `as` type assertions to @total-typescript/shoehorn.
-- **[scaffold-exercises](./scaffold-exercises/SKILL.md)**: Create exercise directory structures with sections, problems, solutions, and explainers.
-- **[setup-pre-commit](./setup-pre-commit/SKILL.md)**: Set up Husky pre-commit hooks with lint-staged, Prettier, type checking, and tests.
+- **[git-guardrails-claude-code](./git-guardrails-claude-code/SKILL.md)**: Настроить хуки-барьеры, блокирующие опасные git-команды (push, reset --hard, clean и т. п.) до их выполнения.
+- **[migrate-to-shoehorn](./migrate-to-shoehorn/SKILL.md)**: Перевести тестовые файлы с утверждений типов через `as` на @total-typescript/shoehorn.
+- **[scaffold-exercises](./scaffold-exercises/SKILL.md)**: Создать структуры каталогов упражнений с секциями, задачами, решениями и пояснениями.
+- **[setup-pre-commit](./setup-pre-commit/SKILL.md)**: Настроить pre-commit хуки Husky с lint-staged, Prettier, проверкой типов и тестами.

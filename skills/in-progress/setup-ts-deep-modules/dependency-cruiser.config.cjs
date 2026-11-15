@@ -1,25 +1,25 @@
 // @ts-check
-// Deep-module enforcement for dependency-cruiser.
+// Обеспечение глубоких модулей для dependency-cruiser.
 //
-// Each package under the packages root is a DEEP MODULE: a lot of behaviour
-// behind a small interface. A package's PUBLIC SURFACE is its ENTRY POINTS:
-// the files at the package root. Implementation lives in SUBFOLDERS and is
-// private (by convention `lib/` for implementation and `tests/` for tests,
-// though any subfolder is private). A package may expose several small entry
-// points (index.ts, client.ts, server.ts, …); prefer that over one giant
-// barrel index.
+// Каждый пакет под корнем пакетов — это ГЛУБОКИЙ МОДУЛЬ: много поведения
+// за маленьким интерфейсом. ПУБЛИЧНАЯ ПОВЕРХНОСТЬ пакета — это его ТОЧКИ ВХОДА:
+// файлы в корне пакета. Реализация живёт в ПОДПАПКАХ и приватна (по соглашению
+// `lib/` для реализации и `tests/` для тестов, хотя приватна любая подпапка).
+// Пакет может выставлять несколько небольших точек входа
+// (index.ts, client.ts, server.ts, …); предпочитай это одному гигантскому
+// barrel-index.
 //
-// The only thing you should ever need to edit here is PACKAGES_ROOT.
+// Единственное, что здесь вообще может понадобиться править, — это PACKAGES_ROOT.
 
-/** Where packages live. One immediate child dir per package (flat, no nesting). */
+/** Где живут пакеты. Один непосредственный дочерний каталог на пакет (плоско, без вложенности). */
 const PACKAGES_ROOT = "src/packages";
 
-// --- derived patterns (no need to edit) -------------------------------------
+// --- производные шаблоны (править не нужно) ---------------------------------
 const R = PACKAGES_ROOT;
 /**
- * A package's private internals: anything nested inside a package subfolder.
- * The package's root files are its entry points and are NOT matched here:
- * they stay importable from outside.
+ * Приватные внутренности пакета: всё, что вложено в подпапку пакета.
+ * Корневые файлы пакета — его точки входа, и здесь они НЕ совпадают:
+ * они остаются импортируемыми снаружи.
  */
 const PACKAGE_INTERNALS = `^${R}/[^/]+/[^/]+/`;
 
@@ -29,54 +29,54 @@ module.exports = {
     {
       name: "entrypoint-boundary-from-app",
       comment:
-        "App/root code may import a package's entry points (its root files), but nothing inside its subfolders.",
+        "Код приложения/корня может импортировать точки входа пакета (его корневые файлы), но ничего внутри его подпапок.",
       severity: "error",
-      from: { pathNot: `^${R}/` }, // importer is NOT inside any package
+      from: { pathNot: `^${R}/` }, // импортёр НЕ находится внутри какого-либо пакета
       to: { path: PACKAGE_INTERNALS },
     },
     {
       name: "entrypoint-boundary-across-packages",
       comment:
-        "A package's own files import each other freely, but may reach OTHER packages only through their entry points, never their internals.",
+        "Файлы одного пакета импортируют друг друга свободно, но до ДРУГИХ пакетов могут дотянуться только через их точки входа и никогда — до их внутренностей.",
       severity: "error",
-      // importer is inside a package ($1), but is not a test file
+      // импортёр находится внутри пакета ($1), но не является тестовым файлом
       from: { path: `^${R}/([^/]+)/`, pathNot: `^${R}/[^/]+/tests/` },
       to: {
         path: PACKAGE_INTERNALS,
-        pathNot: `^${R}/$1/`, // same package → intra-package freedom
+        pathNot: `^${R}/$1/`, // тот же пакет → свобода внутри пакета
       },
     },
     {
       name: "tests-through-entrypoints",
       comment:
-        "A package's tests exercise it through its entry points like everyone else: they may import any package's entry points and their own tests/ fixtures, but never any package's internals, not even their own.",
+        "Тесты пакета упражняют его через точки входа, как и все остальные: они могут импортировать точки входа любого пакета и свои собственные фикстуры из tests/, но никогда — внутренности любого пакета, даже свои собственные.",
       severity: "error",
-      from: { path: `^${R}/([^/]+)/tests/` }, // a test file, in package $1
+      from: { path: `^${R}/([^/]+)/tests/` }, // тестовый файл в пакете $1
       to: {
         path: PACKAGE_INTERNALS,
-        pathNot: `^${R}/$1/tests/`, // own tests/ fixtures → allowed
+        pathNot: `^${R}/$1/tests/`, // свои фикстуры из tests/ → разрешено
       },
     },
     {
       name: "tests-folder-is-private",
       comment:
-        "A package's tests/ folder is reachable only from tests: nothing else may import fixtures.",
+        "Папка tests/ пакета достижима только из тестов: ничто другое не может импортировать фикстуры.",
       severity: "error",
-      from: { pathNot: `^${R}/[^/]+/tests/` }, // importer is not itself a test
+      from: { pathNot: `^${R}/[^/]+/tests/` }, // импортёр сам не является тестом
       to: { path: `^${R}/[^/]+/tests/` },
     },
     {
       name: "no-circular",
-      comment: "No dependency cycles. Scope to `^${R}/` if you want to allow cycles outside packages.",
+      comment: "Никаких циклов зависимостей. Ограничь областью `^${R}/`, если хочешь разрешить циклы вне пакетов.",
       severity: "error",
       from: {},
       to: { circular: true },
     },
 
-    // --- Layering (optional, off by default) ----------------------------------
-    // Interface-hiding controls HOW you import (through the entry points).
-    // Layering controls WHICH packages may depend on which. Add your own rules
-    // here, e.g.:
+    // --- Слоистость (опционально, по умолчанию выключена) ---------------------
+    // Сокрытие интерфейса управляет ТЕМ, КАК ты импортируешь (через точки входа).
+    // Слоистость управляет ТЕМ, КАКИЕ пакеты могут зависеть от каких. Свои правила
+    // добавляй здесь, например:
     //
     // {
     //   name: "ui-may-not-depend-on-billing",

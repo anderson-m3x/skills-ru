@@ -1,98 +1,98 @@
 ---
 name: software-factory
-description: Shared language for designing a software factory: the tasks it runs and the services it plugs into.
+description: Единый язык для проектирования программной фабрики: задач, которые она выполняет, и сервисов, в которые она подключается.
 disable-model-invocation: true
 ---
 
-A **software factory** is a system of agents that turns tickets, PRs and schedules into merged code, deployed on remote infrastructure the user chooses. This skill is the language for designing one. Use these terms, and only these, when discussing or whiteboarding a factory; when the user reaches for a word under _Avoid_, name the canonical term.
+**Программная фабрика** — это система агентов, которая превращает тикеты, PR и расписания в смерженный код, развёрнутый на удалённой инфраструктуре, которую выбирает пользователь. Этот скилл — язык для её проектирования. Используй эти термины и только их, когда обсуждаешь фабрику или рисуешь её на доске; когда пользователь тянется к слову из раздела _Избегай_, назови канонический термин.
 
-## Tasks and runs
+## Задачи и запуски
 
-**Task**:
-A kind of work the factory performs, defined once and run many times: review, explore, implement, ratchet. A task may work on a ticket, a PR, or the codebase as a whole.
-_Avoid_: job, workflow, action, as names for the task. A CI vendor's workflow file and its jobs are where a task is wired up, not the task.
+**Задача** (task):
+Вид работы, которую выполняет фабрика: определяется один раз и запускается многократно: review, explore, implement, ratchet. Задача может работать с тикетом, с PR или с кодовой базой в целом.
+_Избегай_: «работа», «воркфлоу», «экшен» как названий задачи. Файл воркфлоу у CI-вендора и его job'ы — это место, где задача подключена, а не сама задача.
 
-**Trigger**:
-The event that starts a run: a change in the ticket tracker or git host, a clock in the orchestrator, or another run.
+**Триггер** (trigger):
+Событие, которое начинает запуск: изменение в трекере тикетов или в git-хосте, таймер в оркестраторе или другой запуск.
 
-**Run**:
-One execution of a task on one runner, from its trigger to its finish, treated as a black box. A run triggers further runs either directly, through logic in the orchestrator, or by changing the ticket tracker or git host. A run never waits for a human: it ends, and the human's later change to the ticket tracker or git host triggers a new run.
-_Avoid_: session
+**Запуск** (run):
+Одно исполнение задачи на одном раннере — от её триггера до её завершения, — рассматриваемое как чёрный ящик. Запуск порождает следующие запуски либо напрямую, через логику в оркестраторе, либо изменением трекера тикетов или git-хоста. Запуск никогда не ждёт человека: он завершается, а последующее изменение трекера тикетов или git-хоста человеком запускает новый запуск.
+_Избегай_: «сессия»
 
-**Runner**:
-The disposable machine a run executes on. Nothing on it survives the run, even when the machine itself is long-lived: a run's only memory of earlier runs is the ticket tracker, the git host and the orchestrator.
-_Avoid_: server, host, box, compute, sandbox
+**Раннер** (runner):
+Одноразовая машина, на которой исполняется запуск. Ничто на ней не переживает запуск, даже если сама машина долгоживущая: единственная память запуска о более ранних запусках — это трекер тикетов, git-хост и оркестратор.
+_Избегай_: «сервер», «хост», «бокс», «вычислитель», «песочница»
 
-## Services
+## Сервисы
 
-**Ticket tracker**:
-Where tickets live, and the factory's human interface: humans schedule work by filing tickets, talk to agents in their comments, and their changes to tickets trigger runs.
-_Avoid_: issue tracker, ticket manager, project board
+**Трекер тикетов** (ticket tracker):
+Место, где живут тикеты, и человеческий интерфейс фабрики: люди планируют работу, создавая тикеты, разговаривают с агентами в их комментариях, а их изменения тикетов запускают запуски.
+_Избегай_: «трекер задач», «менеджер тикетов», «проектная доска»
 
-**Ticket source**:
-Anything outside the factory that creates tickets in the ticket tracker: a feedback button, a monitor, an error tracker, an inbox.
-_Avoid_: data source, trigger source, intake
+**Источник тикетов** (ticket source):
+Всё, что находится вне фабрики и создаёт тикеты в трекере тикетов: кнопка обратной связи, монитор, трекер ошибок, инбокс.
+_Избегай_: «источник данных», «источник триггеров», «приём»
 
-**Git host**:
-Where branches, PRs and reviews live.
-_Avoid_: code host, forge, repo
+**Git-хост** (git host):
+Место, где живут ветки, PR и ревью.
+_Избегай_: «хост кода», «форж», «репозиторий»
 
-**Orchestrator**:
-The component that receives triggers, starts runs on runners, and records which runs are queued, in flight or finished.
-_Avoid_: dispatcher, scheduler, control plane
+**Оркестратор** (orchestrator):
+Компонент, который принимает триггеры, запускает запуски на раннерах и ведёт учёт того, какие запуски в очереди, в работе или завершены.
+_Избегай_: «диспетчер», «планировщик», «control plane»
 
-**Observability platform**:
-Where runners send logs, traces and status, so a human can see what happened inside each run. Optional: the product filling the runner or orchestrator slot often shows enough on its own. A run never decides on it until something writes it into the ticket tracker or git host.
-_Avoid_: observability, logs, monitoring, dashboard
+**Платформа наблюдаемости** (observability platform):
+Место, куда раннеры отправляют логи, трейсы и статус, чтобы человек мог видеть, что происходило внутри каждого запуска. Необязательна: продукт, занимающий слот раннера или оркестратора, часто показывает достаточно и сам по себе. Запуск никогда не принимает решения на её основе, пока что-то не запишет это в трекер тикетов или в git-хост.
+_Избегай_: «наблюдаемость», «логи», «мониторинг», «дашборд»
 
-## Designing a factory
+## Проектирование фабрики
 
-A design has two halves: the **services**, each a slot filled with a product, and the **tasks** whose runs move work through them.
+У проекта две половины: **сервисы**, каждый из которых — слот, заполненный продуктом, и **задачи**, чьи запуски двигают работу через эти сервисы.
 
-Start from the user's problem, not the factory: untriaged tickets, PRs waiting for automated review, a stricter automated check to migrate to, bugs nobody reads. When the user names a problem or doesn't know what to build, read [EXAMPLE-TASKS.md](EXAMPLE-TASKS.md) for the tasks that solve common ones.
+Отталкивайся от проблемы пользователя, а не от фабрики: неразобранные тикеты, PR, ждущие автоматического ревью, более строгая автоматическая проверка, на которую надо перейти, баги, которые никто не читает. Когда пользователь называет проблему или не знает, что строить, прочитай [EXAMPLE-TASKS.md](EXAMPLE-TASKS.md) — там задачи, решающие типичные из них.
 
-### Start slow
+### Начинай медленно
 
-Every trigger is an accelerator. Accelerators without brakes make a slop cannon. There are three brakes:
+Каждый триггер — это ускоритель. Ускорители без тормозов производят слоп-пушку. Тормозов три:
 
-- **Automated checks**: deterministic gates (types, lint, tests) that every run must pass.
-- **Automated review**: a separate run that reads the diff cold against the codebase's standards and the ticket, when there is one.
-- **Human review**: a human reads the PR before it merges; what it catches becomes new automated checks and sharper automated review.
+- **Автоматические проверки**: детерминированные ворота (типы, линт, тесты), которые должен пройти каждый запуск.
+- **Автоматическое ревью**: отдельный запуск, который читает диф холодным взглядом на соответствие стандартам кодовой базы и тикету, если он есть.
+- **Человеческое ревью**: человек читает PR до мержа; то, что оно ловит, становится новыми автоматическими проверками и более острым автоматическим ревью.
 
-Add one automated trigger at a time, throttled at first (one bug report in ten, a clock once a day), with human review on every PR. Open the throttle as the brakes earn trust, and cap every loop of runs at a few tries before a human.
+Добавляй по одному автоматическому триггеру за раз, сначала с дросселированием (один баг-репорт из десяти, таймер раз в день) и с человеческим ревью на каждом PR. Открывай дроссель по мере того, как тормоза заслуживают доверия, и ограничивай каждый цикл запусков несколькими попытками, прежде чем вмешается человек.
 
-### Fill every slot
+### Заполняй каждый слот
 
-Each service is a slot. One product can fill several slots, and one server can host several services. Three designs, side by side:
+Каждый сервис — это слот. Один продукт может заполнять несколько слотов, а один сервер может хостить несколько сервисов. Три проекта рядом:
 
-| Service                | All on GitHub                   | Linear tickets                 | Own tracker              |
-| ---------------------- | ------------------------------- | ------------------------------ | ------------------------ |
-| Ticket tracker         | GitHub Issues                   | Linear                         | own app                  |
-| Ticket source          | feedback button                 | feedback button, monitor       | feedback button, monitor |
-| Git host               | GitHub                          | GitHub                         | GitHub                   |
-| Orchestrator           | GitHub Actions                  | own server + database          | own app                  |
-| Runner                 | Actions runner                  | Actions, E2B, Daytona or a VPS | own app, or sandboxes    |
-| Observability platform | none: Actions run pages suffice | an LLM tracing platform        | own app                  |
+| Сервис                 | Всё на GitHub                          | Тикеты в Linear                | Свой трекер              |
+| ---------------------- | -------------------------------------- | ------------------------------ | ------------------------ |
+| Трекер тикетов         | GitHub Issues                          | Linear                         | собственное приложение   |
+| Источник тикетов       | кнопка обратной связи                  | кнопка обратной связи, монитор | кнопка обратной связи, монитор |
+| Git-хост               | GitHub                                 | GitHub                         | GitHub                   |
+| Оркестратор            | GitHub Actions                         | собственный сервер + база данных | собственное приложение |
+| Раннер                 | раннер Actions                         | Actions, E2B, Daytona или VPS  | собственное приложение или песочницы |
+| Платформа наблюдаемости | нет: страниц запусков Actions достаточно | платформа трейсинга LLM        | собственное приложение   |
 
-When the user is choosing a product for a slot, read that slot's survey to get oriented, then research the current options yourself; each survey groups the options by type and lists the questions that decide the slot:
+Когда пользователь выбирает продукт для слота, прочитай обзор этого слота, чтобы сориентироваться, а затем исследуй актуальные варианты сам; каждый обзор группирует варианты по типам и перечисляет вопросы, которые решают судьбу слота:
 
 - [TICKET-TRACKERS.md](TICKET-TRACKERS.md)
 - [GIT-HOSTS.md](GIT-HOSTS.md)
 - [RUNNERS.md](RUNNERS.md)
 - [OBSERVABILITY-PLATFORMS.md](OBSERVABILITY-PLATFORMS.md)
 
-Buy the services and build the tasks: the tasks carry the user's design, the services are generic. Favour an off-the-shelf ticket tracker: it is robust, people already know it, and outside users are easy to let in.
+Покупай сервисы и строй задачи: задачи несут проект пользователя, сервисы универсальны. Предпочитай готовый трекер тикетов: он надёжен, люди его уже знают, и внешних пользователей легко пустить.
 
-### Question every task
+### Допрашивай каждую задачу
 
-For each task, answer:
+Для каждой задачи ответь:
 
-1. What triggers it?
-2. What does it do, and which services does it read and write?
-3. What does it trigger next?
-4. Where does a human re-enter?
-5. What stops two runs doing the same work?
+1. Что её запускает?
+2. Что она делает и какие сервисы читает и пишет?
+3. Что она запускает дальше?
+4. Где возвращается человек?
+5. Что мешает двум запускам делать одну и ту же работу?
 
-For each ticket source, answer: what stops it filing the same ticket twice?
+Для каждого источника тикетов ответь: что мешает ему завести один и тот же тикет дважды?
 
-A design is finished when every slot names a product (or, for the observability platform, a deliberate none) and every task and ticket source has an answer to every question.
+Проект готов, когда каждый слот называет продукт (или, для платформы наблюдаемости, осознанное «ничего») и у каждой задачи и каждого источника тикетов есть ответ на каждый вопрос.

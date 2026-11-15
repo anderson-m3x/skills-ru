@@ -1,15 +1,15 @@
-# Triage Labels
+# Метки триажа
 
-The skills speak in terms of five canonical triage roles. This file maps those roles to the actual label strings used in this repo's issue tracker.
+Скиллы говорят на языке пяти канонических ролей триажа. Этот файл сопоставляет эти роли с фактическими строками меток, используемыми в трекере задач этого репозитория.
 
-| Label in mattpocock/skills | Label in our tracker | Meaning                                  |
-| -------------------------- | -------------------- | ---------------------------------------- |
-| `needs-triage`             | `needs-triage`       | Maintainer needs to evaluate this issue  |
-| `needs-info`               | `needs-info`         | Waiting on reporter for more information |
-| `ready-for-agent`          | `ready-for-agent`    | Fully specified, ready for an AFK agent  |
-| `ready-for-human`          | `ready-for-human`    | Requires human implementation            |
-| `wontfix`                  | `wontfix`            | Will not be actioned                     |
+| Метка в mattpocock/skills | Метка в нашем трекере | Значение                                         |
+| ------------------------- | --------------------- | ------------------------------------------------ |
+| `needs-triage`            | `needs-triage`        | Мейнтейнеру нужно оценить эту задачу             |
+| `needs-info`              | `needs-info`          | Ожидание дополнительной информации от автора     |
+| `ready-for-agent`         | `ready-for-agent`     | Полностью описано, готово для AFK-агента         |
+| `ready-for-human`         | `ready-for-human`     | Требуется реализация человеком                   |
+| `wontfix`                 | `wontfix`             | Не будет обработано                              |
 
-When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
+Когда скилл упоминает роль (например, «примени метку триажа, готовую для AFK»), используй соответствующую строку метки из этой таблицы.
 
-Edit the "Label in our tracker" column to match whatever vocabulary you actually use.
+Отредактируй столбец «Метка в нашем трекере» в соответствии с тем словарём, который вы реально используете.

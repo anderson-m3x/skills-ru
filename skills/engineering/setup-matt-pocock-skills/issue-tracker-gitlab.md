@@ -1,46 +1,46 @@
-# Issue tracker: GitLab
+# Трекер задач: GitLab
 
-Issues and specs for this repo live as GitLab issues. Use the [`glab`](https://gitlab.com/gitlab-org/cli) CLI for all operations.
+Задачи и спеки этого репозитория живут как GitLab issues. Для всех операций используй CLI [`glab`](https://gitlab.com/gitlab-org/cli).
 
-## Conventions
+## Соглашения
 
-- **Create an issue**: `glab issue create --title "..." --description "..."`. Use a heredoc for multi-line descriptions. Pass `--description -` to open an editor.
-- **Read an issue**: `glab issue view <number> --comments`. Use `-F json` for machine-readable output.
-- **List issues**: `glab issue list -O json` with appropriate `--label` filters.
-- **Comment on an issue**: `glab issue note <number> --message "..."`. GitLab calls comments "notes".
-- **Apply / remove labels**: `glab issue update <number> --label "..."` / `--unlabel "..."`. Multiple labels can be comma-separated or by repeating the flag.
-- **Close**: `glab issue close <number>`. `glab issue close` does not accept a closing comment, so post the explanation first with `glab issue note <number> --message "..."`, then close.
-- **Merge requests**: GitLab calls PRs "merge requests". Use `glab mr create`, `glab mr view`, `glab mr note`, etc., the same shape as `gh pr ...` with `mr` in place of `pr` and `note`/`--message` in place of `comment`/`--body`.
+- **Создать задачу**: `glab issue create --title "..." --description "..."`. Для многострочных описаний используй heredoc. Передай `--description -`, чтобы открыть редактор.
+- **Прочитать задачу**: `glab issue view <number> --comments`. Используй `-F json` для машиночитаемого вывода.
+- **Список задач**: `glab issue list -O json` с подходящими фильтрами `--label`.
+- **Комментарий к задаче**: `glab issue note <number> --message "..."`. GitLab называет комментарии «notes».
+- **Применить / снять метки**: `glab issue update <number> --label "..."` / `--unlabel "..."`. Несколько меток можно перечислить через запятую или повторяя флаг.
+- **Закрыть**: `glab issue close <number>`. `glab issue close` не принимает комментарий при закрытии, поэтому сначала опубликуй объяснение через `glab issue note <number> --message "..."`, затем закрывай.
+- **Merge requests**: GitLab называет PR «merge requests». Используй `glab mr create`, `glab mr view`, `glab mr note` и т. п. — та же форма, что `gh pr ...`, но с `mr` вместо `pr` и `note`/`--message` вместо `comment`/`--body`.
 
-Infer the repo from `git remote -v`; `glab` does this automatically when run inside a clone.
+Определяй репозиторий по `git remote -v`; `glab` делает это автоматически при запуске внутри клона.
 
-## Merge requests as a triage surface
+## Merge requests как поверхность триажа
 
-**MRs as a request surface: no.** _(Set to `yes` if this repo treats external merge requests as feature requests; `/triage` reads this flag.)_
+**MR как поверхность запросов: нет.** _(Поставь `yes`, если этот репозиторий считает внешние merge requests запросами на фичи; скилл `triage` читает этот флаг.)_
 
-When set to `yes`, MRs run through the same labels and states as issues, using the `glab mr` equivalents:
+Если поставлено `yes`, MR проходят через те же метки и состояния, что и задачи, с использованием эквивалентов `glab mr`:
 
-- **Read an MR**: `glab mr view <number> --comments` and `glab mr diff <number>` for the diff.
-- **List external MRs for triage**: `glab mr list -O json`, then keep only MRs whose author is not a project member/owner (a contributor's MR, not a maintainer's in-flight work).
-- **Comment / label / close**: `glab mr note`, `glab mr update --label`/`--unlabel`, `glab mr close`.
+- **Прочитать MR**: `glab mr view <number> --comments` и `glab mr diff <number>` для диффа.
+- **Список внешних MR для триажа**: `glab mr list -O json`, затем оставь только MR, автор которых не участник/владелец проекта (MR контрибьютора, а не текущая работа мейнтейнера).
+- **Комментарий / метка / закрытие**: `glab mr note`, `glab mr update --label`/`--unlabel`, `glab mr close`.
 
-Unlike GitHub, GitLab numbers issues and MRs separately, so `#42` is unambiguous once you know which surface the maintainer means.
+В отличие от GitHub, GitLab нумерует задачи и MR раздельно, поэтому `#42` однозначно, как только ты знаешь, какую поверхность имеет в виду мейнтейнер.
 
-## When a skill says "publish to the issue tracker"
+## Когда скилл говорит «опубликуй в трекере задач»
 
-Create a GitLab issue.
+Создай задачу GitLab.
 
-## When a skill says "fetch the relevant ticket"
+## Когда скилл говорит «получи соответствующий тикет»
 
-Run `glab issue view <number> --comments`.
+Выполни `glab issue view <number> --comments`.
 
-## Wayfinding operations
+## Операции wayfinding
 
-Used by `/wayfinder`. The **map** is a single issue with **child** issues as tickets.
+Используются скиллом `wayfinder`. **Карта** — это одна задача, а **дочерние** задачи — тикеты.
 
-- **Map**: a single issue labelled `wayfinder:map`, holding the Notes / Decisions-so-far / Fog body. `glab issue create --label wayfinder:map`. (On GitLab tiers with native epics, an epic may hold the map instead; a labelled issue works everywhere.)
-- **Child ticket**: an issue carrying `Part of #<map>` at the top of its description, linked to the map (`glab issue create --linked-issues <map> --link-type relates_to`), and labels `wayfinder:<type>` (`research`/`prototype`/`grilling`/`task`). Once claimed, the ticket is assigned to the driving dev.
-- **Blocking**: GitLab's **native blocking link**, the canonical, UI-visible representation. Add it with the `/blocked_by #<n>` quick action, posted as a note (`glab issue note <child> --message "/blocked_by #<blocker>"`). Native blocking links are a Premium/Ultimate feature; on the free tier (or where unavailable) fall back to a `Blocked by: #<n>, #<n>` line at the top of the description. A ticket is unblocked when every blocker is closed.
-- **Frontier query**: list the map's children with `glab api projects/:id/issues/<map>/links`, keeping open issues that carry a `wayfinder:<type>` label; drop any with an open blocker: a native `blocked_by` link to an open issue (`glab api projects/:id/issues/<child-iid>/links`), or an open issue in the `Blocked by` line, or an assignee; first in map order wins.
-- **Claim**: `glab issue update <n> --assignee @me`, the session's first write.
-- **Resolve**: `glab issue note <n> --message "<answer>"`, then `glab issue close <n>`, then append a context pointer (gist + link) to the map's Decisions-so-far.
+- **Карта**: одна задача с меткой `wayfinder:map`, содержащая тело Notes / Decisions-so-far / Fog. `glab issue create --label wayfinder:map`. (На тарифах GitLab с нативными эпиками карту может держать эпик; задача с меткой работает везде.)
+- **Дочерний тикет**: задача, несущая `Part of #<map>` в начале описания, связанная с картой (`glab issue create --linked-issues <map> --link-type relates_to`), и метки `wayfinder:<type>` (`research`/`prototype`/`grilling`/`task`). После захвата тикет назначается на ведущего разработчика.
+- **Блокировки**: **нативная ссылка блокировки** GitLab — каноническое, видимое в UI представление. Добавь её быстрым действием `/blocked_by #<n>`, опубликованным как note (`glab issue note <child> --message "/blocked_by #<blocker>"`). Нативные ссылки блокировки — функция Premium/Ultimate; на бесплатном тарифе (или там, где она недоступна) откатись к строке `Blocked by: #<n>, #<n>` в начале описания. Тикет разблокирован, когда все блокеры закрыты.
+- **Запрос фронтира**: перечисли дочерние задачи карты через `glab api projects/:id/issues/<map>/links`, оставив открытые задачи с меткой `wayfinder:<type>`; отбрось те, у которых есть открытый блокер: нативная ссылка `blocked_by` на открытую задачу (`glab api projects/:id/issues/<child-iid>/links`), или открытая задача в строке `Blocked by`, или исполнитель; побеждает первая в порядке карты.
+- **Захват**: `glab issue update <n> --assignee @me` — первая запись за сессию.
+- **Разрешение**: `glab issue note <n> --message "<answer>"`, затем `glab issue close <n>`, затем допиши указатель на контекст (суть + ссылка) в Decisions-so-far карты.

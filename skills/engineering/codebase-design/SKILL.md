@@ -1,114 +1,114 @@
 ---
 name: codebase-design
-description: Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.
+description: Общий словарь для проектирования глубоких модулей. Используй, когда пользователь хочет спроектировать или улучшить интерфейс модуля, найти возможности для углубления, решить, где проходит шов, сделать код более тестируемым или удобным для навигации ИИ, либо когда другому скиллу нужен словарь глубоких модулей.
 ---
 
-# Codebase Design
+# Проектирование кодовой базы
 
-Design **deep modules**: a lot of behaviour behind a small interface, placed at a clean seam, testable through that interface. Use this language and these principles wherever code is being designed or restructured. The aim is leverage for callers, locality for maintainers, and testability for everyone.
+Проектируй **глубокие модули**: много поведения за маленьким интерфейсом, размещённым на чистом шве, тестируемым через этот интерфейс. Используй этот язык и эти принципы везде, где код проектируется или перестраивается. Цель — рычаг для вызывающих, локальность для сопровождающих и тестируемость для всех.
 
-## Glossary
+## Глоссарий
 
-Use these terms exactly: don't substitute "component," "service," "API," or "boundary." Consistent language is the whole point.
+Используй эти термины точно: не подменяй их словами «компонент», «сервис», «API» или «граница». Согласованность языка — в этом весь смысл.
 
-**Module**: anything with an interface and an implementation. Deliberately scale-agnostic: a function, class, package, or tier-spanning slice. _Avoid_: unit, component, service.
+**Модуль**: всё, что имеет интерфейс и реализацию. Осознанно не привязан к масштабу: функция, класс, пакет или срез, пересекающий уровни. _Избегай_: unit, компонент, сервис.
 
-**Interface**: everything a caller must know to use the module correctly: the type signature, but also invariants, ordering constraints, error modes, required configuration, and performance characteristics. _Avoid_: API, signature (too narrow, they refer only to the type-level surface).
+**Интерфейс**: всё, что вызывающий должен знать, чтобы правильно использовать модуль: сигнатура типа, но также инварианты, ограничения порядка, режимы ошибок, требуемая конфигурация и характеристики производительности. _Избегай_: API, сигнатура (слишком узко, они относятся лишь к поверхности уровня типов).
 
-**Implementation**: what's inside a module, its body of code. Distinct from **Adapter**: a thing can be a small adapter with a large implementation (a Postgres repo) or a large adapter with a small implementation (an in-memory fake). Reach for "adapter" when the seam is the topic; "implementation" otherwise.
+**Реализация**: то, что внутри модуля, его тело кода. Отличается от **адаптера**: вещь может быть маленьким адаптером с большой реализацией (репозиторий на Postgres) или большим адаптером с маленькой реализацией (фейк в памяти). Тянись к «адаптеру», когда тема — шов; иначе — к «реализации».
 
-**Depth**: leverage at the interface. The amount of behaviour a caller (or test) can exercise per unit of interface they have to learn. A module is **deep** when a large amount of behaviour sits behind a small interface, **shallow** when the interface is nearly as complex as the implementation.
+**Глубина**: рычаг на интерфейсе. Объём поведения, который вызывающий (или тест) может задействовать на единицу интерфейса, который ему приходится изучать. Модуль **глубокий**, когда за маленьким интерфейсом стоит много поведения, и **мелкий**, когда интерфейс почти так же сложен, как реализация.
 
-**Seam** _(Michael Feathers)_: a place where you can alter behaviour without editing in that place; the *location* at which a module's interface lives. Where to put the seam is its own design decision, distinct from what goes behind it. _Avoid_: boundary (overloaded with DDD's bounded context).
+**Шов** _(Michael Feathers)_: место, где можно изменить поведение, не редактируя в этом месте; *локация*, в которой живёт интерфейс модуля. Куда положить шов — отдельное проектное решение, отличное от того, что стоит за ним. _Избегай_: граница (перегружено ограниченным контекстом из DDD).
 
-**Adapter**: a concrete thing that satisfies an interface at a seam. Describes *role* (what slot it fills), not substance (what's inside).
+**Адаптер**: конкретная вещь, удовлетворяющая интерфейсу на шве. Описывает *роль* (какой слот заполняет), а не субстанцию (что внутри).
 
-**Leverage**: what callers get from depth. More capability per unit of interface they learn. One implementation pays back across N call sites and M tests.
+**Рычаг**: то, что вызывающие получают от глубины. Больше возможностей на единицу изученного интерфейса. Одна реализация окупается на N местах вызова и M тестах.
 
-**Locality**: what maintainers get from depth. Change, bugs, knowledge, and verification concentrate in one place rather than spreading across callers. Fix once, fixed everywhere.
+**Локальность**: то, что сопровождающие получают от глубины. Изменения, баги, знания и проверка концентрируются в одном месте, а не расползаются по вызывающим. Исправил один раз — исправлено везде.
 
-## Deep vs shallow
+## Глубокий против мелкого
 
-**Deep module** = small interface + lots of implementation:
+**Глубокий модуль** = маленький интерфейс + много реализации:
 
 ```
 ┌─────────────────────┐
-│   Small Interface   │  ← Few methods, simple params
+│    Малый интерфейс  │  ← Мало методов, простые параметры
 ├─────────────────────┤
 │                     │
-│  Deep Implementation│  ← Complex logic hidden
+│ Глубокая реализация │  ← Сложная логика скрыта
 │                     │
 └─────────────────────┘
 ```
 
-**Shallow module** = large interface + little implementation (avoid):
+**Мелкий модуль** = большой интерфейс + мало реализации (избегай):
 
 ```
 ┌─────────────────────────────────┐
-│       Large Interface           │  ← Many methods, complex params
+│        Большой интерфейс        │  ← Много методов, сложные параметры
 ├─────────────────────────────────┤
-│  Thin Implementation            │  ← Just passes through
+│  Тонкая реализация              │  ← Только пробрасывает дальше
 └─────────────────────────────────┘
 ```
 
-When designing an interface, ask:
+Проектируя интерфейс, спроси:
 
-- Can I reduce the number of methods?
-- Can I simplify the parameters?
-- Can I hide more complexity inside?
+- Можно ли уменьшить число методов?
+- Можно ли упростить параметры?
+- Можно ли спрятать больше сложности внутрь?
 
-## Principles
+## Принципы
 
-- **Depth is a property of the interface, not the implementation.** A deep module can be internally composed of small, mockable, swappable parts; they just aren't part of the interface. A module can have **internal seams** (private to its implementation, used by its own tests) as well as the **external seam** at its interface.
-- **The deletion test.** Imagine deleting the module. If complexity vanishes, it was a pass-through. If complexity reappears across N callers, it was earning its keep.
-- **The interface is the test surface.** Callers and tests cross the same seam. If you want to test *past* the interface, the module is probably the wrong shape.
-- **One adapter means a hypothetical seam. Two adapters means a real one.** Don't introduce a seam unless something actually varies across it.
+- **Глубина — свойство интерфейса, а не реализации.** Глубокий модуль может внутри состоять из маленьких, мокируемых, заменяемых частей; просто они не входят в интерфейс. У модуля могут быть **внутренние швы** (приватные для его реализации, используемые его собственными тестами) и **внешний шов** на его интерфейсе.
+- **Тест удалением.** Представь, что модуль удалён. Если сложность исчезает — это был проброс. Если сложность снова появляется у N вызывающих — модуль оправдывал своё существование.
+- **Интерфейс — это поверхность тестирования.** Вызывающие и тесты пересекают один и тот же шов. Если хочется тестировать *в обход* интерфейса, скорее всего модуль имеет неправильную форму.
+- **Один адаптер — гипотетический шов. Два адаптера — настоящий.** Не вводи шов, пока через него действительно ничего не варьируется.
 
-## Designing for testability
+## Проектирование ради тестируемости
 
-Good interfaces make testing natural:
+Хорошие интерфейсы делают тестирование естественным:
 
-1. **Accept dependencies, don't create them.**
+1. **Принимай зависимости, не создавай их.**
 
    ```typescript
-   // Testable
+   // Тестируемо
    function processOrder(order, paymentGateway) {}
 
-   // Hard to test
+   // Трудно тестировать
    function processOrder(order) {
      const gateway = new StripeGateway();
    }
    ```
 
-2. **Return results, don't produce side effects.**
+2. **Возвращай результаты, не производи побочных эффектов.**
 
    ```typescript
-   // Testable
+   // Тестируемо
    function calculateDiscount(cart): Discount {}
 
-   // Hard to test
+   // Трудно тестировать
    function applyDiscount(cart): void {
      cart.total -= discount;
    }
    ```
 
-3. **Small surface area.** Fewer methods = fewer tests needed. Fewer params = simpler test setup.
+3. **Небольшая площадь поверхности.** Меньше методов — меньше нужно тестов. Меньше параметров — проще подготовка теста.
 
-## Relationships
+## Связи
 
-- A **Module** has exactly one **Interface** (the surface it presents to callers and tests).
-- **Depth** is a property of a **Module**, measured against its **Interface**.
-- A **Seam** is where a **Module**'s **Interface** lives.
-- An **Adapter** sits at a **Seam** and satisfies the **Interface**.
-- **Depth** produces **Leverage** for callers and **Locality** for maintainers.
+- У **модуля** ровно один **интерфейс** (поверхность, которую он предоставляет вызывающим и тестам).
+- **Глубина** — свойство **модуля**, измеряемое относительно его **интерфейса**.
+- **Шов** — место, где живёт **интерфейс** **модуля**.
+- **Адаптер** находится на **шве** и удовлетворяет **интерфейсу**.
+- **Глубина** даёт **рычаг** вызывающим и **локальность** сопровождающим.
 
-## Rejected framings
+## Отвергнутые трактовки
 
-- **Depth as ratio of implementation-lines to interface-lines** (Ousterhout): rewards padding the implementation. We use depth-as-leverage instead.
-- **"Interface" as the TypeScript `interface` keyword or a class's public methods**: too narrow: interface here includes every fact a caller must know.
-- **"Boundary"**: overloaded with DDD's bounded context. Say **seam** or **interface**.
+- **Глубина как отношение строк реализации к строкам интерфейса** (Ousterhout): поощряет раздувание реализации. Вместо этого мы используем глубину-как-рычаг.
+- **«Интерфейс» как ключевое слово `interface` в TypeScript или публичные методы класса**: слишком узко — здесь интерфейс включает каждый факт, который должен знать вызывающий.
+- **«Граница»**: перегружено ограниченным контекстом из DDD. Говори **шов** или **интерфейс**.
 
-## Going deeper
+## Углубление
 
-- **Deepening a cluster given its dependencies**, see [DEEPENING.md](DEEPENING.md): dependency categories, seam discipline, and replace-don't-layer testing.
-- **Exploring alternative interfaces**, see [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md): spin up parallel sub-agents to design the interface several radically different ways, then compare on depth, locality, and seam placement.
+- **Углубление кластера с учётом его зависимостей** — см. [DEEPENING.md](DEEPENING.md): категории зависимостей, дисциплина швов и тестирование по принципу «заменяй, а не наслаивай».
+- **Поиск альтернативных интерфейсов** — см. [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md): запусти параллельных субагентов (инструмент subagent), чтобы спроектировать интерфейс несколькими радикально разными способами, затем сравни их по глубине, локальности и размещению шва.

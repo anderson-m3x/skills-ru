@@ -1,94 +1,94 @@
-# Runners
+# Раннеры
 
-> Surveyed 2026-10, and not guaranteed to be up to date. Use it to get oriented, then research the current options yourself: products, prices, limits and betas change fast.
+> Обзор сделан в 2026-10, актуальность не гарантируется. Используй его, чтобы сориентироваться, а затем исследуй текущие варианты сам: продукты, цены, лимиты и беты меняются быстро.
 
-A runner is **disposable**: every run starts on a fresh machine and leaves nothing behind. Five types fill the slot. They differ mostly in who owns the agent loop and who owns the machine:
+Раннер **одноразовый**: каждый запуск начинается на свежей машине и ничего после себя не оставляет. Слот заполняют пять типов. Отличаются они в основном тем, кому принадлежит цикл агента и кому — машина:
 
-| Type | Agent loop | Machine | Also fills |
+| Тип | Цикл агента | Машина | Также заполняет |
 | --- | --- | --- | --- |
-| CI runner | yours, inside the CI job | CI vendor's, or yours | orchestrator, observability platform |
-| MicroVM API | yours, in the orchestrator or on the runner | provider's | nothing |
-| Bundled agent platform | vendor's | vendor's | part of orchestrator, observability platform |
-| Bring-your-own worker | vendor's | yours | part of orchestrator, observability platform |
-| Own VPS or containers | yours | yours | nothing |
+| CI-раннер | твой, внутри job'а CI | CI-вендора или твой | оркестратор, платформа наблюдаемости |
+| MicroVM API | твой, в оркестраторе или на раннере | провайдера | ничего |
+| Платформа с агентом в комплекте | вендора | вендора | часть оркестратора, платформа наблюдаемости |
+| Свой воркер | вендора | твоя | часть оркестратора, платформа наблюдаемости |
+| Свой VPS или контейнеры | твой | твоя | ничего |
 
-Runner choice is per run: a cheap CI runner for review runs and a microVM for implementer runs is a normal design.
+Раннер выбирается под каждый запуск: дешёвый CI-раннер для ревью-запусков и микро-VM для запусков исполнителя — нормальный проект.
 
-## CI runners
+## CI-раннеры
 
-A fresh VM or pod per CI job, started by the git host's own workflow engine; the agent CLI is one step in the job. The orchestrator starts a run with a workflow trigger (issue, PR, schedule, manual dispatch), and a concurrency group keeps two runs off the same ticket. Hosted runners are disposable by construction; self-hosted runners get there through an ephemeral mode, one pod per job, deleted after. Cost is per minute.
+Свежая VM или под на каждый job CI, запускаемый собственным движком воркфлоу git-хоста; CLI агента — один шаг в job'е. Оркестратор начинает запуск триггером воркфлоу (issue, PR, расписание, ручной dispatch), а группа конкурентности не даёт двум запускам взяться за один тикет. Хостируемые раннеры одноразовы по построению; self-hosted приходят к этому через эфемерный режим — по поду на job, удаляемому после. Стоимость — поминутная.
 
-**Pick it when** the git host is GitHub or GitLab and every trigger is a git host event or a clock: the workflow file is the orchestrator and the run page is the observability platform, so one product fills three slots.
+**Выбирай его, когда** git-хост — это GitHub или GitLab и каждый триггер — событие git-хоста или таймер: файл воркфлоу и есть оркестратор, а страница запуска — платформа наблюдаемости, так что один продукт заполняет три слота.
 
-Starting points:
-- [GitHub Actions](https://docs.github.com/en/actions/reference/limits): the default for an all-GitHub factory; [pricing](https://docs.github.com/en/billing/reference/actions-runner-pricing).
-- [Claude Code GitHub Action](https://code.claude.com/docs/en/github-actions): Claude Code as a workflow step.
-- [GitLab hosted runners](https://docs.gitlab.com/ci/runners/hosted_runners/linux/): an ephemeral VM per job.
-- [Actions Runner Controller](https://docs.github.com/en/actions/concepts/runners/actions-runner-controller): self-hosted, one ephemeral pod per job on the user's Kubernetes.
+Отправные точки:
+- [GitHub Actions](https://docs.github.com/en/actions/reference/limits): вариант по умолчанию для фабрики целиком на GitHub; [pricing](https://docs.github.com/en/billing/reference/actions-runner-pricing).
+- [Claude Code GitHub Action](https://code.claude.com/docs/en/github-actions): Claude Code как шаг воркфлоу.
+- [GitLab hosted runners](https://docs.gitlab.com/ci/runners/hosted_runners/linux/): эфемерная VM на job.
+- [Actions Runner Controller](https://docs.github.com/en/actions/concepts/runners/actions-runner-controller): self-hosted, один эфемерный под на job в Kubernetes пользователя.
 
-## MicroVM APIs
+## MicroVM API
 
-An SDK call creates an isolated microVM (vendors say "sandbox") in about a second; the orchestrator execs commands into it, or starts an agent CLI inside it. Cost is per second of vCPU and RAM. The orchestrator creates one per run, kills it at the end, and sets a timeout as the backstop. Providers also sell persistence (pause/resume, snapshots, drives); a factory uses it as a cache, and keeps memory between runs in the ticket tracker, git host and orchestrator.
+Вызов SDK примерно за секунду создаёт изолированную микро-VM (вендоры говорят «sandbox»); оркестратор исполняет в ней команды или запускает внутри неё CLI агента. Стоимость — посекундно за vCPU и RAM. Оркестратор создаёт её на каждый запуск, убивает в конце и ставит таймаут как запасной предохранитель. Провайдеры также продают персистентность (пауза/возобновление, снапшоты, диски); фабрика использует её как кэш, а память между запусками держит в трекере тикетов, git-хосте и оркестраторе.
 
-**Pick it when** the factory has its own orchestrator (a server, a queue) and wants many short-lived, parallel runs with no machines to manage. Compare on max run length, concurrency cap, and whether time spent waiting on the model is billed: as of 2026-10, Vercel bills only active CPU, so model-wait time is nearly free there.
+**Выбирай его, когда** у фабрики есть свой оркестратор (сервер, очередь) и она хочет много короткоживущих параллельных запусков без машин в управлении. Сравнивай по максимальной длительности запуска, потолку конкурентности и по тому, оплачивается ли время, проведённое в ожидании модели: на 2026-10 Vercel берёт деньги только за активный CPU, поэтому время ожидания модели там почти бесплатно.
 
-Starting points: [E2B](https://e2b.dev/pricing), [Daytona](https://www.daytona.io/pricing), [Modal Sandboxes](https://modal.com/docs/guide/sandboxes), [Vercel Sandbox](https://vercel.com/docs/vercel-sandbox/pricing).
+Отправные точки: [E2B](https://e2b.dev/pricing), [Daytona](https://www.daytona.io/pricing), [Modal Sandboxes](https://modal.com/docs/guide/sandboxes), [Vercel Sandbox](https://vercel.com/docs/vercel-sandbox/pricing).
 
-## Bundled agent platforms
+## Платформы с агентом в комплекте
 
-A hosted coding agent with its runner included: the vendor provisions a fresh VM or container per run, runs its own agent loop there, and pushes a branch or PR. Only the branch survives. Runs start from an @-mention or assignment in the git host or ticket tracker, a chat message, a schedule, or an HTTP call, so the platform fills much of the orchestrator; its transcript view fills the observability platform. Cost is folded into a seat or subscription, or charged per run.
+Хостируемый кодинг-агент вместе со своим раннером: вендор выделяет свежую VM или контейнер на каждый запуск, гоняет там свой цикл агента и пушит ветку или PR. Переживает только ветка. Запуски стартуют по @-упоминанию или назначению в git-хосте или трекере тикетов, по сообщению в чате, по расписанию или по HTTP-вызову, поэтому платформа заполняет значительную часть оркестратора; её вид транскрипта заполняет платформу наблюдаемости. Стоимость входит в место или подписку либо начисляется за запуск.
 
-**Pick it when** the user wants the fewest moving parts and is happy with that vendor's agent. Confirm its triggers cover the user's ticket tracker.
+**Выбирай её, когда** пользователю нужно минимум движущихся частей и его устраивает агент этого вендора. Убедись, что её триггеры покрывают трекер тикетов пользователя.
 
-Starting points:
-- [Claude Code cloud](https://code.claude.com/docs/en/claude-code-on-the-web), with [scheduled tasks](https://code.claude.com/docs/en/routines) for cron, API and GitHub event triggers.
-- [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview): API-first; create a run against an environment and stream events.
-- [Codex cloud](https://developers.openai.com/codex/cloud): a container per task.
-- [Copilot coding agent](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent): assign an issue to Copilot; its runner is a GitHub Actions runner.
+Отправные точки:
+- [Claude Code cloud](https://code.claude.com/docs/en/claude-code-on-the-web), с [scheduled tasks](https://code.claude.com/docs/en/routines) для триггеров по cron, API и событиям GitHub.
+- [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview): API-first; создать запуск против окружения и стримить события.
+- [Codex cloud](https://developers.openai.com/codex/cloud): контейнер на задачу.
+- [Copilot coding agent](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent): назначь issue на Copilot; его раннер — раннер GitHub Actions.
 
-## Bring-your-own worker
+## Свой воркер
 
-The bundled platform keeps its agent loop and its queue of runs, but tool calls execute on a worker the user hosts. The worker polls the vendor outbound, claims a run, executes it, and exits: the same shape as a self-hosted CI runner. Disposability is the user's job: run the worker under Kubernetes or a microVM API so each run gets a fresh disk. Cost is the vendor's seat or usage plus the user's machines.
+Платформа в комплекте сохраняет свой цикл агента и свою очередь запусков, но вызовы инструментов исполняются на воркере, который хостит пользователь. Воркер опрашивает вендора исходящими запросами, забирает запуск, исполняет его и выходит: та же форма, что у self-hosted CI-раннера. Одноразовость — задача пользователя: запускай воркер в Kubernetes или через MicroVM API, чтобы каждый запуск получал свежий диск. Стоимость — место или расход вендора плюс машины пользователя.
 
-**Pick it when** the user wants a bundled agent but runs must reach a private network, keep data on the user's machines, or use custom hardware.
+**Выбирай его, когда** пользователю нужен агент в комплекте, но запуски должны доставать до приватной сети, держать данные на машинах пользователя или использовать кастомное железо.
 
-Starting points: [Claude Code self-hosted environments](https://code.claude.com/docs/en/self-hosted-environments), [Cursor self-hosted pool](https://cursor.com/docs/cloud-agent/self-hosted-pool), [Copilot coding agent on ARC](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment).
+Отправные точки: [Claude Code self-hosted environments](https://code.claude.com/docs/en/self-hosted-environments), [Cursor self-hosted pool](https://cursor.com/docs/cloud-agent/self-hosted-pool), [Copilot coding agent on ARC](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment).
 
-## Own VPS or containers
+## Свой VPS или контейнеры
 
-A machine the user rents or runs, with a fresh container (or machine) per run: the machine may live for months, the container lives for one run. Max run length is whatever deadline the orchestrator sets. Disposability comes from `docker run --rm`, a Kubernetes Job with `ttlSecondsAfterFinished: 0`, or a machine destroyed at the end; every cache sits on a path the next run treats as optional. Cost is flat monthly, or per second while running.
+Машина, которую пользователь арендует или держит сам, со свежим контейнером (или машиной) на каждый запуск: машина может жить месяцами, контейнер живёт один запуск. Максимальная длительность запуска — какой дедлайн поставит оркестратор. Одноразовость даётся через `docker run --rm`, Kubernetes Job с `ttlSecondsAfterFinished: 0` или машину, уничтожаемую в конце; каждый кэш лежит на пути, который следующий запуск считает необязательным. Стоимость — фиксированная месячная или посекундная, пока идёт работа.
 
-**Pick it when** runs are long, steady or heavy, cost per hour dominates, or a server already hosts the orchestrator.
+**Выбирай его, когда** запуски длинные, ровные или тяжёлые, стоимость часа доминирует или сервер уже хостит оркестратор.
 
-Starting points: [Fly Machines](https://docs.fly.io/machines/overview) ([pricing](https://docs.fly.io/about/pricing)), [Hetzner Cloud](https://www.hetzner.com/cloud/) plus Docker, [Kubernetes Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/).
+Отправные точки: [Fly Machines](https://docs.fly.io/machines/overview) ([pricing](https://docs.fly.io/about/pricing)), [Hetzner Cloud](https://www.hetzner.com/cloud/) плюс Docker, [Kubernetes Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/).
 
-## Researching further
+## Исследование дальше
 
-### The questions that decide the slot
+### Вопросы, решающие слот
 
-Check each candidate against these, with the factory's runs in hand:
+Проверь каждого кандидата по этим пунктам, держа в руках запуски фабрики:
 
-1. **How does the orchestrator start one?** A workflow trigger, an SDK call, an @-mention, an HTTP call, or a vendor queue that a worker claims. Does that fit the orchestrator the design already names?
-2. **What is the max run length, and the concurrency cap?** Find both the default timeout and the ceiling, per plan tier, and what happens at the cap. Hold them against the design's longest run and busiest burst.
-3. **What is the cost shape?** Per minute, per second of vCPU and RAM, active CPU only, per run, per seat, or flat monthly. Is time waiting on the model billed? Are model tokens inside the price or on top?
-4. **How is disposability achieved?** Fresh by default, an ephemeral flag, or the orchestrator's own teardown. Which persistence features exist, and can the design keep them to caches?
-5. **What can a run reach?** Private network access, outbound firewall or allowlist, how secrets reach the runner, and who else can read them.
-6. **Which other slots does it fill?** Count the triggers it reads as orchestrator coverage, and its run page or transcript as observability platform coverage.
+1. **Как оркестратор запускает его?** Триггер воркфлоу, вызов SDK, @-упоминание, HTTP-вызов или очередь вендора, из которой забирает воркер. Подходит ли это оркестратору, который проект уже называет?
+2. **Какая максимальная длительность запуска и потолок конкурентности?** Найди и таймаут по умолчанию, и предельное значение — по каждому уровню плана, — и что происходит при достижении потолка. Сверь их с самым длинным запуском и самым плотным всплеском проекта.
+3. **Какова структура стоимости?** За минуту, за секунду vCPU и RAM, только за активный CPU, за запуск, за место или фиксированно за месяц. Оплачивается ли время ожидания модели? Токены модели входят в цену или идут сверху?
+4. **Как достигается одноразовость?** Свежесть по умолчанию, эфемерный флаг или собственное уничтожение силами оркестратора. Какие есть возможности персистентности и можно ли в проекте свести их к кэшам?
+5. **До чего может достать запуск?** Доступ к приватной сети, исходящий файрвол или allowlist, как секреты попадают на раннер и кто ещё может их прочитать.
+6. **Какие ещё слоты он заполняет?** Считай триггеры, которые он читает, покрытием оркестратора, а его страницу запуска или транскрипт — покрытием платформы наблюдаемости.
 
-### Where the answers live
+### Где живут ответы
 
-- The vendor's **limits or quotas page** and **pricing page**, over the landing page.
-- The **SDK or API reference** for the create call: its timeout, lifecycle and network parameters.
-- The **security or networking docs** for firewalls, allowlists and secret handling.
-- The **changelog or release notes** for beta, preview and GA status, and for plan gating (Team, Enterprise).
-- For CI runners, the git host's **billing docs**.
+- **Страница лимитов или квот** и **страница цен** вендора — важнее лендинга.
+- **Справочник SDK или API** по вызову создания: его таймаут, жизненный цикл и сетевые параметры.
+- **Доки по безопасности или сети** про файрволы, allowlist'ы и обращение с секретами.
+- **Changelog или release notes** про статус beta, preview и GA, а также про ограничения по планам (Team, Enterprise).
+- Для CI-раннеров — **доки по биллингу** git-хоста.
 
-### What goes stale fastest
+### Что устаревает быстрее всего
 
-- **Prices and free allowances.** As of 2026-10, GitHub had announced a per-minute fee for self-hosted runners, then postponed it.
-- **Beta, preview and early-access status**, and which plans unlock a feature. As of 2026-10, Claude Managed Agents and Claude Code self-hosted environments were both in beta.
-- **Default timeouts and max run length** per tier.
-- **Trigger integrations** on bundled platforms: which ticket trackers and chat tools start a run.
-- **Startup times**, which are vendor claims; measure them if they matter.
+- **Цены и бесплатные лимиты.** На 2026-10 GitHub объявлял поминутную плату за self-hosted раннеры, затем отложил её.
+- **Статус beta, preview и early access**, а также то, какие планы открывают функцию. На 2026-10 Claude Managed Agents и self-hosted окружения Claude Code были в бете.
+- **Таймауты по умолчанию и максимальная длительность запуска** по уровням.
+- **Интеграции триггеров** на платформах в комплекте: какие трекеры тикетов и чат-инструменты запускают запуск.
+- **Время старта** — это заявления вендоров; измеряй его, если оно важно.
 
-The type traits above (who owns the loop, who owns the machine, which slots it fills) change slowly; trust them over any number here.
+Признаки типов выше (кому принадлежит цикл, кому — машина, какие слоты он заполняет) меняются медленно; доверяй им больше, чем любым числам здесь.

@@ -1,15 +1,15 @@
 ---
 name: domain-modeling
-description: Build and sharpen a project's domain model. Use when discussing codebase terminology, writing or editing a GLOSSARY.md, or recording or editing an ADR.
+description: Строить и заострять доменную модель проекта. Использовать при обсуждении терминологии кодовой базы, при написании или редактировании GLOSSARY.md, а также при записи или редактировании ADR.
 ---
 
-# Domain Modeling
+# Доменное моделирование
 
-Actively build and sharpen the project's domain model as you design. This is the *active* discipline: challenging terms, inventing edge-case scenarios, and writing the glossary and decisions down the moment they crystallise. (Merely *reading* `GLOSSARY.md` for vocabulary is not this skill: that's a one-line habit any skill can do. This skill is for when you're changing the model, not just consuming it.)
+Активно строй и заостряй доменную модель проекта по ходу проектирования. Это *активная* дисциплина: оспаривать термины, придумывать сценарии с краевыми случаями и записывать глоссарий и решения в тот момент, когда они кристаллизуются. (Просто *чтение* `GLOSSARY.md` ради словаря — не этот скилл: это привычка в одну строку, доступная любому скиллу. Этот скилл — для случаев, когда ты меняешь модель, а не просто потребляешь её.)
 
-## File structure
+## Структура файлов
 
-Most repos have a single context:
+У большинства репозиториев один контекст:
 
 ```
 /
@@ -21,54 +21,54 @@ Most repos have a single context:
 └── src/
 ```
 
-If a `GLOSSARY-MAP.md` exists at the root, the repo has multiple contexts. The map points to where each one lives:
+Если в корне есть `GLOSSARY-MAP.md`, у репозитория несколько контекстов. Карта указывает, где живёт каждый из них:
 
 ```
 /
 ├── GLOSSARY-MAP.md
 ├── docs/
-│   └── adr/                          ← system-wide decisions
+│   └── adr/                          ← системные решения
 ├── src/
 │   ├── ordering/
 │   │   ├── GLOSSARY.md
-│   │   └── docs/adr/                 ← context-specific decisions
+│   │   └── docs/adr/                 ← решения конкретного контекста
 │   └── billing/
 │       ├── GLOSSARY.md
 │       └── docs/adr/
 ```
 
-Create files lazily: only when you have something to write. If no `GLOSSARY.md` exists, create one when the first term is resolved. If no `docs/adr/` exists, create it when the first ADR is needed.
+Создавай файлы лениво: только когда есть что записать. Если `GLOSSARY.md` нет, создай его, когда разрешён первый термин. Если `docs/adr/` нет, создай его, когда нужен первый ADR.
 
-## During the session
+## По ходу сессии
 
-### Challenge against the glossary
+### Оспаривай по глоссарию
 
-When the user uses a term that conflicts with the existing language in `GLOSSARY.md`, call it out immediately. "Your glossary defines 'cancellation' as X, but you seem to mean Y. Which is it?"
+Когда пользователь использует термин, конфликтующий с существующим языком в `GLOSSARY.md`, сразу укажи на это. «Твой глоссарий определяет 'cancellation' как X, а ты, похоже, имеешь в виду Y. Что из этого?»
 
-### Sharpen fuzzy language
+### Заостряй размытый язык
 
-When the user uses vague or overloaded terms, propose a precise canonical term. "You're saying 'account': do you mean the Customer or the User? Those are different things."
+Когда пользователь использует расплывчатые или перегруженные термины, предложи точный каноничный термин. «Ты говоришь 'account': ты имеешь в виду Customer или User? Это разные вещи.»
 
-### Discuss concrete scenarios
+### Обсуждай конкретные сценарии
 
-When domain relationships are being discussed, stress-test them with specific scenarios. Invent scenarios that probe edge cases and force the user to be precise about the boundaries between concepts.
+Когда обсуждаются доменные связи, нагружай их конкретными сценариями. Придумывай сценарии, которые прощупывают краевые случаи и заставляют пользователя быть точным в границах между понятиями.
 
-### Cross-reference with code
+### Сверяйся с кодом
 
-When the user states how something works, check whether the code agrees. If you find a contradiction, surface it: "Your code cancels entire Orders, but you just said partial cancellation is possible. Which is right?"
+Когда пользователь утверждает, как что-то работает, проверь, согласен ли код. Если находишь противоречие, вынеси его наверх: «Твой код отменяет заказы целиком, но ты только что сказал, что возможна частичная отмена. Что верно?»
 
-### Update GLOSSARY.md inline
+### Обновляй GLOSSARY.md сразу
 
-When a term is resolved, update `GLOSSARY.md` right there. Don't batch these up: capture them as they happen. Use the format in [GLOSSARY-FORMAT.md](./GLOSSARY-FORMAT.md).
+Когда термин разрешён, обнови `GLOSSARY.md` тут же. Не накапливай это пачками: фиксируй по мере появления. Используй формат из [GLOSSARY-FORMAT.md](./GLOSSARY-FORMAT.md).
 
-`GLOSSARY.md` should be totally devoid of implementation details. Do not treat `GLOSSARY.md` as a spec, a scratch pad, or a repository for implementation decisions. It is a glossary and nothing else.
+`GLOSSARY.md` должен быть полностью лишён деталей реализации. Не относись к `GLOSSARY.md` как к спеке, черновику или хранилищу решений по реализации. Это глоссарий и ничего больше.
 
-### Offer ADRs sparingly
+### Предлагай ADR скупо
 
-Only offer to create an ADR when all three are true:
+Предлагай создать ADR, только когда верны все три условия:
 
-1. **Hard to reverse**: the cost of changing your mind later is meaningful
-2. **Surprising without context**: a future reader will wonder "why did they do it this way?"
-3. **The result of a real trade-off**: there were genuine alternatives and you picked one for specific reasons
+1. **Трудно откатить**: цена смены решения позже значима
+2. **Удивительно без контекста**: будущий читатель будет спрашивать «почему они сделали именно так?»
+3. **Результат настоящего компромисса**: были реальные альтернативы, и ты выбрал одну по конкретным причинам
 
-If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](./ADR-FORMAT.md).
+Если чего-то из трёх не хватает, пропусти ADR. Используй формат из [ADR-FORMAT.md](./ADR-FORMAT.md).

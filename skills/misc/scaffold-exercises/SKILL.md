@@ -1,37 +1,37 @@
 ---
 name: scaffold-exercises
-description: Create exercise directory structures with sections, problems, solutions, and explainers that pass linting. Use when user wants to scaffold exercises, create exercise stubs, or set up a new course section.
+description: Создавать структуры каталогов упражнений с секциями, задачами, решениями и объяснениями, которые проходят линтинг. Использовать, когда пользователь хочет наскаффолдить упражнения, создать заглушки упражнений или настроить новую секцию курса.
 ---
 
-# Scaffold Exercises
+# Скаффолдинг упражнений
 
-Create exercise directory structures that pass `pnpm ai-hero-cli internal lint`, then commit with `git commit`.
+Создавай структуры каталогов упражнений, которые проходят `pnpm ai-hero-cli internal lint`, затем коммить через `git commit`.
 
-## Directory naming
+## Именование каталогов
 
-- **Sections**: `XX-section-name/` inside `exercises/` (e.g., `01-retrieval-skill-building`)
-- **Exercises**: `XX.YY-exercise-name/` inside a section (e.g., `01.03-retrieval-with-bm25`)
-- Section number = `XX`, exercise number = `XX.YY`
-- Names are dash-case (lowercase, hyphens)
+- **Секции**: `XX-section-name/` внутри `exercises/` (например, `01-retrieval-skill-building`)
+- **Упражнения**: `XX.YY-exercise-name/` внутри секции (например, `01.03-retrieval-with-bm25`)
+- Номер секции = `XX`, номер упражнения = `XX.YY`
+- Имена в dash-case (нижний регистр, дефисы)
 
-## Exercise variants
+## Варианты упражнений
 
-Each exercise needs at least one of these subfolders:
+В каждом упражнении нужна хотя бы одна из этих подпапок:
 
-- `problem/` - student workspace with TODOs
-- `solution/` - reference implementation
-- `explainer/` - conceptual material, no TODOs
+- `problem/` — рабочее пространство студента с TODO
+- `solution/` — эталонная реализация
+- `explainer/` — концептуальный материал, без TODO
 
-When stubbing, default to `explainer/` unless the plan specifies otherwise.
+Когда делаешь заглушки, по умолчанию выбирай `explainer/`, если план не говорит иного.
 
-## Required files
+## Обязательные файлы
 
-Each subfolder (`problem/`, `solution/`, `explainer/`) needs a `readme.md` that:
+Каждой подпапке (`problem/`, `solution/`, `explainer/`) нужен `readme.md`, который:
 
-- Is **not empty** (must have real content, even a single title line works)
-- Has no broken links
+- **не пуст** (должен быть настоящий контент; подойдёт даже одна строка заголовка)
+- не содержит битых ссылок
 
-When stubbing, create a minimal readme with a title and a description:
+Когда делаешь заглушки, создавай минимальный readme с заголовком и описанием:
 
 ```md
 # Exercise Title
@@ -39,46 +39,46 @@ When stubbing, create a minimal readme with a title and a description:
 Description here
 ```
 
-If the subfolder has code, it also needs a `main.ts` (>1 line). But for stubs, a readme-only exercise is fine.
+Если в подпапке есть код, ей также нужен `main.ts` (>1 строка). Но для заглушек упражнение только с readme подойдёт.
 
-## Workflow
+## Процесс
 
-1. **Parse the plan** - extract section names, exercise names, and variant types
-2. **Create directories** - `mkdir -p` for each path
-3. **Create stub readmes** - one `readme.md` per variant folder with a title
-4. **Run lint** - `pnpm ai-hero-cli internal lint` to validate
-5. **Fix any errors** - iterate until lint passes
+1. **Разбери план** — извлеки имена секций, имена упражнений и типы вариантов
+2. **Создай каталоги** — `mkdir -p` для каждого пути
+3. **Создай заглушки readme** — по одному `readme.md` на папку варианта с заголовком
+4. **Запусти линт** — `pnpm ai-hero-cli internal lint` для валидации
+5. **Исправь ошибки** — повторяй, пока линт не пройдёт
 
-## Lint rules summary
+## Кратко о правилах линта
 
-The linter (`pnpm ai-hero-cli internal lint`) checks:
+Линтер (`pnpm ai-hero-cli internal lint`) проверяет:
 
-- Each exercise has subfolders (`problem/`, `solution/`, `explainer/`)
-- At least one of `problem/`, `explainer/`, or `explainer.1/` exists
-- `readme.md` exists and is non-empty in the primary subfolder
-- No `.gitkeep` files
-- No `speaker-notes.md` files
-- No broken links in readmes
-- No `pnpm run exercise` commands in readmes
-- `main.ts` required per subfolder unless it's readme-only
+- У каждого упражнения есть подпапки (`problem/`, `solution/`, `explainer/`)
+- Существует хотя бы одна из `problem/`, `explainer/` или `explainer.1/`
+- `readme.md` существует и не пуст в основной подпапке
+- Нет файлов `.gitkeep`
+- Нет файлов `speaker-notes.md`
+- Нет битых ссылок в readme
+- Нет команд `pnpm run exercise` в readme
+- `main.ts` обязателен для каждой подпапки, если она не состоит только из readme
 
-## Moving/renaming exercises
+## Перемещение и переименование упражнений
 
-When renumbering or moving exercises:
+Когда перенумеровываешь или переносишь упражнения:
 
-1. Use `git mv` (not `mv`) to rename directories - preserves git history
-2. Update the numeric prefix to maintain order
-3. Re-run lint after moves
+1. Используй `git mv` (не `mv`) для переименования каталогов — это сохраняет историю git
+2. Обнови числовой префикс, чтобы сохранить порядок
+3. Перезапусти линт после перемещений
 
-Example:
+Пример:
 
 ```bash
 git mv exercises/01-retrieval/01.03-embeddings exercises/01-retrieval/01.04-embeddings
 ```
 
-## Example: stubbing from a plan
+## Пример: заглушки по плану
 
-Given a plan like:
+Дан план вроде:
 
 ```
 Section 05: Memory Skill Building
@@ -87,7 +87,7 @@ Section 05: Memory Skill Building
 - 05.03 Long-term Memory
 ```
 
-Create:
+Создай:
 
 ```bash
 mkdir -p exercises/05-memory-skill-building/05.01-introduction-to-memory/explainer
@@ -95,7 +95,7 @@ mkdir -p exercises/05-memory-skill-building/05.02-short-term-memory/{explainer,p
 mkdir -p exercises/05-memory-skill-building/05.03-long-term-memory/explainer
 ```
 
-Then create readme stubs:
+Затем создай заглушки readme:
 
 ```
 exercises/05-memory-skill-building/05.01-introduction-to-memory/explainer/readme.md -> "# Introduction to Memory"

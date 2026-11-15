@@ -1,6 +1,6 @@
-# GLOSSARY.md Format
+# Формат GLOSSARY.md
 
-## Structure
+## Структура
 
 ```md
 # {Context Name}
@@ -22,18 +22,18 @@ A person or organization that places orders.
 _Avoid_: Client, buyer, account
 ```
 
-## Rules
+## Правила
 
-- **Be opinionated.** When multiple words exist for the same concept, pick the best one and list the others under `_Avoid_`.
-- **Keep definitions tight.** One or two sentences max. Define what it IS, not what it does.
-- **Only include terms specific to this project's context.** General programming concepts (timeouts, error types, utility patterns) don't belong even if the project uses them extensively. Before adding a term, ask: is this a concept unique to this context, or a general programming concept? Only the former belongs.
-- **Group terms under subheadings** when natural clusters emerge. If all terms belong to a single cohesive area, a flat list is fine.
+- **Будь категоричен.** Когда для одного понятия есть несколько слов, выбери лучшее и перечисли остальные под `_Avoid_`.
+- **Держи определения плотными.** Максимум одно-два предложения. Определяй, ЧТО это, а не что оно делает.
+- **Включай только термины, специфичные для контекста этого проекта.** Общие программистские понятия (таймауты, типы ошибок, утилитарные паттерны) сюда не относятся, даже если проект использует их активно. Перед добавлением термина спроси: это понятие уникально для данного контекста или это общее программистское понятие? Подходит только первое.
+- **Группируй термины под подзаголовками**, когда естественно возникают кластеры. Если все термины относятся к одной связной области, плоский список подойдёт.
 
-## Single vs multi-context repos
+## Репозитории с одним и несколькими контекстами
 
-**Single context (most repos):** One `GLOSSARY.md` at the repo root.
+**Один контекст (большинство репозиториев):** один `GLOSSARY.md` в корне репозитория.
 
-**Multiple contexts:** A `GLOSSARY-MAP.md` at the repo root lists the contexts, where they live, and how they relate to each other:
+**Несколько контекстов:** `GLOSSARY-MAP.md` в корне репозитория перечисляет контексты, где они живут и как связаны друг с другом:
 
 ```md
 # Glossary Map
@@ -51,10 +51,10 @@ _Avoid_: Client, buyer, account
 - **Ordering ↔ Billing**: Shared types for `CustomerId` and `Money`
 ```
 
-The skill infers which structure applies:
+Скилл выводит, какая структура применима:
 
-- If `GLOSSARY-MAP.md` exists, read it to find contexts
-- If only a root `GLOSSARY.md` exists, single context
-- If neither exists, create a root `GLOSSARY.md` lazily when the first term is resolved
+- Если существует `GLOSSARY-MAP.md`, прочитай его, чтобы найти контексты
+- Если существует только корневой `GLOSSARY.md`, контекст один
+- Если нет ни того ни другого, создай корневой `GLOSSARY.md` лениво, когда разрешён первый термин
 
-When multiple contexts exist, infer which one the current topic relates to. If unclear, ask.
+Когда контекстов несколько, выведи, к какому из них относится текущая тема. Если непонятно, спроси.

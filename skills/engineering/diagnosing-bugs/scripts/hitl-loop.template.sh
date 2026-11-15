@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Human-in-the-loop reproduction loop.
-# Copy this file, edit the steps below, and run it.
-# The agent runs the script; the user follows prompts in their terminal.
+# Петля воспроизведения с участием человека (human-in-the-loop).
+# Скопируй этот файл, отредактируй шаги ниже и запусти его.
+# Агент запускает скрипт; пользователь выполняет подсказки в своём терминале.
 #
-# Usage:
+# Использование:
 #   bash hitl-loop.template.sh
 #
-# Two helpers:
-#   step "<instruction>"          → show instruction, wait for Enter
-#   capture VAR "<question>"      → show question, read response into VAR
+# Два хелпера:
+#   step "<instruction>"          → показать инструкцию, ждать Enter
+#   capture VAR "<question>"      → показать вопрос, прочитать ответ в VAR
 #
-# At the end, captured values are printed as KEY=VALUE for the agent to parse.
+# В конце снятые значения печатаются как KEY=VALUE, чтобы агент их разобрал.
 #
-# `capture` prints its value back to the terminal, where the agent reads it,
-# so capture observations, and leave signing in to the user as a `step`.
+# `capture` печатает своё значение обратно в терминал, откуда агент его читает,
+# поэтому снимай наблюдения через capture, а вход в систему оставляй пользователю как `step`.
 
 set -euo pipefail
 
@@ -31,11 +31,11 @@ capture() {
 
 # --- edit below ---------------------------------------------------------
 
-step "Open the app at http://localhost:3000 and sign in."
+step "Открой приложение на http://localhost:3000 и войди в систему."
 
-capture ERRORED "Click the 'Export' button. Did it throw an error? (y/n)"
+capture ERRORED "Нажми кнопку 'Export'. Выбросило ли ошибку? (y/n)"
 
-capture ERROR_MSG "Paste the error message (or 'none'):"
+capture ERROR_MSG "Вставь сообщение об ошибке (или 'none'):"
 
 # --- edit above ---------------------------------------------------------
 

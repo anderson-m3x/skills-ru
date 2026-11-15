@@ -1,55 +1,55 @@
-# Phase boundaries
+# Границы фаз
 
-A **phase** is a chunk of work inside a session: the grilling, the implementation, the QA. The definition is fuzzy on purpose: a phase ends when you think *"ok, we're done with that"*.
+**Фаза** — кусок работы внутри сессии: грилл-сессия, реализация, QA. Определение намеренно размыто: фаза кончается, когда ты думаешь: *«ок, с этим закончили»*.
 
-The **phase boundary** is the gap between two phases, and it is the only place this decision belongs. Mid-phase there is no decision to make: continue, or split the work that's left into subagents. Compacting mid-phase makes the agent lose the thread.
+**Граница фазы** — зазор между двумя фазами, и это единственное место, где такое решение уместно. Посреди фазы решать нечего: продолжай или отщепи оставшуюся работу в субагентов. Компактизация посреди фазы заставляет агента потерять нить.
 
-## The five options
+## Пять вариантов
 
-| Option       | What it does                                                    |
-| ------------ | --------------------------------------------------------------- |
-| **Continue** | Stay in the session. No context switch at all.                    |
-| **`/clear`** | Empty the context window and start from nothing.                  |
-| **`/handoff`** | Write a portable markdown file and seed a session anywhere with it. |
-| **Subagent** | Send the task to its own context window and get a report back.     |
-| **`/compact`** | Compress this context and seed a fresh session with the summary.  |
+| Вариант                       | Что делает                                                          |
+| ----------------------------- | ------------------------------------------------------------------- |
+| **Продолжить**                | Остаться в сессии. Никакого переключения контекста вообще.          |
+| **очистка контекста (clear)** | Опустошить окно контекста и начать с нуля.                          |
+| **скилл handoff**             | Записать переносимый markdown-файл и засеять им сессию где угодно.  |
+| **Субагент**                  | Отправить задачу в его собственное окно контекста и получить отчёт. |
+| **компактизация (compact)**   | Сжать этот контекст и засеять свежую сессию его резюме.             |
 
-## The tree
+## Дерево
 
-Work top to bottom at the boundary. The first **yes** wins.
+Работай сверху вниз на границе. Побеждает первое **«да»**.
 
-**1. Can you continue in this session?** Two things make the answer yes: the next phase needs this phase as a **primary source**, or you have enough [smart zone](https://www.aihero.dev/ai-coding-dictionary/smart-zone) left (~150k tokens) for the next phase to fit. Grilling → implementation is the standard yes: the implementation wants the reasoning verbatim, not a summary of it. Continue costs nothing and loses nothing, so rule it out before anything else.
+**1. Можешь ли ты продолжить в этой сессии?** Ответ «да» дают две вещи: следующей фазе эта фаза нужна как **первичный источник**, либо у тебя осталось достаточно [smart zone](https://www.aihero.dev/ai-coding-dictionary/smart-zone) (~150k токенов), чтобы следующая фаза влезла. Грилл-сессия → реализация — стандартное «да»: реализация хочет рассуждение дословно, а не его резюме. Продолжить не стоит ничего и ничего не теряет, поэтому закрывай этот вопрос раньше всего остального.
 
-**2. Is the context irrelevant to what comes next?** Is everything in this session (the exploration, the decisions, the dead ends) disposable? If so, **`/clear`**. It is the cheapest move on the board: it takes no time and hands back the whole window. `/clear` also isn't terminal: the old session stays resumable.
+**2. Контекст не относится к тому, что будет дальше?** Всё в этой сессии (исследование, решения, тупики) — расходное? Тогда **очистка контекста (clear)**. Это самый дешёвый ход на доске: он не занимает времени и возвращает всё окно. Очистка к тому же не тупик: старая сессия остаётся возобновляемой.
 
-The cost of getting this wrong is one-way. Clear a *relevant* context and you lose the **why** behind what you built, and no amount of reading the diff back gets it returned.
+Цена ошибки здесь односторонняя. Очисти *релевантный* контекст — и потеряешь **почему** за тем, что построил, и никакое перечитывание диффа этого не вернёт.
 
-**3. Do you need to hand off?** `/handoff` is narrow. You need it only when you are:
+**3. Нужно ли передавать эстафету?** Скилл handoff узок. Он нужен только когда ты:
 
-- swapping to a **new harness** (Claude → Codex),
-- moving to a **new directory** or repo,
-- sending the work to a **colleague**,
-- or forking a side task you found **mid-phase** without derailing what you're doing.
+- переходишь на **новый харнесс** (другая агентская обвязка вместо текущей),
+- переезжаешь в **новый каталог** или репозиторий,
+- передаёшь работу **коллеге**,
+- или форкаешь сайд-задачу, найденную **посреди фазы**, не сбивая то, что делаешь.
 
-That list is the whole clause. What `/handoff` buys is **portability**: a file that travels. If nothing is travelling, you don't need it.
+Этот список — весь пункт. Что покупает handoff — **переносимость**: файл, который путешествует. Если ничего не путешествует, он тебе не нужен.
 
-**4. Can the task be done AFK?** Is it scoped tightly enough to run with you away from the keyboard, no steering? Then send it to a **subagent** and leave this session untouched. Automated review is the standard case: the agent reads the diff and reports, and you aren't needed while it does.
+**4. Можно ли сделать задачу AFK?** Она очерчена достаточно туго, чтобы идти с тобой вдали от клавиатуры, без руления? Тогда отправь её **субагенту** и оставь эту сессию нетронутой. Автоматизированное ревью — стандартный случай: агент читает дифф и отчитывается, а ты не нужен, пока он это делает.
 
-**5. Otherwise, `/compact`.** Relevant context, same harness, same directory, and you need to stay in the loop: this is where the tree lands, and it lands here often. Pass it an instruction (`/compact we're going to QA this area`) so the summary keeps what the next phase needs.
+**5. Иначе — компактизация (compact).** Релевантный контекст, тот же харнесс, тот же каталог, и тебе нужно оставаться в цикле: сюда дерево и приходит, и приходит часто. Передай ей инструкцию (например, «компактизируй: дальше идёт QA этой области»), чтобы резюме сохранило то, что нужно следующей фазе.
 
-`/compact` is the **default, not the first reach**. It sits at the bottom because the four questions above it are all cheaper or more precise. The failure mode when people start here is a fresh session that is confidently wrong about a decision the summary flattened.
+Компактизация — **значение по умолчанию, а не первый выбор**. Она внизу, потому что четыре вопроса над ней все дешевле или точнее. Режим отказа, когда люди начинают с неё, — свежая сессия, которая уверенно ошибается насчёт решения, сплющенного резюме.
 
-## Primary and secondary sources
+## Первичные и вторичные источники
 
-Every move except **Continue** turns a **primary source** into a **secondary source**: the session as it happened, replaced by a summary of it. The trade is always the same shape:
+Каждый ход, кроме **Продолжить**, превращает **первичный источник** во **вторичный**: сессию, как она была, — в резюме о ней. Размен всегда одной формы:
 
-| Source                            | Information | Noise | Room to move |
-| --------------------------------- | ----------- | ----- | ------------ |
-| Primary (Continue)                | Full        | Lots  | Little       |
-| Secondary (`/compact`, `/handoff`) | Lossy       | Less  | Lots         |
+| Источник                           | Информация | Шум    | Простор для манёвра |
+| ---------------------------------- | ---------- | ------ | ------------------- |
+| Первичный (Продолжить)             | Полная     | Много  | Мало                |
+| Вторичный (компактизация, handoff) | С потерями | Меньше | Много               |
 
-This is why question 1 comes first. You only pay the lossiness when staying costs more than it saves.
+Вот почему вопрос 1 идёт первым. Ты платишь за потери только тогда, когда остаться стоит больше, чем это экономит.
 
-## These are judgement calls
+## Это оценочные решения
 
-The questions are not objective: each has taste in it, and the same boundary can go two ways on two days. The value is in asking them **in order**, at the boundary rather than in the middle of the work.
+Вопросы не объективны: в каждом есть вкус, и одна и та же граница в разные дни может пойти двумя путями. Ценность в том, чтобы задавать их **по порядку**, на границе, а не в середине работы.

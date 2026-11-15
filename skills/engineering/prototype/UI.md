@@ -1,64 +1,64 @@
-# UI Prototype
+# UI-прототип
 
-Generate **several radically different UI variations** on a single route, switchable from a floating bottom bar. The user flips between variants in the browser, picks one (or steals bits from each), then throws the rest away.
+Сгенерируй **несколько радикально разных вариантов интерфейса** на одном маршруте, переключаемых из плавающей нижней панели. Пользователь щёлкает между вариантами в браузере, выбирает один (или берёт по кусочку из каждого), а остальные выбрасывает.
 
-If the question is about logic/state rather than what something looks like, this is the wrong branch. Use [LOGIC.md](LOGIC.md).
+Если вопрос о логике/состоянии, а не о том, как что-то выглядит, это не та ветка. Используй [LOGIC.md](LOGIC.md).
 
-## When this is the right shape
+## Когда это правильная форма
 
-- "What should this page look like?"
-- "I want to see a few options for this dashboard before committing."
-- "Try a different layout for the settings screen."
-- Any time the user would otherwise spend a day picking between three vague mockups in their head.
+- «Как должна выглядеть эта страница?»
+- «Хочу увидеть несколько вариантов этого дашборда, прежде чем зафиксироваться».
+- «Попробуй другой макет для экрана настроек».
+- Любой случай, когда иначе пользователь потратил бы день на выбор между тремя смутными макетами в голове.
 
-## Two sub-shapes: strongly prefer sub-shape A
+## Две подформы: сильно предпочитай подформу A
 
-A UI prototype is much easier to judge when it's **butting up against the rest of the app**: real header, real sidebar, real data, real density. A throwaway route on its own is a vacuum: every variant looks fine in isolation. Default to sub-shape A whenever there's a plausible existing page to host the variants. Only reach for sub-shape B if the prototype genuinely has no nearby home.
+UI-прототип гораздо легче оценить, когда он **упирается в остальное приложение**: реальный хедер, реальный сайдбар, реальные данные, реальная плотность. Выбрасываемый маршрут сам по себе — вакуум: в изоляции каждый вариант выглядит нормально. По умолчанию выбирай подформу A, если есть правдоподобная существующая страница, в которую можно поместить варианты. Тянись к подформе B только если у прототипа действительно нет подходящего дома поблизости.
 
-### Sub-shape A: adjustment to an existing page (preferred)
+### Подформа A: правка существующей страницы (предпочтительно)
 
-The route already exists. Variants are rendered **on the same route**, gated by a `?variant=` URL search param. The existing data fetching, params, and auth all stay. Only the rendering swaps. This is the default; pick it unless there's a specific reason not to.
+Маршрут уже существует. Варианты рендерятся **на том же маршруте**, под управлением search-параметра URL `?variant=`. Существующая загрузка данных, параметры и авторизация остаются. Меняется только рендеринг. Это дефолт; выбирай его, если нет конкретной причины поступить иначе.
 
-If the prototype is for something that doesn't yet have a page but *would naturally live inside one* (a new section of the dashboard, a new card on the settings screen, a new step in an existing flow), it's still sub-shape A. Mount the variants inside the host page.
+Если прототип для чего-то, у чего пока нет страницы, но что *естественно разместилось бы внутри неё* (новая секция дашборда, новая карточка на экране настроек, новый шаг в существующем потоке), это всё равно подформа A. Монтируй варианты внутри страницы-хозяина.
 
-### Sub-shape B: a new page (last resort)
+### Подформа B: новая страница (крайний случай)
 
-Only use this when the thing being prototyped genuinely has no existing page to live inside (e.g. an entirely new top-level surface, or a flow that can't be embedded anywhere sensible).
+Используй это, только когда у того, что прототипируется, действительно нет существующей страницы, внутри которой можно жить (например, совершенно новая поверхность верхнего уровня или поток, который некуда осмысленно встроить).
 
-Create a **throwaway route** following whatever routing convention the project already uses. Don't invent a new top-level structure. Name it so it's obviously a prototype (e.g. include the word `prototype` in the path or filename). Same `?variant=` pattern.
+Создай **выбрасываемый маршрут**, следуя тем соглашениям о маршрутизации, которые уже приняты в проекте. Не изобретай новую структуру верхнего уровня. Назови его так, чтобы было очевидно, что это прототип (например, включи слово `prototype` в путь или имя файла). Тот же паттерн `?variant=`.
 
-Before committing to sub-shape B, sanity-check: is there really no existing page this could be embedded in? An empty route hides design problems that a populated one would expose.
+Прежде чем зафиксироваться на подформе B, проверь на здравый смысл: действительно ли нет существующей страницы, в которую это можно встроить? Пустой маршрут скрывает проблемы дизайна, которые выявил бы наполненный.
 
-In both sub-shapes the floating bottom bar is identical.
+В обеих подформах плавающая нижняя панель идентична.
 
-## Process
+## Процесс
 
-### 1. State the question and pick N
+### 1. Сформулируй вопрос и выбери N
 
-Default to **3 variants**. More than 5 stops being radically different and starts being noise, so cap there.
+По умолчанию — **3 варианта**. Больше 5 перестаёт быть радикально разным и начинает быть шумом, так что ограничивайся этим.
 
-Write down the plan in one line, in the prototype's location or a top-of-file comment:
+Запиши план в одну строку, в месте прототипа или комментарием в начале файла:
 
-> "Three variants of the settings page, switchable via `?variant=`, on the existing `/settings` route."
+> «Три варианта страницы настроек, переключаемые через `?variant=`, на существующем маршруте `/settings`».
 
-This works whether the user is here to push back or not.
+Это работает независимо от того, здесь ли пользователь, чтобы возразить, или нет.
 
-### 2. Generate radically different variants
+### 2. Сгенерируй радикально разные варианты
 
-Draft each variant. Hold each one to:
+Набросай каждый вариант. Держи каждый в рамках:
 
-- The page's purpose and the data it has access to.
-- The project's component library / styling system (TailwindCSS, shadcn, MUI, plain CSS, whatever).
-- A clear exported component name, e.g. `VariantA`, `VariantB`, `VariantC`.
+- Назначения страницы и данных, к которым у неё есть доступ.
+- Библиотеки компонентов / системы стилей проекта (TailwindCSS, shadcn, MUI, чистый CSS — что угодно).
+- Ясного экспортируемого имени компонента, например `VariantA`, `VariantB`, `VariantC`.
 
-Variants must be **structurally different**: different layout, different information hierarchy, different primary affordance, not just different colours. Three slightly-tweaked card grids isn't a UI prototype, it's wallpaper. If two drafts come out too similar, redo one with explicit "do not use a card grid" guidance.
+Варианты должны быть **структурно разными**: другой макет, другая информационная иерархия, иной основной аффорданс, а не просто другие цвета. Три чуть подкрученные сетки карточек — это не UI-прототип, это обои. Если два черновика вышли слишком похожими, переделай один с явным указанием «не используй сетку карточек».
 
-### 3. Wire them together
+### 3. Свяжи их вместе
 
-Create a single switcher component on the route:
+Создай на маршруте один компонент-переключатель:
 
 ```tsx
-// pseudo-code, adapt to the project's framework
+// псевдокод, адаптируй под фреймворк проекта
 const variant = searchParams.get('variant') ?? 'A';
 return (
   <>
@@ -70,43 +70,43 @@ return (
 );
 ```
 
-For sub-shape A (existing page): keep all the existing data fetching above the switcher; only the rendered subtree changes per variant.
+Для подформы A (существующая страница): оставь всю существующую загрузку данных выше переключателя; на каждый вариант меняется только рендеримое поддерево.
 
-For sub-shape B (new page): the throwaway route under `/prototype/<name>` mounts the same switcher.
+Для подформы B (новая страница): выбрасываемый маршрут под `/prototype/<name>` монтирует тот же переключатель.
 
-### 4. Build the floating switcher
+### 4. Собери плавающий переключатель
 
-A small fixed-position bar at the bottom-centre of the screen with three pieces:
+Небольшая панель фиксированного позиционирования внизу по центру экрана из трёх частей:
 
-- **Left arrow**: cycles to the previous variant (wraps around).
-- **Variant label**: shows the current variant key and, if the variant exports a name, that name too. e.g. `B (Sidebar layout)`.
-- **Right arrow**: cycles forward (wraps around).
+- **Левая стрелка**: переключает на предыдущий вариант (по кругу).
+- **Метка варианта**: показывает текущий ключ варианта и, если вариант экспортирует имя, ещё и это имя. Например, `B (Sidebar layout)`.
+- **Правая стрелка**: переключает вперёд (по кругу).
 
-Behaviour:
+Поведение:
 
-- Clicking an arrow updates the URL search param (use the framework's router, e.g. `router.replace` on Next, `navigate` on React Router, etc) so the variant is shareable and reload-stable.
-- Keyboard: `←` and `→` arrow keys also cycle. Don't intercept arrow keys when an `<input>`, `<textarea>`, or `[contenteditable]` is focused.
-- Visually distinct from the page (e.g. high-contrast pill, subtle shadow) so it's obviously not part of the design being evaluated.
-- Hidden in production builds: gate on `process.env.NODE_ENV !== 'production'` or an equivalent check, so a stray prototype merge can't ship the bar to users.
+- Нажатие на стрелку обновляет search-параметр URL (используй роутер фреймворка: например, `router.replace` в Next, `navigate` в React Router и т. п.), чтобы вариант можно было расшарить и он сохранялся при перезагрузке.
+- Клавиатура: стрелки `←` и `→` тоже переключают. Не перехватывай стрелки, когда в фокусе `<input>`, `<textarea>` или `[contenteditable]`.
+- Визуально отличается от страницы (например, высококонтрастная пилюля, лёгкая тень), чтобы было очевидно, что это не часть оцениваемого дизайна.
+- Скрыт в продакшен-сборках: закрывай условием `process.env.NODE_ENV !== 'production'` или эквивалентной проверкой, чтобы случайный мёрж прототипа не мог отправить панель пользователям.
 
-Put the switcher in a single shared component so both sub-shapes can reuse it. Locate it wherever shared UI lives in the project.
+Помести переключатель в один общий компонент, чтобы обе подформы могли его переиспользовать. Размести там, где в проекте живёт общий UI.
 
-### 5. Hand it over
+### 5. Передай
 
-Surface the URL (and the `?variant=` keys). The user will flip through whenever they get to it. The interesting feedback is usually **"I want the header from B with the sidebar from C"**, which is the actual design they want.
+Покажи URL (и ключи `?variant=`). Пользователь пощёлкает, когда доберётся. Интересная обратная связь обычно — **«хочу хедер из B с сайдбаром из C»**, а это и есть дизайн, который ему нужен.
 
-### 6. Capture the answer and clean up
+### 6. Зафиксируй ответ и приберись
 
-Once a variant has won, capture the answer (which variant and why), then capture the prototype the way the [SKILL](SKILL.md) describes. Fold the winner into the real code and move the rest onto the throwaway branch, not into main:
+Как только какой-то вариант победил, зафиксируй ответ (какой вариант и почему), а затем зафиксируй прототип так, как описано в [SKILL](SKILL.md). Внедри победителя в реальный код, а остальное переложи в выбрасываемую ветку, не в main:
 
-- **Sub-shape A**: fold the winner into the existing page; drop the losing variants and the switcher from main.
-- **Sub-shape B**: promote the winning variant to a real route; drop the throwaway route and the switcher from main.
+- **Подформа A**: внедри победителя в существующую страницу; убери проигравшие варианты и переключатель из main.
+- **Подформа B**: продвинь победивший вариант в настоящий маршрут; убери выбрасываемый маршрут и переключатель из main.
 
-The full set of variants is the primary source, so it lands on the throwaway branch, not the bin, since variant components and the switcher left in the main branch rot fast and confuse the next reader.
+Полный набор вариантов — это первоисточник, поэтому он попадает в выбрасываемую ветку, а не в мусор, ведь компоненты вариантов и переключатель, оставленные в main, быстро гниют и путают следующего читателя.
 
-## Anti-patterns
+## Антипаттерны
 
-- **Variants that differ only in colour or copy.** That's a tweak, not a prototype. Real variants disagree about structure.
-- **Sharing too much code between variants.** A shared `<Header>` is fine; a shared `<Layout>` defeats the point. Each variant should be free to throw out the layout.
-- **Wiring variants to real mutations.** Read-only prototypes are fine. If a variant needs to mutate, point it at a stub: the question is "what should this look like", not "does the backend work".
-- **Promoting the prototype directly to production.** The variant code was written under prototype constraints (no tests, minimal error handling). Rewrite it properly when you fold it in.
+- **Варианты, отличающиеся только цветом или текстами.** Это подкрутка, а не прототип. Настоящие варианты расходятся в структуре.
+- **Слишком много общего кода между вариантами.** Общий `<Header>` — нормально; общий `<Layout>` убивает смысл. Каждый вариант должен быть свободен выбросить макет.
+- **Подключение вариантов к реальным мутациям.** Прототипы только на чтение — нормально. Если варианту нужно мутировать, направь его на заглушку: вопрос — «как это должно выглядеть», а не «работает ли бэкенд».
+- **Продвижение прототипа прямо в продакшен.** Код варианта писался под ограничения прототипа (без тестов, минимальная обработка ошибок). Перепиши его как следует, когда внедряешь.

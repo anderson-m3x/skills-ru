@@ -1,105 +1,105 @@
 ---
 name: to-tickets
-description: Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker (edges as text in one file per ticket locally, or native blocking links on a real tracker).
+description: Разбей план, спеку или текущий разговор на набор tracer-bullet тикетов, каждый из которых объявляет свои блокирующие рёбра, и опубликуй их в настроенном трекере (рёбра текстом, по одному файлу на тикет, локально — или нативные блокирующие связи в настоящем трекере).
 disable-model-invocation: true
 ---
 
-# To Tickets
+# В тикеты
 
-Break a plan, spec, or conversation into a set of **tickets**: tracer-bullet vertical slices, each declaring the tickets that **block** it.
+Разбей план, спеку или разговор на набор **тикетов**: tracer-bullet вертикальных срезов, каждый из которых объявляет тикеты, которые его **блокируют**.
 
-The issue tracker and triage label vocabulary should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`.
+Трекер задач и словарь меток триажа должны были быть тебе переданы. Если нет — скажи пользователю запустить скилл setup-matt-pocock-skills.
 
-## Process
+## Процесс
 
-### 1. Gather context
+### 1. Собери контекст
 
-Work from whatever is already in the conversation context. If the user passes a reference (a spec path, an issue number or URL) as an argument, fetch it and read its full body and comments.
+Работай с тем, что уже есть в контексте разговора. Если пользователь передал ссылку (путь к спеке, номер задачи или URL) как аргумент, загрузи её и прочитай полное тело и комментарии.
 
-### 2. Explore the codebase (optional)
+### 2. Исследуй кодовую базу (необязательно)
 
-If you have not already explored the codebase, do so to understand the current state of the code. Ticket titles and descriptions should use the project's domain glossary vocabulary, and respect ADRs in the area you're touching.
+Если ты ещё не исследовал кодовую базу, сделай это, чтобы понять текущее состояние кода. Названия и описания тикетов должны использовать словарь предметной области проекта и соблюдать ADR в той области, которую затрагиваешь.
 
-Look for opportunities to prefactor the code to make the implementation easier. "Make the change easy, then make the easy change."
+Ищи возможности заранее отрефакторить код, чтобы упростить реализацию. «Сначала сделай изменение лёгким, потом сделай лёгкое изменение».
 
-### 3. Draft vertical slices
+### 3. Набросай вертикальные срезы
 
-Break the work into **tracer bullet** tickets.
+Разбей работу на **tracer bullet** тикеты.
 
 <vertical-slice-rules>
 
-- Each slice cuts a narrow but COMPLETE path through every layer (schema, API, UI, tests): vertical, NOT a horizontal slice of one layer
-- A completed slice is demoable or verifiable on its own
-- Each slice is sized to fit in a single fresh context window
-- Any prefactoring should be done first
+- Каждый срез прорезает узкий, но ПОЛНЫЙ путь через все слои (схема, API, UI, тесты): вертикальный, а НЕ горизонтальный срез одного слоя
+- Завершённый срез можно показать или проверить отдельно
+- Каждый срез по размеру помещается в одно свежее контекстное окно
+- Любой предварительный рефакторинг делается в первую очередь
 
 </vertical-slice-rules>
 
-Give each ticket its **blocking edges**: the other tickets that must complete before it can start. A ticket with no blockers can start immediately.
+Дай каждому тикету его **блокирующие рёбра**: другие тикеты, которые должны завершиться, прежде чем он сможет начаться. Тикет без блокеров может начаться сразу.
 
-**Wide refactors are the exception to vertical slicing.** A **wide refactor** is one mechanical change (rename a column, retype a shared symbol) whose **blast radius** fans across the whole codebase, so a single edit breaks thousands of call sites at once and no vertical slice can land green. Don't force it into a tracer bullet; sequence it as **expand–contract**. First expand: add the new form beside the old so nothing breaks. Then migrate the call sites over in batches sized by blast radius (per package, per directory), each batch its own ticket blocked by the expand, keeping CI green batch to batch because the old form still exists. Finally contract: delete the old form once no caller remains, in a ticket blocked by every migrate batch. When even the batches can't stay green alone, keep the sequence but let them share an integration branch that all block a final integrate-and-verify ticket; green is promised only there.
+**Широкие рефакторинги — исключение из вертикальных срезов.** **Широкий рефакторинг** — это одно механическое изменение (переименовать колонку, сменить тип общего символа), **радиус поражения** которого расходится по всей кодовой базе, так что одна правка ломает тысячи мест вызова сразу и ни один вертикальный срез не может пройти зелёным. Не втискивай его в tracer bullet; выстрой его как **expand–contract**. Сначала expand: добавь новую форму рядом со старой, чтобы ничего не сломалось. Затем переноси места вызова партиями, размер которых задаёт радиус поражения (по пакету, по каталогу), каждая партия — свой тикет, блокированный expand, а CI остаётся зелёным от партии к партии, потому что старая форма ещё существует. Наконец contract: удали старую форму, когда не осталось вызывающих, — тикетом, блокированным каждой партией переноса. Когда даже партии не могут оставаться зелёными по отдельности, сохрани последовательность, но дай им общую интеграционную ветку, которая вся блокирует финальный тикет integrate-and-verify; зелёный цвет обещан только там.
 
-### 4. Quiz the user
+### 4. Проверь раскладку с пользователем
 
-Present the proposed breakdown as a numbered list. For each ticket, show:
+Представь предложенную разбивку нумерованным списком. Для каждого тикета покажи:
 
-- **Title**: short descriptive name
-- **Blocked by**: which other tickets (if any) must complete first
-- **What it delivers**: the end-to-end behaviour this ticket makes work
+- **Название**: короткое описательное имя
+- **Блокируется**: какими другими тикетами (если есть) нужно завершиться раньше
+- **Что даёт**: сквозное поведение, которое этот тикет делает работающим
 
-Ask the user:
+Спроси пользователя:
 
-- Does the granularity feel right? (too coarse / too fine)
-- Are the blocking edges correct: does each ticket only depend on tickets that genuinely gate it?
-- Should any tickets be merged or split further?
+- Гранулярность кажется правильной? (слишком крупно / слишком мелко)
+- Блокирующие рёбра верны: зависит ли каждый тикет только от тикетов, которые действительно его ограничивают?
+- Стоит ли какие-то тикеты объединить или разделить дальше?
 
-Iterate until the user approves the breakdown.
+Итерируй, пока пользователь не одобрит разбивку.
 
-### 5. Publish the tickets to the configured tracker
+### 5. Опубликуй тикеты в настроенном трекере
 
-Publish the approved tickets. **How** depends on the tracker `/setup-matt-pocock-skills` configured; the tickets are the same either way, only the shape of the blocking edges changes:
+Опубликуй одобренные тикеты. **Как** — зависит от трекера, который настроил скилл setup-matt-pocock-skills; тикеты в любом случае одни и те же, меняется только форма блокирующих рёбер:
 
-- **Local files** → write one file per ticket under `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01` in dependency order (blockers first). Each file's "Blocked by" lists the numbers/titles it depends on. Use the per-ticket file template below: one ticket per file, never a single combined file.
-- **A real issue tracker (GitHub, Linear, …)** → publish one issue per ticket in dependency order (blockers first) so each ticket's blocking edges can reference real identifiers. Use the platform's native blocking relationship where it has one; otherwise set each ticket's "Blocked by" to the blocking issues. If the source was an existing issue, make each ticket its sub-issue (tracker doc's operation). Apply the `ready-for-agent` triage label unless instructed otherwise; the tickets are agent-grabbable by construction.
+- **Локальные файлы** → пиши по одному файлу на тикет в `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, нумеруя с `01` в порядке зависимостей (сначала блокеры). В каждом файле «Блокируется» перечисляет номера/названия, от которых он зависит. Используй шаблон файла на тикет ниже: один тикет на файл, никогда не один общий файл.
+- **Настоящий трекер задач (GitHub, Linear, …)** → публикуй по одной задаче на тикет в порядке зависимостей (сначала блокеры), чтобы блокирующие рёбра каждого тикета могли ссылаться на реальные идентификаторы. Используй нативную связь блокировки там, где она есть; иначе поставь каждому тикету в «Блокируется» блокирующие задачи. Если источником была существующая задача, сделай каждый тикет её подзадачей (операция из документации трекера). Ставь метку триажа `ready-for-agent`, если не указано иное; тикеты по построению готовы к захвату агентом.
 
-Work the **frontier**: any ticket whose blockers are all done. For a purely linear chain that means top to bottom.
+Работай по **фронту**: любой тикет, все блокеры которого сделаны. Для чисто линейной цепочки это означает сверху вниз.
 
-Do NOT close or modify any parent issue.
+НЕ закрывай и не изменяй никакую родительскую задачу.
 
 <local-ticket-template>
 
 # <NN>: <Ticket title>
 
-**What to build:** the end-to-end behaviour this ticket makes work, from the user's perspective, not a layer-by-layer implementation list.
+**Что построить:** сквозное поведение, которое этот тикет делает работающим, с точки зрения пользователя, а не послойный список реализации.
 
-**Blocked by:** the numbers/titles of the tickets that gate this one, or "None (can start immediately)".
+**Блокируется:** номера/названия тикетов, которые ограничивают этот, или «Нет (можно начинать сразу)».
 
-**Status:** ready-for-agent
+**Статус:** ready-for-agent
 
-- [ ] Acceptance criterion 1
-- [ ] Acceptance criterion 2
+- [ ] Критерий приёмки 1
+- [ ] Критерий приёмки 2
 
 </local-ticket-template>
 
 <issue-template>
 
-## Parent
+## Родитель
 
-A reference to the parent issue on the tracker (if the source was an existing issue, otherwise omit this section).
+Ссылка на родительскую задачу в трекере (если источником была существующая задача, иначе опусти этот раздел).
 
-## What to build
+## Что построить
 
-The end-to-end behaviour this ticket makes work, from the user's perspective, not layer-by-layer implementation.
+Сквозное поведение, которое этот тикет делает работающим, с точки зрения пользователя, а не послойная реализация.
 
-## Acceptance criteria
+## Критерии приёмки
 
-- [ ] Criterion 1
-- [ ] Criterion 2
+- [ ] Критерий 1
+- [ ] Критерий 2
 
-## Blocked by
+## Блокируется
 
-- A reference to each blocking ticket, or "None (can start immediately)". Omit this section when blockers were set as native edges.
+- Ссылка на каждый блокирующий тикет или «Нет (можно начинать сразу)». Опусти этот раздел, если блокеры заданы нативными рёбрами.
 
 </issue-template>
 
-In either form, avoid specific file paths or code snippets: they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it and note briefly that it came from a prototype. Trim to the decision-rich parts, not a working demo, just the important bits.
+В любой форме избегай конкретных путей к файлам и сниппетов кода: они быстро устаревают. Исключение: если прототип дал сниппет, который кодирует решение точнее, чем может проза (конечный автомат, редьюсер, схема, форма типа), вставь его и кратко отметь, что он из прототипа. Обрежь до частей, богатых решениями, — не рабочий демо-пример, только важные куски.

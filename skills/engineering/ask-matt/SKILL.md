@@ -1,97 +1,97 @@
 ---
 name: ask-matt
-description: Ask which skill or flow fits your situation. A router over the skills in this repo.
+description: Спроси, какой скилл или поток подходит под твою ситуацию. Роутер по скиллам этого репозитория.
 disable-model-invocation: true
 ---
 
 # Ask Matt
 
-You don't remember every skill, so ask.
+Ты не помнишь все скиллы — поэтому спрашивай.
 
-Before stating what a skill does or recommending a step be skipped, read that skill's SKILL.md: the summaries here are for orientation only.
+Прежде чем утверждать, что делает скилл, или рекомендовать пропустить шаг, прочитай SKILL.md этого скилла: здешние резюме — только для ориентировки.
 
-A **flow** is a path through the skills. Most paths run along one **main flow**, and two **on-ramps** merge onto it. Everything else is standalone, or a vocabulary layer that runs underneath.
+**Поток** — это путь через скиллы. Большинство маршрутов идут по одному **основному потоку**, и два **въезда** вливаются в него. Всё остальное стоит отдельно либо является слоем лексики, который работает под ним.
 
-## The main flow: idea → ship
+## Основной поток: идея → шип
 
-The route most work travels. You have an idea and want it built.
+Маршрут, по которому идёт большинство работы. У тебя есть идея, и ты хочешь, чтобы её построили.
 
-1. **`/grill-with-docs`** sharpens the idea by interview. Start here whenever you are **working in a working directory**: it's stateful, retaining what it learns in `GLOSSARY.md` and ADRs. (No working directory? Use `/grill-me` instead, covered under Standalone. Both run the same `/grilling` primitive; `grill-with-docs` is the one that leaves a paper trail, which makes it the better of the two whenever a repo is there to leave it in.)
-2. **Branch: can you settle every question in conversation?** If a question needs a runnable answer (state, business logic, a UI you have to see), detour through a prototype, bridged by **`/handoff`** in both directions (a prototype lives in its own directory, which is exactly what `/handoff` is for; see Phase boundaries):
-   - **`/handoff`** out, then open a fresh session against that file,
-   - **`/prototype`** to answer the question with throwaway code,
-   - **`/handoff`** back what you learned, and reference it from the original idea thread.
-3. **Branch: is this a multi-session build?**
-   - **Yes** → **`/to-spec`** (turn the thread into a spec), then **`/to-tickets`** to split it into tracer-bullet tickets, each declaring its **blocking edges**. Then work the tickets one of two ways:
-     - **`/implement`** per ticket, **`/clear`ing context between each one**. On a local tracker that's one file per ticket under `.scratch/<feature>/issues/`, worked blockers-first by hand; on a real tracker the edges become native blocking links, so any ticket whose blockers are done can be grabbed. Each ticket is self-contained, so the last one's context is disposable.
-     - **`/implement-spec`** for the whole spec in one run. It reads the tickets as a **task graph**, runs implementer subagents across the ready **frontier** in parallel, and lands everything on one **integration branch**. Reach for it when you'd rather orchestrate the build than drive each ticket yourself.
-   - **No** → **`/implement`** right here, in the same context window.
+1. **скилл grill-with-docs** затачивает идею через интервью. Начинай здесь всякий раз, когда ты **работаешь в рабочем каталоге**: он стейтфульный и удерживает выученное в `GLOSSARY.md` и ADR. (Рабочего каталога нет? Используй вместо него скилл grill-me, о нём — в разделе Отдельно стоящие. Оба запускают один и тот же примитив — скилл grilling; grill-with-docs — тот из двух, что оставляет бумажный след, и потому он лучше всякий раз, когда есть репозиторий, куда этот след оставить.)
+2. **Ветвление: можешь ли ты закрыть каждый вопрос в разговоре?** Если на вопрос нужен исполняемый ответ (состояние, бизнес-логика, UI, который надо увидеть), сделай крюк через прототип, соединённый **скиллом handoff** в обе стороны (прототип живёт в своём собственном каталоге — ровно для этого и есть скилл handoff; см. Границы фаз):
+   - **скилл handoff** наружу, затем открыть свежую сессию по этому файлу,
+   - **скилл prototype**, чтобы ответить на вопрос одноразовым кодом,
+   - **скилл handoff** обратно — то, что ты узнал, и сослаться на это из исходного треда с идеей.
+3. **Ветвление: это сборка на несколько сессий?**
+   - **Да** → **скилл to-spec** (превратить тред в спеку), затем **скилл to-tickets**, чтобы разбить её на тикеты-tracer bullet, каждый со своими объявленными **блокирующими рёбрами**. Дальше веди тикеты одним из двух способов:
+     - **скилл implement** по тикету, **очистка контекста (clear) между каждым**. На локальном трекере это один файл на тикет в `.scratch/<feature>/issues/`, который вручную разбирают блокеры-вперёд; на настоящем трекере рёбра становятся нативными блокирующими связями, так что можно брать любой тикет, у которого блокеры закрыты. Каждый тикет самодостаточен, поэтому контекст последнего — расходный.
+     - **скилл implement-spec** на всю спеку за один прогон. Он читает тикеты как **граф задач**, запускает субагентов-реализаторов по готовому **фронту** параллельно и сводит всё в одну **интеграционную ветку**. Тянись к нему, когда тебе хочется оркестрировать сборку, а не вести каждый тикет самому.
+   - **Нет** → **скилл implement** прямо здесь, в том же окне контекста.
 
-   Either way, the code gets built by driving **`/tdd`** (one red-green slice at a time) and closes out with **`/code-review`**, a two-axis review (Standards + Spec) of the diff. `/implement` runs both per ticket; `/implement-spec`'s implementers each drive `/tdd`, and it runs one `/code-review` over the integration branch. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point.
+   В любом случае код строится прогоном **скилла tdd** (один red-green-срез за раз) и закрывается **скиллом code-review** — ревью диффа по двум осям (Standards + Spec). **скилл implement** запускает оба на каждый тикет; реализаторы **скилла implement-spec** каждый ведут **скилл tdd**, а сам **скилл implement-spec** прогоняет одно **ревью code-review** по интеграционной ветке. Тянись к **скиллу tdd** отдельно, когда просто хочешь построить конкретное поведение через тесты без полной спеки, и к **скиллу code-review** отдельно всякий раз, когда хочешь отревьюить ветку или PR относительно фиксированной точки.
 
-   When the work goes up as a pull request, **`/pr`** shapes the body: the smallest visual that shows the change, before/after evidence that it works, and a one-way or two-way door call. It's model-invoked, so the agent reaches for it whenever it writes a PR.
+   Когда работа уходит как пул-реквест, **скилл pr** формирует тело: минимальную визуализацию, показывающую изменение, доказательства до/после того, что это работает, и решение «дверь в одну сторону или в две». Он вызывается моделью, так что агент тянется к нему всякий раз, когда пишет PR.
 
-4. **`/retro`** closes the loop. After a build, and especially one that went sideways, it looks back over the session and suggests changes to the agent's **environment**, not the code: navigation pointers, automated checks, the coding standards `/code-review` enforces, steering files, tooling. Mechanical mistakes become deterministic checks; judgement calls become coding standards. The next build then starts from a better environment.
+4. **скилл retro** замыкает цикл. После сборки — и особенно той, что пошла наперекосяк, — он оглядывается на сессию и предлагает изменения в **окружении** агента, а не в коде: навигационные указатели, автоматические проверки, стандарты кодирования, которые обеспечивает скилл code-review, steering-файлы, инструментарий. Механические ошибки становятся детерминированными проверками; оценочные суждения — стандартами кодирования. Следующая сборка тогда стартует из лучшего окружения.
 
-### Context hygiene
+### Гигиена контекста
 
-Keep steps 1–3 in **one unbroken context window** (don't compact or clear until after `/to-tickets`) so the grilling, spec, and tickets all build on the same thinking. Each `/implement` then starts fresh, working from the ticket. Run `/retro` in the session it's looking back on, before you clear; after clearing, point it at that session's log instead.
+Держи шаги 1–3 в **одном непрерывном окне контекста** (не компактизируй и не очищай до to-tickets), чтобы грилл-сессия, спека и тикеты строились на одном и том же мышлении. Каждый implement после этого стартует заново, работая по тикету. Запускай retro в той сессии, на которую он оглядывается, до очистки; после очистки направь его на лог той сессии.
 
-The limit on this is the **[smart zone](https://www.aihero.dev/ai-coding-dictionary/smart-zone)**: the window (~150k tokens on state-of-the-art models) within which the model still reasons sharply. If a session approaches it before `/to-tickets`, don't push on degraded; `/compact` at the nearest phase boundary and carry on (see Phase boundaries).
+Предел этому — **[smart zone](https://www.aihero.dev/ai-coding-dictionary/smart-zone)**: окно (~150k токенов на моделях state-of-the-art), внутри которого модель ещё рассуждает остро. Если сессия подходит к нему до to-tickets, не продолжай на деградировавшем контексте: сделай компактизацию на ближайшей границе фаз и продолжай (см. Границы фаз).
 
-## On-ramps
+## Въезды
 
-A starting situation that generates work, then merges onto the main flow.
+Стартовая ситуация, которая порождает работу, а затем вливается в основной поток.
 
-- **Bugs and requests piling up** → **`/triage`**. It moves issues through triage roles and produces agent-ready issues, which **`/implement`** later picks up.
+- **Баги и запросы копятся** → **скилл triage**. Он двигает issue через роли триажа и выдаёт issue, готовые для агента, которые потом подхватывает **скилл implement**.
 
-  Triage is only for issues **you didn't create**: bug reports, incoming feature requests, anything that arrives raw. Tickets that `/to-tickets` produced are already agent-ready, so **don't triage them**.
+  Триаж — только для issue, которые **создал не ты**: баг-репорты, входящие фич-реквесты, всё, что приходит сырым. Тикеты, которые произвёл to-tickets, уже готовы для агента, поэтому **не триажь их**.
 
-- **Something's broken** → **`/diagnosing-bugs`**. For the hard ones: the bug that resists a first glance, the intermittent flake, the regression that crept in between two known-good states. It refuses to theorise until it has a **tight feedback loop** (one command that already goes red on *this* bug), then fixes with a regression test. Once the fix is in, run **`/retro`** in the same session to ask what would have prevented the bug; where the real finding is that there's no good seam to lock it down, that's a job for **`/improve-codebase-architecture`**.
+- **Что-то сломалось** → **скилл diagnosing-bugs**. Для трудных: баг, который не сдаётся с первого взгляда, плавающий флейк, регресс, вползший между двумя известными хорошими состояниями. Он отказывается теоретизировать, пока не получит **плотную петлю обратной связи** (одну команду, которая уже красная именно на *этом* баге), и затем чинит с регрессионным тестом. Когда фикс на месте, запусти **скилл retro** в той же сессии, чтобы спросить, что предотвратило бы баг; там, где настоящая находка в том, что нет хорошего шва, чтобы это закрепить, — это работа для **скилла improve-codebase-architecture**.
 
-- **A huge, foggy effort: a greenfield project or a huge feature build, too big for one session** → **`/wayfinder`**, the most cognitively demanding flow here. When the way from here to the destination isn't visible yet, it charts a **shared map** of **decision tickets** on the issue tracker and resolves them one at a time, producing **decisions, not deliverables**, until the fog is pushed back and the way is clear. Where **`/grill-with-docs`** sharpens an idea you can hold in one session, wayfinder is for the idea you can't, and it's slower and denser, so save it for exactly that, never a well-scoped feature.
+- **Огромное туманное усилие: greenfield-проект или огромная сборка фичи, слишком большая для одной сессии** → **скилл wayfinder**, самый когнитивно требовательный поток здесь. Когда путь отсюда до пункта назначения ещё не виден, он чертит **общую карту** из **тикетов-решений** в трекере задач и разрешает их по одному, выдавая **решения, а не результаты**, пока туман не отодвинут и путь не станет ясен. Там, где **скилл grill-with-docs** затачивает идею, которую можно удержать в одной сессии, wayfinder — для идеи, которую удержать нельзя; он медленнее и плотнее, так что береги его ровно для этого и никогда — для хорошо очерченной фичи.
 
-  When the map clears, **it hands off, it doesn't build**: merge onto the main flow at **`/to-spec`**, which collapses the map's linked decisions into a buildable plan, then `/to-tickets` and `/implement` as usual. Looping the map straight into `/implement` skips that collapse and throws the linked detail away, so go straight to `/implement` only when the effort turned out genuinely small.
+  Когда карта проясняется, **он передаёт эстафету, а не строит**: вливайся в основной поток на **скилле to-spec**, который сворачивает связанные решения карты в строящийся план, дальше to-tickets и implement как обычно. Замыкать карту сразу в implement — пропустить этот свёрт и выбросить связанную детализацию, так что иди прямо в implement только тогда, когда усилие оказалось действительно небольшим.
 
-## Codebase health
+## Здоровье кодовой базы
 
-Not feature work, just upkeep.
+Не фич-работа, просто поддержание.
 
-- **`/improve-codebase-architecture`** runs whenever you have a spare moment to keep the codebase good for agents to operate in. It surfaces **deepening opportunities**; picking one _generates an idea_ you can take into the main flow at `/grill-with-docs`. It's the survey that finds the candidates; **`/codebase-design`** (below) is the bench you design the chosen one on.
+- **скилл improve-codebase-architecture** запускается всякий раз, когда у тебя выдалась свободная минутка, чтобы держать кодовую базу хорошей для работы агентов. Он выявляет **возможности углубления**; выбор одной _порождает идею_, которую можно взять в основной поток на скилле grill-with-docs. Это обзор, который находит кандидатов; **скилл codebase-design** (ниже) — верстак, на котором проектируется выбранный кандидат.
 
-## Vocabulary underneath
+## Лексика снизу
 
-Two model-invoked references that run *beneath* the other skills, each the single source of truth for its vocabulary. Reach for them directly when the **words**, not the process, are the problem; or let the skills above pull them in.
+Две ссылки, вызываемые моделью, которые работают *под* остальными скиллами, каждая — единственный источник истины для своей лексики. Обращайся к ним напрямую, когда проблема в **словах**, а не в процессе; либо позволь скиллам выше подтянуть их.
 
-- **`/domain-modeling`**: sharpen the project's *domain* language: challenge a fuzzy term, resolve an overloaded word ("account" doing three jobs), record a hard-to-reverse decision as an ADR. It's the active discipline `/grill-with-docs` drives to keep `GLOSSARY.md` a clean glossary.
-- **`/codebase-design`** is the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) for designing a module's *shape*: a lot of behaviour behind a small interface at a clean seam. `/tdd` and `/improve-codebase-architecture` both speak it.
+- **скилл domain-modeling**: заостряет *предметный* язык проекта: оспорить размытый термин, разрешить перегруженное слово («account», делающий три работы), записать труднообратимое решение как ADR. Это активная дисциплина, которую ведёт grill-with-docs, чтобы держать `GLOSSARY.md` чистым глоссарием.
+- **скилл codebase-design** — лексика глубокого модуля (модуль, интерфейс, глубина, шов, адаптер, рычаг, локальность) для проектирования *формы* модуля: много поведения за маленьким интерфейсом на чистом шве. На нём говорят и tdd, и improve-codebase-architecture.
 
-## Phase boundaries
+## Границы фаз
 
-A **phase** is a chunk of work inside a session: the grilling, the implementation, the QA. At the **boundary** between two of them you have five options, and picking between them is the fuzziest decision in this whole map:
+**Фаза** — кусок работы внутри сессии: грилл-сессия, реализация, QA. На **границе** между двумя из них у тебя пять вариантов, и выбор между ними — самое туманное решение на всей этой карте:
 
-- **Continue**: stay put. Costs nothing, loses nothing.
-- **`/clear`**: empty the window, when nothing here matters to what's next.
-- **`/handoff`** writes a portable markdown file. Narrow: only for a **new harness**, a **new directory**, a **colleague**, or forking a side task **mid-phase**. What it buys is portability.
-- **Subagent**: send a tightly-scoped task to its own window and get a report back.
-- **`/compact`** compresses this context and seeds a fresh session with it. The **default**, at the bottom of the tree rather than the first reach.
+- **Продолжить**: остаться на месте. Ничего не стоит, ничего не теряет.
+- **очистка контекста (clear)**: опустошить окно, когда ничто здесь не важно для следующего.
+- **скилл handoff** пишет переносимый markdown-файл. Узко: только для **нового харнесса**, **нового каталога**, **коллеги** или форка сайд-задачи **посреди фазы**. Что он покупает — переносимость.
+- **Субагент**: отправить туго очерченную задачу в его собственное окно и получить отчёт обратно.
+- **компактизация (compact)** сжимает этот контекст и засевает им свежую сессию. **Значение по умолчанию** — внизу дерева, а не первый выбор.
 
-Read [PHASE-BOUNDARIES.md](PHASE-BOUNDARIES.md) for the ordered tree: the five questions, the reasoning behind each branch, and why the primary-source cost makes **Continue** the one to rule out first. Make the decision **at** a boundary; mid-phase, continue or split the rest into subagents.
+Читай [PHASE-BOUNDARIES.md](PHASE-BOUNDARIES.md) ради упорядоченного дерева: пять вопросов, обоснование каждой ветви и почему стоимость первичного источника делает **Продолжить** тем, что нужно закрыть раньше всего. Принимай решение **на** границе; посреди фазы — либо продолжай, либо отщепи остальное в субагентов.
 
-## Standalone
+## Отдельно стоящие
 
-Off the main flow entirely.
+Вне основного потока целиком.
 
-- **`/grill-me`**: the same relentless interview as `/grill-with-docs`, but **stateless**: it saves nothing locally and builds no `GLOSSARY.md`. Reach for it when you are **not working in a working directory** (sharpening a plan, a design, a piece of writing, anything with no repo under it). If you are in a working directory, use `/grill-with-docs` instead: it runs the same interview and leaves a paper trail, so it is strictly the better one.
-- **`/grilling`** is the interview primitive itself: rounds, the frontier, facts are the agent's job and decisions are yours. `/grill-me` and `/grill-with-docs` are the two named ways in, and `/triage`, `/wayfinder` and `/improve-codebase-architecture` all run it internally. Reach for it directly only when you want the interview with no wrapper around it.
-- **`/prototype`** is a small, throwaway program that answers one design question: does this state model feel right, or what should this UI look like. Throwaway is a constraint on how the code is written, not a promise to destroy it: the answer folds into the real code, and the prototype itself is kept as a **primary source** on a `prototype/<name>` branch out of main, pointed at from the implementation issue. It's the detour in step 2 of the main flow, but reach for it any time a design question is hard to settle on paper.
-- **`/research`**: delegate reading legwork to a **background agent**: it investigates a question against **primary sources**, then leaves a cited Markdown file in the repo. Keep working while it reads. The file it produces is something to take *into* the main flow at `/grill-with-docs`, since research feeds the thinking rather than replacing it.
-- **`/to-questionnaire`** comes in when the thing blocking you isn't in your head or the codebase but in **someone else's**, and it writes them a questionnaire to fill in. It's the inverse of `/grill-me`: instead of interviewing you about the subject, it interviews you about the **send** (who it's going to, what you need back) and aims the questions at the gap. What comes back is material for `/grill-with-docs` or `/to-spec`.
-- **`/wizard`** is for the steps only a **human** can take: provisioning infrastructure, setting up credentials or CI secrets, clicking through an unfamiliar third-party dashboard, running a one-off migration or cutover. It generates an interactive bash script that opens each URL, captures each value, and writes it into `.env` and GitHub secrets, so the procedure stops being something you re-explain to an agent every time. Model-invoked, so the agent reaches for it the moment it hits a wall only you can pass. If the agent could just do it itself, it should; this is for where a human is genuinely in the loop.
-- **`/wait-what`** is the corrective for a message that didn't land. Use it mid-conversation, inside any other skill, and the agent re-pitches what it just said with the context you were missing, in plain English, using the `GLOSSARY.md` vocabulary. It works after the fact; `/grill-with-docs` is the upfront cure, because a shared language agreed early is what stops the jargon arriving at all.
-- **`/teach`**: learn a concept over multiple sessions, using the current directory as a stateful workspace.
-- **`/writing-for-agents`** is the reference for writing documents agents consume: skills, AGENTS.md, pointed-at docs.
+- **скилл grill-me**: то же беспощадное интервью, что и в grill-with-docs, но **без состояния**: ничего не сохраняет локально и не строит `GLOSSARY.md`. Тянись к нему, когда ты **не работаешь в рабочем каталоге** (затачиваешь план, дизайн, кусок текста — что угодно, под чем нет репозитория). Если ты в рабочем каталоге, используй вместо него grill-with-docs: он прогоняет то же интервью и оставляет бумажный след, так что он строго лучше.
+- **скилл grilling** — сам примитив интервью: раунды, фронт, факты — работа агента, а решения — твои. grill-me и grill-with-docs — два именованных входа, а triage, wayfinder и improve-codebase-architecture все прогоняют его внутри. Обращайся к нему напрямую только тогда, когда хочешь интервью без обёртки вокруг него.
+- **скилл prototype** — маленькая одноразовая программа, отвечающая на один вопрос дизайна: правильна ли модель состояния или как должен выглядеть этот UI. Одноразовость — ограничение на то, как написан код, а не обещание его уничтожить: ответ вливается в настоящий код, а сам прототип сохраняется как **первичный источник** в ветке `prototype/<name>` от main, на который указывает issue реализации. Это крюк в шаге 2 основного потока, но тянись к нему в любой момент, когда вопрос дизайна трудно решить на бумаге.
+- **скилл research**: делегируй черновую работу по чтению **фоновому субагенту**: он исследует вопрос по **первичным источникам**, а затем оставляет в репозитории markdown-файл с цитатами. Продолжай работать, пока он читает. Файл, который он производит, — то, что нужно взять *в* основной поток на скилле grill-with-docs, потому что исследование питает мышление, а не заменяет его.
+- **скилл to-questionnaire** подключается, когда блокирующее тебя лежит не у тебя в голове и не в кодовой базе, а в **чьей-то ещё**, и пишет им анкету для заполнения. Это инверсия grill-me: вместо интервью с тобой о предмете он интервьюирует тебя о **передаче** (кому уходит, что нужно назад) и нацеливает вопросы в пробел. То, что возвращается, — материал для grill-with-docs или to-spec.
+- **скилл wizard** — для шагов, которые может сделать только **человек**: провижининг инфраструктуры, настройка креденшелов или CI-секретов, клики по незнакомому дашборду третьей стороны, разовый прогон миграции или переключения. Он генерирует интерактивный bash-скрипт, который открывает каждый URL, фиксирует каждое значение и записывает его в `.env` и GitHub-секреты, так что процедура перестаёт быть тем, что ты заново объясняешь агенту каждый раз. Вызывается моделью, так что агент тянется к нему в тот момент, когда упирается в стену, пройти которую можешь только ты. Если агент мог бы просто сделать это сам — он должен; это для случаев, где человек действительно в цикле.
+- **скилл wait-what** — корректировка для сообщения, которое не дошло. Используй его посреди разговора, внутри любого другого скилла, и агент переизложит только что сказанное с недостающим тебе контекстом, простым языком, используя лексику `GLOSSARY.md`. Он работает постфактум; grill-with-docs — лекарство заранее, потому что общий язык, согласованный рано, и есть то, что вообще не даёт жаргону появиться.
+- **скилл teach**: учить концепцию на протяжении нескольких сессий, используя текущий каталог как рабочее пространство с состоянием.
+- **скилл writing-for-agents** — справочник по написанию документов, которые потребляют агенты: скиллы, AGENTS.md, документы, на которые указывают.
 
-## Precondition
+## Предварительное условие
 
-**`/setup-matt-pocock-skills`**: run before your first engineering flow to configure the issue tracker, triage labels, and doc layout the other skills assume. Custom issue trackers also work.
+**скилл setup-matt-pocock-skills**: запусти перед своим первым инженерным потоком, чтобы настроить трекер задач, метки триажа и раскладку документов, которые предполагают остальные скиллы. Кастомные трекеры задач тоже работают.

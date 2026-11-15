@@ -1,44 +1,44 @@
-# Design It Twice
+# Спроектируй дважды
 
-When the user wants to explore alternative interfaces for a chosen deepening candidate, use this parallel sub-agent pattern. Based on "Design It Twice" (Ousterhout): your first idea is unlikely to be the best.
+Когда пользователь хочет исследовать альтернативные интерфейсы для выбранного кандидата на углубление, используй этот паттерн параллельных субагентов (инструмент subagent). Основано на «Design It Twice» (Ousterhout): твоя первая идея вряд ли лучшая.
 
-Uses the vocabulary in [SKILL.md](SKILL.md): **module**, **interface**, **seam**, **adapter**, **leverage**.
+Использует словарь из [SKILL.md](SKILL.md): **модуль**, **интерфейс**, **шов**, **адаптер**, **рычаг**.
 
-## Process
+## Процесс
 
-### 1. Frame the problem space
+### 1. Очерти пространство задачи
 
-Before spawning sub-agents, write a user-facing explanation of the problem space for the chosen candidate:
+Прежде чем запускать субагентов, напиши обращённое к пользователю объяснение пространства задачи для выбранного кандидата:
 
-- The constraints any new interface would need to satisfy
-- The dependencies it would rely on, and which category they fall into (see [DEEPENING.md](DEEPENING.md))
-- A rough illustrative code sketch to ground the constraints, not a proposal, just a way to make the constraints concrete
+- Ограничения, которым должен удовлетворять любой новый интерфейс
+- Зависимости, на которые он будет опираться, и к какой категории они относятся (см. [DEEPENING.md](DEEPENING.md))
+- Грубый иллюстративный набросок кода, чтобы заземлить ограничения: не предложение, а лишь способ сделать ограничения конкретными
 
-Show this to the user, then immediately proceed to Step 2. The user reads and thinks while the sub-agents work in parallel.
+Покажи это пользователю и сразу переходи к шагу 2. Пользователь читает и думает, пока субагенты работают параллельно.
 
-### 2. Spawn sub-agents
+### 2. Запусти субагентов
 
-Spawn 3+ sub-agents in parallel, each with a fresh context window. Each must produce a **radically different** interface for the deepened module.
+Запусти 3+ субагентов параллельно, каждый со свежим окном контекста. Каждый должен выдать **радикально отличный** интерфейс для углублённого модуля.
 
-Prompt each sub-agent with a separate technical brief (file paths, coupling details, dependency category from [DEEPENING.md](DEEPENING.md), what sits behind the seam). The brief is independent of the user-facing problem-space explanation in Step 1. Give each agent a different design constraint:
+Дай каждому субагенту отдельный технический бриф (пути к файлам, детали связности, категория зависимости из [DEEPENING.md](DEEPENING.md), что стоит за швом). Бриф не зависит от обращённого к пользователю объяснения пространства задачи из шага 1. Дай каждому агенту своё ограничение проектирования:
 
-- Agent 1: "Minimize the interface: aim for 1–3 entry points max. Maximise leverage per entry point."
-- Agent 2: "Maximise flexibility: support many use cases and extension."
-- Agent 3: "Optimise for the most common caller: make the default case trivial."
-- Agent 4 (if applicable): "Design around ports & adapters for cross-seam dependencies."
+- Агент 1: «Минимизируй интерфейс: цель — максимум 1–3 точки входа. Максимизируй рычаг на точку входа.»
+- Агент 2: «Максимизируй гибкость: поддерживай множество сценариев использования и расширение.»
+- Агент 3: «Оптимизируй под самого частого вызывающего: сделай случай по умолчанию тривиальным.»
+- Агент 4 (если применимо): «Проектируй вокруг ports & adapters для зависимостей, пересекающих шов.»
 
-Include both [SKILL.md](SKILL.md) vocabulary and GLOSSARY.md vocabulary in the brief so each sub-agent names things consistently with the architecture language and the project's domain language.
+Включи в бриф словарь из [SKILL.md](SKILL.md) и словарь из GLOSSARY.md, чтобы каждый субагент называл вещи согласованно с языком архитектуры и предметным языком проекта.
 
-Each sub-agent outputs:
+Каждый субагент выдаёт:
 
-1. Interface (types, methods, params, plus invariants, ordering, error modes)
-2. Usage example showing how callers use it
-3. What the implementation hides behind the seam
-4. Dependency strategy and adapters (see [DEEPENING.md](DEEPENING.md))
-5. Trade-offs: where leverage is high, where it's thin
+1. Интерфейс (типы, методы, параметры, плюс инварианты, порядок, режимы ошибок)
+2. Пример использования, показывающий, как вызывающие его используют
+3. Что реализация скрывает за швом
+4. Стратегию зависимостей и адаптеры (см. [DEEPENING.md](DEEPENING.md))
+5. Компромиссы: где рычаг высок, а где тонок
 
-### 3. Present and compare
+### 3. Представь и сравни
 
-Present designs sequentially so the user can absorb each one, then compare them in prose. Contrast by **depth** (leverage at the interface), **locality** (where change concentrates), and **seam placement**.
+Представь проекты последовательно, чтобы пользователь успевал усвоить каждый, затем сравни их прозой. Сопоставляй по **глубине** (рычаг на интерфейсе), **локальности** (где концентрируются изменения) и **размещению шва**.
 
-After comparing, give your own recommendation: which design you think is strongest and why. If elements from different designs would combine well, propose a hybrid. Be opinionated: the user wants a strong read, not a menu.
+После сравнения дай свою рекомендацию: какой проект, по-твоему, сильнейший и почему. Если элементы разных проектов хорошо сочетаются, предложи гибрид. Будь категоричен: пользователю нужна уверенная оценка, а не меню.

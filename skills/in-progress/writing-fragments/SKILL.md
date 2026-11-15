@@ -1,45 +1,45 @@
 ---
 name: writing-fragments
-description: "Writing, explore: mine raw fragments, no structure yet."
+description: "Написание, explore: добываем сырые фрагменты, структуры пока нет."
 disable-model-invocation: true
 ---
 
 <what-to-do>
 
-This is pure **explore**: widen the space of what could be written without committing to structure. Committing is _exploit_, a separate skill's job. Run a grilling session that produces fragments, interviewing the user relentlessly about whatever they want to write about. Imposing phases, outlines, or article structure is out of scope here.
+Это чистый **explore**: расширить пространство того, что можно написать, не вкладываясь в структуру. Вкладываться — это _exploit_, работа отдельного скилла. Проведите грилл-сессию, которая производит фрагменты, безжалостно интервьюируя пользователя о том, о чём он хочет написать. Навязывать фазы, планы или структуру статьи здесь вне области задачи.
 
-As fragments emerge from either side of the conversation, append them to a single markdown file.
+По мере того как фрагменты появляются с любой стороны разговора, добавляйте их в один markdown-файл.
 
-If the user did not pass a path, ask once where to save the document, then remember it for the rest of the session.
+Если пользователь не передал путь, один раз спросите, куда сохранять документ, затем запомните это до конца сессии.
 
-Capture fragments from the very first thing the user says, including the initial prompt.
+Собирайте фрагменты с самой первой вещи, которую говорит пользователь, включая начальный промпт.
 
-On first write, put a single H1 at the top with a working title (it can change later) and nothing else: no metadata, no TOC, no date.
+При первой записи поставьте один H1 сверху с рабочим названием (оно может измениться позже) и больше ничего: ни метаданных, ни оглавления, ни даты.
 
 </what-to-do>
 
 <supporting-info>
 
-## What is a fragment
+## Что такое фрагмент
 
-A fragment is any piece of text that might survive into the final article. It must be _readable by the author_ (the author can tell what it means), but it does not need to define its terms or be comprehensible to a cold reader. The bar is "is this a piece of good writing?", not "is this a self-contained argument?"
+Фрагмент — любой кусок текста, который может дожить до финальной статьи. Он должен быть _читаемым для автора_ (автор может сказать, что он значит), но ему не нужно определять свои термины или быть понятным холодному читателю. Планка — «хороший ли это кусок письма?», а не «самодостаточный ли это аргумент?»
 
-Fragments are deliberately heterogeneous. Examples of what could be a fragment:
+Фрагменты намеренно разнородны. Примеры того, что может быть фрагментом:
 
-- A sharp sentence you'd want to deploy somewhere but don't yet know where.
-- A claim with a one-line justification.
-- A vignette: a thing that happened, a code snippet, a scenario, an analogy.
-- A half-thought: "something about how X feels like Y, work this out later."
-- A quote, a piece of dialogue, an overheard line.
-- A list of related observations that hang together by feel.
-- A complaint, a confession, a punchline.
-- A **leading word**: a compact metaphor or coinage the whole piece can hang on (one term that names the idea, the way _tracer bullets_ or _fog of war_ names a whole pattern).
+- Острая фраза, которую хотелось бы где-то развернуть, но пока непонятно где.
+- Утверждение с однострочным обоснованием.
+- Виньетка: случившаяся вещь, фрагмент кода, сценарий, аналогия.
+- Полумысль: «что-то такое, как X ощущается как Y, разобраться позже».
+- Цитата, кусок диалога, подслушанная реплика.
+- Список связанных наблюдений, которые держатся вместе по ощущению.
+- Жалоба, признание, панчлайн.
+- **Ведущее слово**: компактная метафора или неологизм, на который может опереться вся вещь (один термин, называющий идею, как _tracer bullets_ или _fog of war_ называют целый паттерн).
 
-Of these, the leading word is the most valuable fragment to land. It is load-bearing: name the right one in explore and it shapes the structure, the transitions, and the title later, paying dividends through the entire exploit phase. When the conversation circles a recurring idea, push to coin a word for it.
+Из них ведущее слово — самый ценный фрагмент, который можно посадить. Оно несущее: назовите правильное в explore, и оно сформирует структуру, переходы и название позже, принося дивиденды всю фазу exploit. Когда разговор кружит вокруг повторяющейся идеи, подталкивайте к тому, чтобы придумать для неё слово.
 
-The novelist's diary is the model: years of unstructured noticings that later get mined for raw material. Fragments are noticings.
+Дневник романиста — модель: годы неструктурированных замечаний, которые позже добываются как сырьё. Фрагменты — это замечания.
 
-## File format
+## Формат файла
 
 ```markdown
 # Working title
@@ -66,14 +66,14 @@ A reaction to it.
 - And want to be near each other
 ```
 
-Fragments are separated by a horizontal rule (`\n---\n`). No headings inside the body. No tags. No order beyond the order they were added.
+Фрагменты разделяются горизонтальной линией (`\n---\n`). Никаких заголовков внутри тела. Никаких тегов. Никакого порядка, кроме порядка добавления.
 
-## Writing rhythm
+## Ритм письма
 
-Append silently. Don't ask permission for each fragment. Mention what you added in passing ("adding that"), but don't interrupt the conversation with save dialogs.
+Добавляйте молча. Не спрашивайте разрешения на каждый фрагмент. Упоминайте мимоходом, что добавили («добавляю это»), но не прерывайте разговор диалогами сохранения.
 
-Before every write: re-read the file from disk. The user may have edited, reordered, or deleted fragments between turns, so preserve their changes. Never overwrite the file; only append (or, if the user asks, edit a specific fragment in place).
+Перед каждой записью: перечитайте файл с диска. Пользователь мог править, переупорядочивать или удалять фрагменты между ходами, поэтому сохраняйте его изменения. Никогда не перезаписывайте файл; только добавляйте (или, если пользователь просит, правьте конкретный фрагмент на месте).
 
-The user can say "cut the last one", "rewrite that one sharper", "merge those two" at any time. Treat those as first-class instructions.
+Пользователь может в любой момент сказать «убери последний», «перепиши тот острее», «объедини эти два». Считайте это инструкциями первого класса.
 
 </supporting-info>

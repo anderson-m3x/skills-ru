@@ -1,95 +1,71 @@
 ---
 name: git-guardrails-claude-code
-description: Set up Claude Code hooks to block dangerous git commands (push, reset --hard, clean, branch -D, etc.) before they execute. Use when user wants to prevent destructive git operations, add git safety hooks, or block git push/reset in Claude Code.
+description: Настроить защиту, которая блокирует опасные git-команды (push, reset --hard, clean, branch -D и т. п.) до их выполнения. Использовать, когда пользователь хочет предотвратить разрушительные git-операции, добавить защитные ограничения для git или запретить git push/reset.
 ---
 
-# Setup Git Guardrails
+# Настройка защитных ограничений для git
 
-Sets up a PreToolUse hook that intercepts and blocks dangerous git commands before Claude executes them.
+Настраивает защиту, которая перехватывает и блокирует опасные git-команды до того, как агент их выполнит: скрипт-обёртка плюс правило в AGENTS.md.
 
-## What Gets Blocked
+## Что блокируется
 
-- `git push` (all variants including `--force`)
+- `git push` (все варианты, включая `--force`)
 - `git reset --hard`
 - `git clean -f` / `git clean -fd`
 - `git branch -D`
 - `git checkout .` / `git restore .`
 
-When blocked, Claude sees a message telling it that it does not have authority to access these commands.
+При блокировке агент видит сообщение о том, что у него нет полномочий использовать эти команды.
 
-## Steps
+## Шаги
 
-### 1. Ask scope
+### 1. Спроси область действия
 
-Ask the user: install for **this project only** (`.claude/settings.json`) or **all projects** (`~/.claude/settings.json`)?
+Спроси пользователя: установить **только для этого проекта** (`.dsh/hooks/block-dangerous-git.sh` и `AGENTS.md` в репозитории) или **для всех проектов** (`~/.dsh/hooks/block-dangerous-git.sh` и `~/.dsh/AGENTS.md`)?
 
-### 2. Copy the hook script
+### 2. Скопируй скрипт
 
-The bundled script is at: [scripts/block-dangerous-git.sh](scripts/block-dangerous-git.sh)
+Встроенный скрипт находится здесь: [scripts/block-dangerous-git.sh](scripts/block-dangerous-git.sh)
 
-Copy it to the target location based on scope:
+Скопируй его в целевое место по области действия:
 
-- **Project**: `.claude/hooks/block-dangerous-git.sh`
-- **Global**: `~/.claude/hooks/block-dangerous-git.sh`
+- **Проект**: `.dsh/hooks/block-dangerous-git.sh`
+- **Глобально**: `~/.dsh/hooks/block-dangerous-git.sh`
 
-Make it executable with `chmod +x`.
+Сделай его исполняемым через `chmod +x`.
 
-### 3. Add hook to settings
+### 3. Добавь правило в AGENTS.md
 
-Add to the appropriate settings file:
+Добавь в соответствующий файл AGENTS.md:
 
-**Project** (`.claude/settings.json`):
+**Проект** (`AGENTS.md` в корне репозитория):
 
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-dangerous-git.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
+```markdown
+## Опасные git-команды
+
+Никогда не выполняй git-команды, которые блокирует `.dsh/hooks/block-dangerous-git.sh`. Перед любой командой `git` сверься со скриптом: `echo '{"tool_input":{"command":"<команда>"}}' | .dsh/hooks/block-dangerous-git.sh`. Код выхода 2 означает запрет: сообщи пользователю, что у тебя нет полномочий на эту команду, и не выполняй её.
 ```
 
-**Global** (`~/.claude/settings.json`):
+**Глобально** (`~/.dsh/AGENTS.md`):
 
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/block-dangerous-git.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
+```markdown
+## Опасные git-команды
+
+Никогда не выполняй git-команды, которые блокирует `~/.dsh/hooks/block-dangerous-git.sh`. Перед любой командой `git` сверься со скриптом: `echo '{"tool_input":{"command":"<команда>"}}' | ~/.dsh/hooks/block-dangerous-git.sh`. Код выхода 2 означает запрет: сообщи пользователю, что у тебя нет полномочий на эту команду, и не выполняй её.
 ```
 
-If the settings file already exists, merge the hook into the existing `hooks.PreToolUse` array. Don't overwrite other settings.
+Если AGENTS.md уже существует, добавь раздел к его содержимому. Не перезаписывай остальное.
 
-### 4. Ask about customization
+### 4. Спроси про кастомизацию
 
-Ask if user wants to add or remove any patterns from the blocked list. Edit the copied script accordingly.
+Спроси, хочет ли пользователь добавить или убрать какие-то паттерны из списка блокируемых. Отредактируй скопированный скрипт соответственно.
 
-### 5. Verify
+### 5. Проверь
 
-Run a quick test:
+Запусти быстрый тест:
 
 ```bash
 echo '{"tool_input":{"command":"git push origin main"}}' | <path-to-script>
 ```
 
-Should exit with code 2 and print a BLOCKED message to stderr.
+Должен завершиться с кодом 2 и вывести в stderr сообщение о блокировке.

@@ -1,26 +1,26 @@
 ---
 name: prototype
-description: Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like.
+description: Собери выбрасываемый прототип, чтобы ответить на вопрос по дизайну. Используй, когда пользователь хочет проверить, ощущается ли модель состояний или логика правильной, или исследовать, как должен выглядеть интерфейс.
 ---
 
-# Prototype
+# Прототип
 
-A prototype is **throwaway code that answers a question**. The question decides the shape.
+Прототип — это **выбрасываемый код, который отвечает на вопрос**. Вопрос определяет форму.
 
-## Pick a branch
+## Выбери ветку
 
-Identify which question is being answered, using the user's prompt, the surrounding code, or by asking if the user is around:
+Определи, на какой вопрос отвечаем, — по промпту пользователя, по окружающему коду или спросив пользователя, если он на связи:
 
-- **"Does this logic / state model feel right?"** → [LOGIC.md](LOGIC.md). Build a single shareable HTML file (free-play buttons plus tabbed guided walkthroughs) that pushes the state machine through cases that are hard to reason about on paper, and that a non-developer can drive.
-- **"What should this look like?"** → [UI.md](UI.md). Generate several radically different UI variations on a single route, switchable via a URL search param and a floating bottom bar.
+- **«Эта логика / модель состояний ощущается правильной?»** → [LOGIC.md](LOGIC.md). Собери один самодостаточный HTML-файл, которым можно поделиться (кнопки свободного перебора плюс вкладки с пошаговыми сценариями), который прогоняет конечный автомат через случаи, о которых трудно рассуждать на бумаге, и с которым справится не-разработчик.
+- **«Как это должно выглядеть?»** → [UI.md](UI.md). Сгенерируй несколько радикально разных вариантов интерфейса на одном маршруте, переключаемых через search-параметр URL и плавающую нижнюю панель.
 
-The two branches produce very different artifacts, so getting this wrong wastes the whole prototype. If the question is genuinely ambiguous and the user isn't reachable, default to whichever branch better matches the surrounding code (a backend module → logic; a page or component → UI) and state the assumption at the top of the prototype.
+Две ветки дают очень разные артефакты, поэтому ошибка здесь тратит весь прототип. Если вопрос действительно неоднозначен, а пользователь недоступен, по умолчанию выбери ту ветку, которая лучше соответствует окружающему коду (бэкенд-модуль → логика; страница или компонент → UI), и озвучь это допущение в начале прототипа.
 
-## Rules that apply to both
+## Правила, общие для обеих ветвей
 
-1. **Throwaway from day one, and clearly marked as such.** Locate the prototype code close to where it will actually be used (next to the module or page it's prototyping for) so context is obvious, but name it so a casual reader can see it's a prototype, not production. For throwaway UI routes, obey whatever routing convention the project already uses; don't invent a new top-level structure.
-2. **Trivial to run.** A UI prototype starts from one command in the project's task runner: `pnpm <name>`, `python <path>`, `bun <path>`, etc. A logic demo is a single HTML file the user double-clicks. Either way, no thinking required to start it.
-3. **No persistence by default.** State lives in memory. Persistence is the thing the prototype is _checking_, not something it should depend on. If the question explicitly involves a database, hit a scratch DB or a local file with a clear "PROTOTYPE, wipe me" name.
-4. **Skip the polish.** No tests, no error handling beyond what makes the prototype _runnable_, no abstractions. The point is to learn something fast.
-5. **Surface the state.** After every action (logic) or on every variant switch (UI), print or render the full relevant state so the user can see what changed.
-6. **Capture it when done.** Fold any validated decision into the real code, then capture the prototype itself as a **primary source**: commit it to a throwaway branch, out of main, and leave a context pointer to that branch on the implementation issue. Capture the answer too (the verdict and the question it settled) in the issue or a commit. The main branch keeps only the validated decision.
+1. **Выбрасываемый с первого дня и явно помеченный как таковой.** Размещай код прототипа рядом с тем местом, где он на самом деле будет использоваться (рядом с модулем или страницей, для которых он прототипируется), чтобы контекст был очевиден, но называй его так, чтобы случайный читатель видел: это прототип, а не продакшен. Для выбрасываемых UI-маршрутов соблюдай те соглашения о маршрутизации, которые уже приняты в проекте; не изобретай новую структуру верхнего уровня.
+2. **Запускается тривиально.** UI-прототип запускается одной командой в таск-раннере проекта: `pnpm <name>`, `python <path>`, `bun <path>` и т. п. Логик-демо — это один HTML-файл, который пользователь открывает двойным щелчком. В любом случае, чтобы запустить, думать не нужно.
+3. **По умолчанию без персистентности.** Состояние живёт в памяти. Персистентность — это то, что прототип _проверяет_, а не то, на что он должен опираться. Если вопрос явно связан с базой данных, используй черновую БД или локальный файл с явным именем вроде «ПРОТОТИП, сотри меня».
+4. **Без полировки.** Никаких тестов, никакой обработки ошибок сверх того, что делает прототип _запускаемым_, никаких абстракций. Смысл — быстро что-то узнать.
+5. **Показывай состояние.** После каждого действия (логика) или при каждом переключении варианта (UI) печатай или рендери полное релевантное состояние, чтобы пользователь видел, что изменилось.
+6. **Зафиксируй результат, когда закончил.** Внедри любое подтверждённое решение в реальный код, а затем сохрани сам прототип как **первоисточник**: закоммить его в выбрасываемую ветку, вне main, и оставь в тикете на реализацию указатель на эту ветку. Зафиксируй и ответ (вердикт и вопрос, который он закрыл) в тикете или в коммите. В main остаётся только подтверждённое решение.

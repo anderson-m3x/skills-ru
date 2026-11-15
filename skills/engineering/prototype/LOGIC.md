@@ -1,67 +1,67 @@
-# Logic Prototype
+# Логический прототип
 
-A single, self-contained HTML file (a **shareable demo**) that lets anyone drive a state model by clicking buttons. Use this when the question is about **business logic, state transitions, or data shape**: the kind of thing that looks reasonable on paper but only feels wrong once you push it through real cases.
+Один самодостаточный HTML-файл (**демо, которым можно поделиться**), позволяющий любому человеку управлять моделью состояний нажатием кнопок. Используй это, когда вопрос о **бизнес-логике, переходах состояний или форме данных**: то, что на бумаге выглядит разумно, но ощущается неправильным, как только прогонишь это через реальные случаи.
 
-Because it's one file with nothing to install, you can hand it to a non-developer (a designer, a PM, a domain expert) and let them feel the model for themselves. So it speaks their language, not the code's.
+Поскольку это один файл, для которого ничего не нужно устанавливать, его можно отдать не-разработчику (дизайнеру, продакт-менеджеру, предметному эксперту) и дать ему самому почувствовать модель. Поэтому он говорит на их языке, а не на языке кода.
 
-## When this is the right shape
+## Когда это правильная форма
 
-- "I'm not sure if this state machine handles the edge case where X then Y."
-- "Does this data model actually let me represent the case where..."
-- "I want to feel out what the API should look like before writing it."
-- Anything where someone wants to **press buttons and watch state change**.
+- «Не уверен, обрабатывает ли этот конечный автомат крайний случай, когда сначала X, потом Y».
+- «Позволяет ли эта модель данных вообще представить случай, когда…»
+- «Хочу почувствовать, каким должен быть API, до того как его писать».
+- Всё, где человек хочет **нажимать кнопки и смотреть, как меняется состояние**.
 
-If the question is "what should this look like," this is the wrong branch. Use [UI.md](UI.md).
+Если вопрос «как это должно выглядеть», это не та ветка. Используй [UI.md](UI.md).
 
-## Process
+## Процесс
 
-### 1. State the question
+### 1. Сформулируй вопрос
 
-Before writing code, write down what state model and what question you're prototyping. One paragraph, at the top of the demo (in a visible intro, not just a comment). A logic prototype that answers the wrong question is pure waste, so make the question explicit so it can be checked later, whether the user is watching now or returning to it AFK.
+До написания кода запиши, какую модель состояний и какой вопрос ты прототипируешь. Один абзац, в начале демо (в видимом вступлении, а не только в комментарии). Логический прототип, отвечающий не на тот вопрос, — чистая потеря, поэтому формулируй вопрос явно, чтобы его можно было проверить позже — независимо от того, смотрит ли пользователь сейчас или вернётся к прототипу потом.
 
-### 2. Isolate the logic in a portable module
+### 2. Изолируй логику в переносимом модуле
 
-Put the actual logic (the bit that's answering the question) in a single `<script>` block written as a small, pure module that could be lifted out and dropped into the real codebase later. The page around it is throwaway; this module isn't.
+Помести собственно логику (ту часть, что отвечает на вопрос) в единственный блок `<script>`, написанный как небольшой чистый модуль, который можно потом вынуть и вставить в реальную кодовую базу. Страница вокруг него выбрасываемая; этот модуль — нет.
 
-The right shape depends on the question:
+Правильная форма зависит от вопроса:
 
-- **A pure reducer**: `(state, action) => state`. Good when actions are discrete events and state is a single value.
-- **A state machine**: explicit states and transitions. Good when "which actions are even legal right now" is part of the question.
-- **A small set of pure functions** over a plain data type. Good when there's no implicit current state, just transformations.
-- **A class or module with a clear method surface** when the logic genuinely owns ongoing internal state.
+- **Чистый редьюсер**: `(state, action) => state`. Хорошо, когда действия — дискретные события, а состояние — одно значение.
+- **Конечный автомат**: явные состояния и переходы. Хорошо, когда «какие действия вообще допустимы прямо сейчас» — часть вопроса.
+- **Небольшой набор чистых функций** над простым типом данных. Хорошо, когда нет неявного текущего состояния, только преобразования.
+- **Класс или модуль с явной поверхностью методов**, когда логика действительно владеет длящимся внутренним состоянием.
 
-Pick whichever shape best fits the question being asked, *not* whichever is easiest to wire to a page. Keep it pure: no DOM, no `document`, no button handlers reaching inside it. The page calls into it; nothing flows the other direction. This is what makes the prototype useful past its own lifetime: once the question's answered, the validated reducer / machine / function set lifts into the real module on its own.
+Выбирай ту форму, которая лучше всего подходит вопросу, *а не* ту, которую проще всего прикрутить к странице. Держи её чистой: никакого DOM, никакого `document`, никаких обработчиков кнопок, лезущих внутрь. Страница вызывает её; в обратную сторону ничего не течёт. Именно это делает прототип полезным и после истечения его собственного срока жизни: как только вопрос получил ответ, подтверждённые редьюсер / автомат / набор функций переносятся в реальный модуль сами по себе.
 
-### 3. Build the shareable HTML file
+### 3. Собери HTML-файл, которым можно поделиться
 
-One file, plain HTML/CSS/JS: no framework, no bundler, no server, everything inline so it opens by double-click and survives being emailed around. Anyone should be able to run it by opening it.
+Один файл, чистые HTML/CSS/JS: без фреймворка, без бандлера, без сервера, всё встроено, чтобы он открывался двойным щелчком и переживал пересылку по почте. Любой должен быть в состоянии запустить его, просто открыв.
 
-Write it for a non-developer. Every label is in **domain language**, not code: buttons and state read like the business, not the reducer. Explain in plain words what's happening.
+Пиши его для не-разработчика. Каждая подпись — на **предметном языке**, а не на языке кода: кнопки и состояние читаются как бизнес, а не как редьюсер. Объясняй простыми словами, что происходит.
 
-Lay it out with a clean hierarchy, top to bottom:
+Раскладывай с чистой иерархией, сверху вниз:
 
-1. **Title and one-line explanation** of what this demo lets you explore (the question from step 1).
-2. **Current state**: the full relevant state, rendered as a readable panel (labelled fields, not a raw JSON dump), re-rendered after every click so the change is visible. Where it helps a non-developer follow, call out what just changed.
-3. **Free-play buttons**: one button per action, always available, so anyone can poke at the model in any order. Each click dispatches its action and re-renders the state.
-4. **Guided walkthroughs**: a set of **scenarios**, one per tab. Each tab holds a short plain-language description of the scenario (the situation it sets up and what to watch for) and underneath it, the ordered **buttons to press** for that scenario. Each step is a real button: clicking it performs that action and moves to the next step. Starting a walkthrough resets to a known initial state so the scenario runs the same way every time.
+1. **Заголовок и однострочное объяснение** того, что это демо позволяет исследовать (вопрос из шага 1).
+2. **Текущее состояние**: полное релевантное состояние, отрисованное как читаемая панель (подписанные поля, а не сырой дамп JSON), перерисовывается после каждого нажатия, чтобы изменение было видно. Где это помогает не-разработчику следить, отмечай, что именно изменилось.
+3. **Кнопки свободного перебора**: по одной кнопке на действие, доступны всегда, чтобы любой мог потыкать модель в любом порядке. Каждое нажатие отправляет своё действие и перерисовывает состояние.
+4. **Пошаговые сценарии**: набор **сценариев**, по одному на вкладку. На каждой вкладке — короткое описание сценария простым языком (ситуация, которую он создаёт, и на что смотреть), а под ним — упорядоченные **кнопки, которые надо нажимать** для этого сценария. Каждый шаг — настоящая кнопка: нажатие выполняет это действие и переходит к следующему шагу. Запуск сценария сбрасывает к известному начальному состоянию, чтобы сценарий каждый раз проходил одинаково.
 
-Choose scenarios that demonstrate the awkward cases, the ones hard to reason about on paper: the happy path, a tricky edge case, an attempt at something that should be illegal.
+Выбирай сценарии, которые демонстрируют неудобные случаи — те, о которых трудно рассуждать на бумаге: счастливый путь, каверзный крайний случай, попытку сделать то, что должно быть недопустимо.
 
-Keep it beautiful but restrained: clean typography, generous spacing, one accent colour. No animations, no gimmicks: nothing that competes with the state and the buttons.
+Держи его красивым, но сдержанным: чистая типографика, щедрые отступы, один акцентный цвет. Без анимаций, без трюков: ничего, что конкурирует с состоянием и кнопками.
 
-### 4. Hand it over
+### 4. Передай его
 
-Send them the file, or open it for them. They'll click through the walkthroughs and free-play whenever they get to it; the interesting moments are when they say "wait, that shouldn't be possible" or "huh, I assumed X would be different"; those are the bugs in the _idea_, which is the whole point. If they want new actions or a new scenario, add them. Prototypes evolve.
+Отправь им файл или открой его для них. Они пройдут по сценариям и поиграют свободно, когда доберутся до него; интересные моменты — когда они говорят «погоди, так же не должно быть возможно» или «хм, я думал, X будет иначе»; это баги в _идее_, в чём и весь смысл. Если им нужны новые действия или новый сценарий — добавь. Прототипы эволюционируют.
 
-### 5. Capture the answer and the prototype
+### 5. Зафиксируй ответ и прототип
 
-Once the prototype has answered its question, capture the answer, then capture the prototype the way the [SKILL](SKILL.md) describes. The logic-specific mapping: the validated reducer / machine / function set lifts into the real module (the decision, absorbed); the HTML shell rides along to the throwaway branch that keeps the prototype as a primary source, and being one self-contained file, it stays trivially re-runnable there.
+Как только прототип ответил на свой вопрос, зафиксируй ответ, а затем зафиксируй прототип так, как описано в [SKILL](SKILL.md). Специфика для логики: подтверждённые редьюсер / автомат / набор функций переносятся в реальный модуль (решение, поглощённое); HTML-оболочка уезжает в выбрасываемую ветку, которая хранит прототип как первоисточник, и, будучи одним самодостаточным файлом, остаётся там тривиально перезапускаемой.
 
-## Anti-patterns
+## Антипаттерны
 
-- **Don't add tests.** A prototype that needs tests is no longer a prototype.
-- **Don't wire it to the real database.** Use in-memory state unless the question is specifically about persistence.
-- **Don't generalise.** No "what if we wanted to support X later." The prototype answers one question.
-- **Don't blur the logic and the page together.** If the pure module references the DOM, `document`, or button handlers, it's no longer liftable. Keep the page as a thin shell over a pure module.
-- **Don't reach for a framework, bundler, or server.** One file the recipient double-clicks; a React app or a dev server defeats "shareable".
-- **Don't ship the HTML shell into production.** The page is optimised for being clicked through by hand. The logic module behind it is the bit worth keeping.
+- **Не добавляй тесты.** Прототип, которому нужны тесты, — уже не прототип.
+- **Не подключай его к реальной базе данных.** Используй состояние в памяти, если только вопрос не именно о персистентности.
+- **Не обобщай.** Никаких «а что если мы захотим поддерживать X позже». Прототип отвечает на один вопрос.
+- **Не смешивай логику и страницу.** Если чистый модуль ссылается на DOM, `document` или обработчики кнопок, он уже не переносимый. Держи страницу тонкой оболочкой над чистым модулем.
+- **Не тянись к фреймворку, бандлеру или серверу.** Один файл, который получатель открывает двойным щелчком; React-приложение или дев-сервер убивают «можно поделиться».
+- **Не тащи HTML-оболочку в продакшен.** Страница оптимизирована под то, чтобы по ней щёлкали руками. Модуль логики за ней — то, что стоит сохранить.

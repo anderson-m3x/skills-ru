@@ -1,207 +1,208 @@
-# Writing Agent Briefs
+# Написание брифов для агента
 
-An agent brief is a structured comment posted on a GitHub issue or PR when it moves to `ready-for-agent`. It is the authoritative specification that an AFK agent will work from. The original body and discussion are context: the agent brief is the contract.
+Бриф для агента — это структурированный комментарий, публикуемый в GitHub issue или PR, когда тот переходит в `ready-for-agent`. Это авторитетная спека, по которой будет работать AFK-агент. Исходное тело и обсуждение — контекст: бриф для агента — это контракт.
 
-The brief states **what the agent should do**, which stretches to both surfaces: for an issue, that's building the change from nothing; for a PR, it's what's left to do *to the existing diff*: finish it, close gaps, address review points. Same principles either way; the PR example below shows the difference.
+Бриф говорит, **что агент должен сделать**, и это растягивается на обе поверхности: для issue — построить изменение с нуля; для PR — что осталось сделать *с существующим диффом*: довести его, закрыть пробелы, учесть замечания ревью. Принципы одинаковы в обоих случаях; пример PR ниже показывает разницу.
 
-## Principles
+## Принципы
 
-### Durability over precision
+### Долговечность важнее точности
 
-The issue may sit in `ready-for-agent` for days or weeks. The codebase will change in the meantime. Write the brief so it stays useful even as files are renamed, moved, or refactored.
+Issue может простоять в `ready-for-agent` дни или недели. Кодовая база за это время изменится. Пишите бриф так, чтобы он оставался полезным, даже когда файлы переименовывают, перемещают или рефакторят.
 
-- **Do** describe interfaces, types, and behavioral contracts
-- **Do** name specific types, function signatures, or config shapes that the agent should look for or modify
-- **Don't** reference file paths: they go stale
-- **Don't** reference line numbers
-- **Don't** assume the current implementation structure will remain the same
+- **Нужно** описывать интерфейсы, типы и контракты поведения
+- **Нужно** называть конкретные типы, сигнатуры функций или формы конфигов, которые агенту следует найти или изменить
+- **Не нужно** ссылаться на пути к файлам: они устаревают
+- **Не нужно** ссылаться на номера строк
+- **Не нужно** исходить из того, что текущая структура реализации останется прежней
 
-### Behavioral, not procedural
+### Про поведение, а не про процедуру
 
-Describe **what** the system should do, not **how** to implement it. The agent will explore the codebase fresh and make its own implementation decisions.
+Описывайте, **что** система должна делать, а не **как** это реализовывать. Агент заново исследует кодовую базу и примет собственные решения о реализации.
 
-- **Good:** "The `SkillConfig` type should accept an optional `schedule` field of type `CronExpression`"
-- **Bad:** "Open src/types/skill.ts and add a schedule field on line 42"
-- **Good:** "When a user runs `/triage` with no arguments, they should see a summary of issues needing attention"
-- **Bad:** "Add a switch statement in the main handler function"
+- **Хорошо:** «Тип `SkillConfig` должен принимать необязательное поле `schedule` типа `CronExpression`»
+- **Плохо:** «Открой src/types/skill.ts и добавь поле schedule на строке 42»
+- **Хорошо:** «Когда пользователь запускает скилл triage без аргументов, он должен видеть сводку issue, требующих внимания»
+- **Плохо:** «Добавь switch в главной функции-обработчике»
 
-### Complete acceptance criteria
+### Полные критерии приёмки
 
-The agent needs to know when it's done. Every agent brief must have concrete, testable acceptance criteria. Each criterion should be independently verifiable.
+Агенту нужно знать, когда он закончил. В каждом брифе для агента должны быть конкретные, проверяемые критерии приёмки. Каждый критерий должен проверяться независимо.
 
-- **Good:** "Running `gh issue list --label needs-triage` returns issues that have been through initial classification"
-- **Bad:** "Triage should work correctly"
+- **Хорошо:** «`gh issue list --label needs-triage` возвращает issue, прошедшие первичную классификацию»
+- **Плохо:** «Триаж должен работать корректно»
 
-### Explicit scope boundaries
+### Явные границы скоупа
 
-State what is out of scope. This prevents the agent from gold-plating or making assumptions about adjacent features.
+Укажите, что вне скоупа. Это удерживает агента от лишней работы и от домыслов о смежных фичах.
 
-## Template
-
-```markdown
-## Agent Brief
-
-**Category:** bug / enhancement
-**Summary:** one-line description of what needs to happen
-
-**Current behavior:**
-Describe what happens now. For bugs, this is the broken behavior.
-For enhancements, this is the status quo the feature builds on.
-
-**Desired behavior:**
-Describe what should happen after the agent's work is complete.
-Be specific about edge cases and error conditions.
-
-**Key interfaces:**
-- `TypeName`: what needs to change and why
-- `functionName()` return type: what it currently returns vs what it should return
-- Config shape: any new configuration options needed
-
-**Acceptance criteria:**
-- [ ] Specific, testable criterion 1
-- [ ] Specific, testable criterion 2
-- [ ] Specific, testable criterion 3
-
-**Out of scope:**
-- Thing that should NOT be changed or addressed in this issue
-- Adjacent feature that might seem related but is separate
-```
-
-## Examples
-
-### Good agent brief (bug)
+## Шаблон
 
 ```markdown
-## Agent Brief
+## Бриф для агента
 
-**Category:** bug
-**Summary:** Skill description truncation drops mid-word, producing broken output
+**Категория:** bug / enhancement
+**Сводка:** однострочное описание того, что нужно сделать
 
-**Current behavior:**
-When a skill description exceeds 1024 characters, it is truncated at exactly
-1024 characters regardless of word boundaries. This produces descriptions
-that end mid-word (e.g. "Use when the user wants to confi").
+**Текущее поведение:**
+Опишите, что происходит сейчас. Для багов это сломанное поведение.
+Для enhancement это статус-кво, на котором строится фича.
 
-**Desired behavior:**
-Truncation should break at the last word boundary before 1024 characters
-and append "..." to indicate truncation.
+**Желаемое поведение:**
+Опишите, что должно происходить после завершения работы агента.
+Будьте конкретны насчёт граничных случаев и условий ошибок.
 
-**Key interfaces:**
-- The `SkillMetadata` type's `description` field: no type change needed,
-  but the validation/processing logic that populates it needs to respect
-  word boundaries
-- Any function that reads SKILL.md frontmatter and extracts the description
+**Ключевые интерфейсы:**
+- `TypeName`: что нужно изменить и почему
+- возвращаемый тип `functionName()`: что он возвращает сейчас и что должен
+- Форма конфига: любые новые параметры конфигурации, которые нужны
 
-**Acceptance criteria:**
-- [ ] Descriptions under 1024 chars are unchanged
-- [ ] Descriptions over 1024 chars are truncated at the last word boundary
-      before 1024 chars
-- [ ] Truncated descriptions end with "..."
-- [ ] The total length including "..." does not exceed 1024 chars
+**Критерии приёмки:**
+- [ ] Конкретный, проверяемый критерий 1
+- [ ] Конкретный, проверяемый критерий 2
+- [ ] Конкретный, проверяемый критерий 3
 
-**Out of scope:**
-- Changing the 1024 char limit itself
-- Multi-line description support
+**Вне скоупа:**
+- То, что НЕ следует менять или затрагивать в этом issue
+- Смежная фича, которая может показаться связанной, но отдельна
 ```
 
-### Good agent brief (enhancement)
+## Примеры
+
+### Хороший бриф для агента (баг)
 
 ```markdown
-## Agent Brief
+## Бриф для агента
 
-**Category:** enhancement
-**Summary:** Add `.out-of-scope/` directory support for tracking rejected feature requests
+**Категория:** bug
+**Сводка:** обрезка описания скилла рвёт слово и даёт битый вывод
 
-**Current behavior:**
-When a feature request is rejected, the issue is closed with a `wontfix` label
-and a comment. There is no persistent record of the decision or reasoning.
-Future similar requests require the maintainer to recall or search for the
-prior discussion.
+**Текущее поведение:**
+Когда описание скилла превышает 1024 символа, оно обрезается ровно на 1024
+символах независимо от границ слов. В результате описания обрываются посреди
+слова (например, «Use when the user wants to confi»).
 
-**Desired behavior:**
-Rejected feature requests should be documented in `.out-of-scope/<concept>.md`
-files that capture the decision, reasoning, and links to all issues that
-requested the feature. When triaging new issues, these files should be
-checked for matches.
+**Желаемое поведение:**
+Обрезка должна происходить на последней границе слова до 1024 символов,
+а в конец добавляется «...», обозначающее усечение.
 
-**Key interfaces:**
-- Markdown file format in `.out-of-scope/`: each file should have a
-  `# Concept Name` heading, a `**Decision:**` line, a `**Reason:**` line,
-  and a `**Prior requests:**` list with issue links
-- The triage workflow should read all `.out-of-scope/*.md` files early
-  and match incoming issues against them by concept similarity
+**Ключевые интерфейсы:**
+- Поле `description` типа `SkillMetadata`: сам тип менять не нужно,
+  но логика валидации/обработки, которая его заполняет, должна учитывать
+  границы слов
+- Любая функция, которая читает фронтматтер SKILL.md и извлекает описание
 
-**Acceptance criteria:**
-- [ ] Closing a feature as wontfix creates/updates a file in `.out-of-scope/`
-- [ ] The file includes the decision, reasoning, and link to the closed issue
-- [ ] If a matching `.out-of-scope/` file already exists, the new issue is
-      appended to its "Prior requests" list rather than creating a duplicate
-- [ ] During triage, existing `.out-of-scope/` files are checked and surfaced
-      when a new issue matches a prior rejection
+**Критерии приёмки:**
+- [ ] Описания короче 1024 символов не меняются
+- [ ] Описания длиннее 1024 символов обрезаются на последней границе слова
+      до 1024 символов
+- [ ] Обрезанные описания заканчиваются на "..."
+- [ ] Итоговая длина, включая "...", не превышает 1024 символа
 
-**Out of scope:**
-- Automated matching (human confirms the match)
-- Reopening previously rejected features
-- Bug reports (only enhancement rejections go to `.out-of-scope/`)
+**Вне скоупа:**
+- Изменение самого лимита в 1024 символа
+- Поддержка многострочных описаний
 ```
 
-### Good agent brief (PR)
-
-For a PR, "Current behavior" describes the state of the diff, and the brief asks the agent to finish or fix it rather than build from scratch.
+### Хороший бриф для агента (enhancement)
 
 ```markdown
-## Agent Brief
+## Бриф для агента
 
-**Category:** enhancement
-**Summary:** Finish the contributor's `--json` output flag for `triage list`
+**Категория:** enhancement
+**Сводка:** Добавить поддержку каталога `.out-of-scope/` для учёта отклонённых запросов фич
 
-**Current behavior:**
-The PR adds a `--json` flag that serializes the issue list to JSON. The happy
-path works and the diff matches the project's command structure. Two gaps
-remain: errors are still printed as human text (not JSON), and the new flag has
-no test coverage.
+**Текущее поведение:**
+Когда запрос фичи отклоняют, issue закрывают с меткой `wontfix`
+и комментарием. Постоянной записи о решении и обосновании нет.
+При следующих похожих запросах мейнтейнеру приходится вспоминать или искать
+прошлое обсуждение.
 
-**Desired behavior:**
-With `--json`, all output (including errors) is well-formed JSON on stdout,
-and the command's exit codes are unchanged. The existing human-readable output
-is untouched when the flag is absent.
+**Желаемое поведение:**
+Отклонённые запросы фич должны документироваться в файлах
+`.out-of-scope/<concept>.md`, которые фиксируют решение, обоснование
+и ссылки на все issue, где запрашивали эту фичу. При триаже новых issue
+эти файлы должны проверяться на совпадения.
 
-**Key interfaces:**
-- The command's error path should emit `{ "error": string }` under `--json`
-  instead of the plain-text error
-- Reuse the existing serializer the PR already added; don't introduce a second
+**Ключевые интерфейсы:**
+- Формат markdown-файлов в `.out-of-scope/`: в каждом файле должен быть
+  заголовок `# Имя понятия`, строка `**Решение:**`, строка `**Причина:**`
+  и список `**Предыдущие запросы:**` со ссылками на issue
+- Процесс триажа должен в начале читать все файлы `.out-of-scope/*.md`
+  и сопоставлять с ними входящие issue по сходству понятий
 
-**Acceptance criteria:**
-- [ ] `triage list --json` emits valid JSON for both success and error cases
-- [ ] Exit codes match the non-JSON command
-- [ ] A test covers the `--json` success output and one error case
-- [ ] Default (non-JSON) output is byte-for-byte unchanged
+**Критерии приёмки:**
+- [ ] Закрытие фичи как wontfix создаёт/обновляет файл в `.out-of-scope/`
+- [ ] Файл содержит решение, обоснование и ссылку на закрытый issue
+- [ ] Если подходящий файл в `.out-of-scope/` уже есть, новый issue
+      добавляется в его список «Предыдущие запросы», а не создаётся дубликат
+- [ ] В ходе триажа существующие файлы `.out-of-scope/` проверяются
+      и показываются, когда новый issue совпадает с прежним отказом
 
-**Out of scope:**
-- Adding `--json` to any other command
-- Changing the JSON shape of the success payload the PR already defined
+**Вне скоупа:**
+- Автоматическое сопоставление (совпадение подтверждает человек)
+- Повторное открытие ранее отклонённых фич
+- Баг-репорты (в `.out-of-scope/` попадают только отказы по enhancement)
 ```
 
-### Bad agent brief
+### Хороший бриф для агента (PR)
+
+Для PR «Текущее поведение» описывает состояние диффа, и бриф просит агента довести или починить его, а не строить с нуля.
 
 ```markdown
-## Agent Brief
+## Бриф для агента
 
-**Summary:** Fix the triage bug
+**Категория:** enhancement
+**Сводка:** Довести флаг вывода `--json` контрибьютора для `triage list`
 
-**What to do:**
-The triage thing is broken. Look at the main file and fix it.
-The function around line 150 has the issue.
+**Текущее поведение:**
+PR добавляет флаг `--json`, который сериализует список issue в JSON.
+Happy path работает, и дифф соответствует структуре команд проекта.
+Остаются два пробела: ошибки по-прежнему печатаются как человеческий текст
+(не JSON), и новый флаг не покрыт тестами.
 
-**Files to change:**
-- src/triage/handler.ts (line 150)
-- src/types.ts (line 42)
+**Желаемое поведение:**
+С `--json` весь вывод (включая ошибки) — корректный JSON в stdout,
+а коды возврата команды не меняются. Существующий человекочитаемый вывод
+не затрагивается, когда флаг не передан.
+
+**Ключевые интерфейсы:**
+- Путь ошибки команды при `--json` должен выдавать `{ "error": string }`
+  вместо простого текста ошибки
+- Переиспользуйте существующий сериализатор, который PR уже добавил;
+  не вводите второй
+
+**Критерии приёмки:**
+- [ ] `triage list --json` выдаёт валидный JSON и при успехе, и при ошибке
+- [ ] Коды возврата совпадают с командой без `--json`
+- [ ] Тест покрывает успешный вывод `--json` и один случай ошибки
+- [ ] Вывод по умолчанию (без JSON) побайтово не изменился
+
+**Вне скоупа:**
+- Добавление `--json` в любую другую команду
+- Изменение JSON-формы успешного ответа, которую PR уже определил
 ```
 
-This is bad because:
-- No category
-- Vague description ("the triage thing is broken")
-- References file paths and line numbers that will go stale
-- No acceptance criteria
-- No scope boundaries
-- No description of current vs desired behavior
+### Плохой бриф для агента
+
+```markdown
+## Бриф для агента
+
+**Сводка:** Починить баг в триаже
+
+**Что делать:**
+Штука с триажем сломана. Посмотри главный файл и почини.
+Проблема в функции около строки 150.
+
+**Файлы для изменения:**
+- src/triage/handler.ts (строка 150)
+- src/types.ts (строка 42)
+```
+
+Это плохо, потому что:
+- Нет категории
+- Расплывчатое описание («штука с триажем сломана»)
+- Ссылки на пути к файлам и номера строк, которые устареют
+- Нет критериев приёмки
+- Нет границ скоупа
+- Нет описания текущего и желаемого поведения

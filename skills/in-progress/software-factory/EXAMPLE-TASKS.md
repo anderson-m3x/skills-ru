@@ -1,80 +1,80 @@
-# Example tasks
+# Примеры задач
 
-Tasks grouped by the problem they solve. Each names the trigger that starts its runs, what a run does, and what it triggers next. Most factories start as one of these and grow by chaining the next.
+Задачи сгруппированы по проблеме, которую они решают. В каждой указан триггер, который начинает её запуски, что делает запуск и что он запускает дальше. Большинство фабрик начинаются с одной из них и растут, пристёгивая следующую.
 
-## Untriaged tickets pile up
+## Неразобранные тикеты копятся
 
-**Explore task**
-- Trigger: a ticket is created, or a human labels it.
-- Does: checks the ticket's claims against the codebase, reproducing them where it can, sorts it into a category (easy call, needs a human, not a bug), and leaves its findings on the ticket for the implementer. It never pushes.
-- Triggers: an implementer run for easy calls. Anything else ends with the ticket labelled as waiting for a human.
+**Задача explore**
+- Триггер: тикет создан или человек ставит на него метку.
+- Делает: проверяет утверждения тикета по кодовой базе, по возможности воспроизводя их, относит его к категории (easy call, needs a human, not a bug) и оставляет свои находки в тикете для исполнителя. Она никогда не пушит.
+- Запускает: запуск исполнителя для easy call. Всё остальное заканчивается тем, что тикет помечается как ждущий человека.
 
-## Ready tickets wait for someone to build them
+## Готовые тикеты ждут, пока их кто-нибудь построит
 
-**Implementer task**
-- Trigger: a ticket is labelled ready, by a human or an explore run.
-- Does: builds the ticket until the automated checks pass, and opens a draft PR.
-- Triggers: an automated review run.
+**Задача-исполнитель**
+- Триггер: на тикет поставлена метка ready — человеком или запуском explore.
+- Делает: доводит тикет, пока не пройдут автоматические проверки, и открывает драфт-PR.
+- Запускает: запуск автоматического ревью.
 
-## PRs wait for review
+## PR ждут ревью
 
-**Automated review task**
-- Trigger: a PR opens with no automated review yet, or a human labels it.
-- Does: reviews the diff against the codebase's standards and the ticket it came from.
-- Triggers: a rework run on a fail. On a pass it ends, and the PR waits for human review before a human merges it.
+**Задача автоматического ревью**
+- Триггер: PR открывается, автоматического ревью у него ещё нет, или человек ставит на него метку.
+- Делает: ревьюит диф на соответствие стандартам кодовой базы и тикету, из которого он пришёл.
+- Запускает: запуск доработки при провале. При успехе она завершается, и PR ждёт человеческого ревью, пока человек его не смержит.
 
-## Failed automated reviews sit unfixed
+## Проваленные автоматические ревью лежат неисправленными
 
-**Rework task**
-- Trigger: an automated review run fails a PR.
-- Does: fixes only what the automated review named, and pushes.
-- Triggers: an automated review run. After a set number of fails, it ends with the PR labelled as waiting for a human.
+**Задача доработки**
+- Триггер: запуск автоматического ревью проваливает PR.
+- Делает: исправляет только то, что назвало автоматическое ревью, и пушит.
+- Запускает: запуск автоматического ревью. После заданного числа провалов она завершается, а PR помечается как ждущий человека.
 
-## Specs are too big for one run
+## Спеки слишком велики для одного запуска
 
-**Decompose task**
-- Trigger: a spec ticket is labelled.
-- Does: splits the spec into tickets, each recording which tickets it depends on.
-- Triggers: an implementer run.
+**Задача декомпозиции**
+- Триггер: на спек-тикет поставлена метка.
+- Делает: разбивает спеку на тикеты, каждый из которых фиксирует, от каких тикетов он зависит.
+- Запускает: запуск исполнителя.
 
-The implementer run here picks the next ticket whose dependencies are all closed, and triggers itself again until no ticket is left.
+Здешний запуск исполнителя берёт следующий тикет, все зависимости которого закрыты, и запускает себя снова, пока не останется ни одного тикета.
 
-## Migrating to a stricter automated check
+## Переход на более строгую автоматическую проверку
 
-A new lint rule (or a stricter type setting) is switched on, but only some files pass it. The rule enforces on the passing files, and the failing ones sit on an exception list.
+Новое правило линта (или более строгая настройка типов) включено, но проходит его только часть файлов. Правило действует на проходящих файлах, а падающие лежат в списке исключений.
 
-**Ratchet task**
-- Trigger: a daily clock.
-- Does: takes one file off the exception list, fixes it until the stricter check passes, and opens a PR.
-- Triggers: an automated review run. Once the exception list is empty, the ratchet run has nothing to take and the migration is done.
+**Задача ratchet**
+- Триггер: ежедневный таймер.
+- Делает: берёт один файл из списка исключений, исправляет его, пока не пройдёт более строгая проверка, и открывает PR.
+- Запускает: запуск автоматического ревью. Как только список исключений опустеет, запуску ratchet нечего взять, и миграция завершена.
 
-One small PR a day keeps human review cheap, and the check only ever gets stricter.
+Один маленький PR в день делает человеческое ревью дешёвым, а проверка только ужесточается.
 
-## Users report bugs nobody reads
+## Пользователи сообщают о багах, которые никто не читает
 
-A feedback button in the app is a ticket source: it files each report as a ticket with the explore label already on it. The explore run does the rest.
+Кнопка обратной связи в приложении — это источник тикетов: она заводит каждый отчёт как тикет с уже проставленной на нём меткой explore. Остальное делает запуск explore.
 
-## Production problems are found late
+## Проблемы в проде обнаруживаются поздно
 
-A monitor (slow queries, error rates) is a ticket source. It files a ticket per problem, and comments on the open ticket instead when it sees the same problem again. After a fix merges, it reopens the ticket if the problem persists.
+Монитор (медленные запросы, частоты ошибок) — источник тикетов. Он заводит тикет на каждую проблему, а увидев ту же проблему снова, вместо этого комментирует открытый тикет. После мержа исправления он переоткрывает тикет, если проблема сохраняется.
 
-## The factory's own runs fail
+## Собственные запуски фабрики падают
 
-**Fix task**
-- Trigger: the orchestrator reports a failed run.
-- Does: files the failing log as a ticket, and attempts a fix as a PR when the failure is fixable.
-- Triggers: an automated review run. A failure in a fix run's own work triggers nothing, so fixes never chain. Because the fix changes the factory itself, it always gets human review.
+**Задача исправления**
+- Триггер: оркестратор сообщает о проваленном запуске.
+- Делает: заводит тикет из лога падения и, когда сбой исправим, пытается сделать исправление как PR.
+- Запускает: запуск автоматического ревью. Сбой в собственной работе запуска исправления не запускает ничего, поэтому исправления никогда не выстраиваются в цепочку. Поскольку исправление меняет саму фабрику, оно всегда получает человеческое ревью.
 
-## The codebase drifts
+## Кодовая база дрейфует
 
-**Architecture task**
-- Trigger: a nightly clock.
-- Does: scans recent changes for refactoring candidates and files them as one ticket.
-- Triggers: nothing. A human picks a candidate and labels it, which starts the usual chain.
+**Задача архитектуры**
+- Триггер: ночной таймер.
+- Делает: просматривает недавние изменения на предмет кандидатов на рефакторинг и заводит их одним тикетом.
+- Запускает: ничего. Человек выбирает кандидата и ставит на него метку, что запускает обычную цепочку.
 
-## The same mistakes keep coming back
+## Одни и те же ошибки возвращаются
 
-**Retro task**
-- Trigger: a PR merges, throttled to one merged PR in ten.
-- Does: reads the PR, its ticket, its automated reviews and its run logs, and proposes changes to the factory's own instructions as a PR.
-- Triggers: an automated review run.
+**Задача ретро**
+- Триггер: PR смержен, с дросселированием до одного смерженного PR из десяти.
+- Делает: читает PR, его тикет, его автоматические ревью и логи его запусков и предлагает изменения в собственные инструкции фабрики в виде PR.
+- Запускает: запуск автоматического ревью.

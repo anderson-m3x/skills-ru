@@ -1,37 +1,37 @@
-# Deepening
+# Углубление
 
-How to deepen a cluster of shallow modules safely, given its dependencies. Assumes the vocabulary in [SKILL.md](SKILL.md): **module**, **interface**, **seam**, **adapter**.
+Как безопасно углубить кластер мелких модулей с учётом его зависимостей. Предполагает словарь из [SKILL.md](SKILL.md): **модуль**, **интерфейс**, **шов**, **адаптер**.
 
-## Dependency categories
+## Категории зависимостей
 
-When assessing a candidate for deepening, classify its dependencies. The category determines how the deepened module is tested across its seam.
+Оценивая кандидата на углубление, классифицируй его зависимости. Категория определяет, как углублённый модуль тестируется через свой шов.
 
-### 1. In-process
+### 1. Внутри процесса
 
-Pure computation, in-memory state, no I/O. Always deepenable: merge the modules and test through the new interface directly. No adapter needed.
+Чистые вычисления, состояние в памяти, без I/O. Углубляется всегда: объедини модули и тестируй напрямую через новый интерфейс. Адаптер не нужен.
 
-### 2. Local-substitutable
+### 2. Локально заменяемые
 
-Dependencies that have local test stand-ins (PGLite for Postgres, in-memory filesystem). Deepenable if the stand-in exists. The deepened module is tested with the stand-in running in the test suite. The seam is internal; no port at the module's external interface.
+Зависимости, у которых есть локальные тестовые подстановки (PGLite для Postgres, файловая система в памяти). Углубляемо, если подстановка существует. Углублённый модуль тестируется с подстановкой, запущенной в наборе тестов. Шов внутренний; никакого порта на внешнем интерфейсе модуля.
 
-### 3. Remote but owned (Ports & Adapters)
+### 3. Удалённые, но свои (Ports & Adapters)
 
-Your own services across a network boundary (microservices, internal APIs). Define a **port** (interface) at the seam. The deep module owns the logic; the transport is injected as an **adapter**. Tests use an in-memory adapter. Production uses an HTTP/gRPC/queue adapter.
+Свои сервисы за сетевой границей (микросервисы, внутренние API). Определи **порт** (интерфейс) на шве. Глубокий модуль владеет логикой; транспорт внедряется как **адаптер**. Тесты используют адаптер в памяти. Продакшен использует HTTP/gRPC/queue-адаптер.
 
-Recommendation shape: *"Define a port at the seam, implement an HTTP adapter for production and an in-memory adapter for testing, so the logic sits in one deep module even though it's deployed across a network."*
+Форма рекомендации: *«Определи порт на шве, реализуй HTTP-адаптер для продакшена и адаптер в памяти для тестов, чтобы логика находилась в одном глубоком модуле, хотя он развёрнут по сети.»*
 
-### 4. True external (Mock)
+### 4. Действительно внешние (Mock)
 
-Third-party services (Stripe, Twilio, etc.) you don't control. The deepened module takes the external dependency as an injected port; tests provide a mock adapter.
+Сторонние сервисы (Stripe, Twilio и т. п.), которые ты не контролируешь. Углублённый модуль принимает внешнюю зависимость как внедряемый порт; тесты предоставляют мок-адаптер.
 
-## Seam discipline
+## Дисциплина швов
 
-- **One adapter means a hypothetical seam. Two adapters means a real one.** Don't introduce a port unless at least two adapters are justified (typically production + test). A single-adapter seam is just indirection.
-- **Internal seams vs external seams.** A deep module can have internal seams (private to its implementation, used by its own tests) as well as the external seam at its interface. Don't expose internal seams through the interface just because tests use them.
+- **Один адаптер — гипотетический шов. Два адаптера — настоящий.** Не вводи порт, пока не оправданы как минимум два адаптера (обычно продакшен + тест). Шов с единственным адаптером — просто лишняя косвенность.
+- **Внутренние швы против внешних.** У глубокого модуля могут быть внутренние швы (приватные для его реализации, используемые его собственными тестами) и внешний шов на его интерфейсе. Не выставляй внутренние швы через интерфейс только потому, что их используют тесты.
 
-## Testing strategy: replace, don't layer
+## Стратегия тестирования: заменяй, а не наслаивай
 
-- Old unit tests on shallow modules become waste once tests at the deepened module's interface exist; delete them.
-- Write new tests at the deepened module's interface. The **interface is the test surface**.
-- Tests assert on observable outcomes through the interface, not internal state.
-- Tests should survive internal refactors, since they describe behaviour, not implementation. If a test has to change when the implementation changes, it's testing past the interface.
+- Старые юнит-тесты на мелких модулях становятся балластом, как только появляются тесты на интерфейсе углублённого модуля; удали их.
+- Пиши новые тесты на интерфейсе углублённого модуля. **Интерфейс — это поверхность тестирования**.
+- Тесты проверяют наблюдаемые результаты через интерфейс, а не внутреннее состояние.
+- Тесты должны переживать внутренние рефакторинги, поскольку описывают поведение, а не реализацию. Если тест приходится менять при изменении реализации, он тестирует в обход интерфейса.

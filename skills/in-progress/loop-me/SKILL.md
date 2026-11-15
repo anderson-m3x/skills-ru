@@ -1,32 +1,32 @@
 ---
 name: loop-me
-description: Grill me about specs for the workflows I want to build, within this workspace.
+description: Гриллить меня про спеки workflow, которые я хочу построить, в пределах этого воркспейса.
 disable-model-invocation: true
-argument-hint: "A workflow to design, or nothing to go find one"
+argument-hint: "Workflow для проектирования или ничего, чтобы найти его"
 ---
 
-Run a stateful `/grilling` session whose only output is **workflow** specs. Use the grilling discipline (relentless, a round of questions at a time, a recommended answer attached to each) aimed at the vocabulary and goal below. Create, edit, and delete specs as the grilling resolves things.
+Проведи stateful-сессию скилла grilling, единственный результат которой — спеки **workflow**. Используй дисциплину грилла (безжалостно, по раунду вопросов за раз, с рекомендованным ответом к каждому), нацеленную на словарь и цель ниже. Создавай, правь и удаляй спеки по мере того, как грилл всё проясняет.
 
-## The loop lens
+## Линза петель
 
-A **loop** is a recurring pattern in the user's life: their career, their week, their morning, a single repeated activity. Picturing a life as loops within loops reveals how predictable its activities really are, which is what makes them worth **delegating**. Use the lens to find loops worth specifying, and propose ones the user hasn't noticed.
+**Петля** — повторяющийся паттерн в жизни пользователя: его карьера, его неделя, его утро, отдельная повторяющаяся активность. Если представить жизнь как петли внутри петель, видно, насколько предсказуемы её активности, — именно это делает их достойными **делегирования**. Используй линзу, чтобы находить петли, достойные спеки, и предлагай те, которых пользователь не заметил.
 
-A **workflow** is the spec of one loop, made real. You run a workflow on a loop: the loop is its running instantiation. Workflows live in `workflows/*.md` and are the source of truth.
+**Workflow** — это спека одной петли, воплощённая в жизнь. Ты запускаешь workflow на петле: петля — его работающая инстанциация. Workflow живут в `workflows/*.md` и являются источником истины.
 
-## Vocabulary
+## Словарь
 
-A shared language, reached for only when a workflow calls for it: never a checklist. **Mandate nothing structural**: a workflow needs no AI, no checkpoint, and no schedule unless the grilling shows it does.
+Общий язык, к которому прибегают, только когда workflow это требует: никогда не чеклист. **Ничего структурного не навязывай**: workflow не нужен ни ИИ, ни чекпойнт, ни расписание, если грилл не показывает, что нужен.
 
-- **Trigger**: what fires each run, an **event** (a new email, a new issue) or a **schedule** (every morning). Event-triggering is usually the more efficient.
-- **Checkpoint**: a human-in-the-loop point where the user is asked to verify or decide. Some workflows have none and run autonomously; some use no AI at all.
-- **Push right**: defer the checkpoint as far as it will go. Do maximal work before involving the human, so they are asked once, late, with everything prepared.
-- **Brief**: what a checkpoint presents, a tight, decision-ready summary (what was produced, why, and a link down to the asset itself), never the raw output. The user reads a brief, not a draft. Speed of review is imperative.
+- **Триггер**: что запускает каждый прогон — **событие** (новое письмо, новый issue) или **расписание** (каждое утро). Триггер по событию обычно эффективнее.
+- **Чекпойнт**: точка с человеком в цикле, где пользователя просят проверить или решить. Некоторые workflow обходятся без него и работают автономно; некоторые вообще не используют ИИ.
+- **Push right**: откладывай чекпойнт максимально далеко. Делай максимум работы до привлечения человека, чтобы его спрашивали один раз, поздно, со всем подготовленным.
+- **Бриф**: то, что предъявляет чекпойнт, — плотное саммари, готовое к решению (что сделано, почему и ссылка вниз на сам актив), никогда не сырой вывод. Пользователь читает бриф, а не черновик. Скорость ревью критична.
 
-## Definition of done
+## Определение готовности
 
-A workflow spec is done when an implementer agent could build it without asking a single question. Grill until then; nothing is done while a question remains.
+Спека workflow готова, когда агент-исполнитель мог бы построить её, не задав ни одного вопроса. Грилли до этого; ничего не готово, пока остаётся вопрос.
 
-## The workspace
+## Воркспейс
 
-- `workflows/*.md`: one spec per workflow.
-- `NOTES.md`: raw notes on the user's world, the tools they use, the channels they process, and their own terminology for both. When it is empty or thin, interview them about their world before specifying anything. Sharpen fuzzy terms into canonical ones as they surface, and record them here.
+- `workflows/*.md`: одна спека на workflow.
+- `NOTES.md`: сырые заметки о мире пользователя, инструментах, которыми он пользуется, каналах, которые он обрабатывает, и его собственной терминологии для того и другого. Когда файл пуст или скуден, интервьюируй его про его мир, прежде чем что-то специфицировать. Заостряй размытые термины в канонические по мере их появления и записывай их здесь.

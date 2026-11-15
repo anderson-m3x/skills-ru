@@ -1,6 +1,6 @@
 ---
 name: pr
-description: "Use when writing a PR body."
+description: "Используй при написании тела PR."
 metadata:
   credits:
     skill: show-me
@@ -9,38 +9,38 @@ metadata:
     url: "https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md"
 ---
 
-Use this template for writing the PR body:
+Используй этот шаблон для написания тела PR:
 
 ```markdown
-## Summary
+## Сводка
 
-<diagram, diff-sketch, or tree>
+<диаграмма, diff-скетч или дерево>
 
-## Evidence
+## Доказательства
 
-- **Before:** <screenshot/output/failing test run>
-  **After:** <screenshot/output/passing test run>
+- **До:** <скриншот/вывод/упавший прогон тестов>
+  **После:** <скриншот/вывод/прошедший прогон тестов>
 
-## Merge Danger
+## Риск мержа
 
-**Door:** <one-way or two-way>
+**Дверь:** <односторонняя или двусторонняя>
 
-<optional: description>
+<опционально: описание>
 
-**Blast Radius:** <one-word description>
+**Радиус поражения:** <описание одним словом>
 
-<optional: potential ramifications of merge>
+<опционально: потенциальные последствия мержа>
 ```
 
-## Sections
+## Разделы
 
-Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
+Пропускай все преамбулы и держи прозу краткой. Используй доменный язык пользователя из `GLOSSARY.md`.
 
-### Summary
+### Сводка
 
-Pick the smallest view that makes the key point clear.
+Выбери наименьшее представление, которое делает ключевой момент ясным.
 
-- Show logic or an algorithm as pseudocode:
+- Покажи логику или алгоритм как псевдокод:
 
 ```text
 on(save)
@@ -50,7 +50,7 @@ on(save)
   return fresh result
 ```
 
-- Show runtime control flow as a call tree:
+- Покажи поток управления во время выполнения как дерево вызовов:
 
 ```text
 submitForm
@@ -60,7 +60,7 @@ submitForm
   navigateToSession
 ```
 
-- Show UI structure as a component tree, including state and module boundaries that matter:
+- Покажи структуру UI как дерево компонентов, включая состояние и значимые границы модулей:
 
 ```text
 <SessionPage> (apps/example/src/routes/session.tsx)
@@ -69,16 +69,16 @@ submitForm
     <RunSkillButton> (packages/ui)
 ```
 
-- Show file responsibility or a broad refactor as a shallow file tree:
+- Покажи ответственность файлов или широкий рефакторинг как неглубокое дерево файлов:
 
 ```text
 src/
-├── commands/       # parses user actions
-├── sessions/       # owns session state
-└── transport/      # sends API requests
+├── commands/       # разбирает действия пользователя
+├── sessions/       # владеет состоянием сессии
+└── transport/      # отправляет API-запросы
 ```
 
-- Show component interaction, control flow, or data flow with Mermaid:
+- Покажи взаимодействие компонентов, поток управления или поток данных через Mermaid:
 
 ```mermaid
 sequenceDiagram
@@ -90,9 +90,9 @@ sequenceDiagram
     Daemon-->>UI: stream result
 ```
 
-- Use `diff` when the point is what changes and the surrounding shape already exists. Match the diff shape to the topic.
+- Используй `diff`, когда суть в том, что меняется, а окружающая форма уже есть. Подгоняй форму diff под тему.
 
-For a component change:
+Для изменения компонента:
 
 ```diff
  <SessionPage>
@@ -103,12 +103,12 @@ For a component change:
 +    <SkillResultCard />
 ```
 
-For a file-layout change:
+Для изменения раскладки файлов:
 
 ```diff
  src/
  ├── commands/
-+│   └── show-me.ts       # expands the slash command
++│   └── show-me.ts       # разворачивает слэш-команду
  ├── sessions/
 -└── transport.ts
 +└── transport/
@@ -116,7 +116,7 @@ For a file-layout change:
 +    └── stream.ts
 ```
 
-For a call-tree or call-stack change:
+Для изменения дерева или стека вызовов:
 
 ```diff
  submitForm
@@ -129,7 +129,7 @@ For a call-tree or call-stack change:
 +    subscribeToEvents
 ```
 
-For a state or control-flow change:
+Для изменения состояния или потока управления:
 
 ```diff
  on(save)
@@ -140,7 +140,7 @@ For a state or control-flow change:
 +  invalidate cache
 ```
 
-- Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
+- Показывай блок целиком, когда большая его часть новая, когда опущенный контекст скрыл бы владение или порядок, или когда пользователю нужна копируемая целевая форма:
 
 ```ts
 function expandSkill(command: string): string {
@@ -149,22 +149,22 @@ function expandSkill(command: string): string {
 }
 ```
 
-#### Guidance
+#### Рекомендации
 
-Place each visual next to the short text it supports. Keep only the calls, files, props, states, and boundaries needed to answer the user's current question or the options to resolve the current discussion point.
+Ставь каждый визуал рядом с коротким текстом, который он поддерживает. Оставляй только вызовы, файлы, пропсы, состояния и границы, нужные для ответа на текущий вопрос пользователя или для вариантов решения текущего пункта обсуждения.
 
-You may use one of these, you may use several, it is unlikely you will use all of them. Use your judgement and don't overwhelm the user.
+Можешь использовать один из них, можешь несколько — вряд ли понадобятся все. Полагайся на своё суждение и не перегружай пользователя.
 
-### Evidence
+### Доказательства
 
-Concrete evidence that the change works. Show a before and after.
+Конкретные доказательства того, что изменение работает. Покажи «до» и «после».
 
-Screenshots are S-tier - when the environment is set up for it and the change is visual.
+Скриншоты — S-уровень, когда окружение для этого настроено и изменение визуальное.
 
-Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
+Доказательства на основе выполнения — A-уровень. Результаты тестов, вывод в консоль. Покажи точный тест, который теперь падает и проходит, через псевдокод.
 
-### Merge Danger
+### Риск мержа
 
-Describe whether it's a one-way or two-way door. You can walk back through two-way doors, but not one-way doors. A PR that is cheap to roll back is lower risk. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors.
+Опиши, односторонняя это дверь или двусторонняя. Через двусторонние двери можно вернуться, через односторонние — нет. PR, который дёшево откатить, менее рискован. Изменения, связанные с деструктивными действиями или трудно обратимыми решениями, — односторонние двери.
 
-The blast radius is the potential impact or scope of the changes introduced by this PR. Consider all possibilities. Examples are layout shift, breakages for consumers, mobile responsiveness, etc.
+Радиус поражения — потенциальное влияние или охват изменений, вносимых этим PR. Рассмотри все возможности. Примеры: сдвиг раскладки, поломки для потребителей, мобильная адаптивность и т. п.

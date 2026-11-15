@@ -1,42 +1,42 @@
 ---
 name: implement-spec
-description: "Implement the result of /to-spec and /to-tickets in code."
+description: "Реализуй в коде результат скиллов to-spec и to-tickets."
 disable-model-invocation: true
 ---
 
-You have been provided a spec. This spec should have tickets associated with it, describing how to implement the spec.
+Тебе передали спеку. У этой спеки должны быть связанные тикеты, описывающие, как спеку реализовать.
 
-The issue tracker should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`.
+Трекер задач должен быть тебе предоставлен. Если нет — скажи пользователю запустить скилл `setup-matt-pocock-skills`.
 
-The goal is the entire spec implemented on a single **integration branch**, with every ticket resolved the way the issue tracker closes work.
+Цель — вся спека, реализованная в одной **интеграционной ветке**, при этом каждый тикет закрыт так, как это делает трекер задач.
 
-The tickets are not a list of steps. They are a **task graph** with blocking relationships between them. This means there is always a **frontier** of tickets which are ready to be grabbed.
+Тикеты — это не список шагов. Это **граф задач** с отношениями блокировки между ними. Значит, всегда есть **фронт** тикетов, готовых к взятию.
 
-Start every subagent with a fresh context window.
+Начинай каждого субагента (инструмент subagent) со свежим контекстным окном.
 
-Communication to and from subagents should be sparse. Communicate primarily through **context pointers**: to the spec, tickets, research notes, and previous commits. Don't duplicate information already available via pointers.
+Общение с субагентами и от них должно быть редким. Общайся в первую очередь через **указатели на контекст**: спеку, тикеты, заметки по исследованию и предыдущие коммиты. Не дублируй информацию, уже доступную по указателям.
 
-**Implementer subagents** should be run in the background where possible for maximum concurrency.
+**Субагентов-реализаторов** по возможности запускай в фоне для максимальной параллельности.
 
-## Steps
+## Шаги
 
-1. Read the spec and tickets to understand the task graph.
+1. Прочитай спеку и тикеты, чтобы понять граф задач.
 
-2. (optional) Use an **exploration subagent** to conduct any exploration required by the tickets - relevant codebase files or external documentation. Ensure the exploration subagent can save files - it should save its markdown notes in a directory outside the repo, accessible by all future subagents. This lets **implementer subagents** focus on implementation rather than exploration.
+2. (опционально) Используй **субагента-исследователя** для любого исследования, которого требуют тикеты, — релевантные файлы кодовой базы или внешняя документация. Убедись, что субагент-исследователь может сохранять файлы: он должен сохранять свои markdown-заметки в директории вне репозитория, доступной всем будущим субагентам. Это позволяет **субагентам-реализаторам** сосредоточиться на реализации, а не на исследовании.
 
-3. Create the integration branch. If the issue tracker closes work through PRs, or the user asks for one, open a draft PR after the first merge in step 5 (a branch with no commits ahead of main can't open one), marked as closing the spec and tickets.
+3. Создай интеграционную ветку. Если трекер задач закрывает работу через PR или пользователь просит PR, открой черновик PR после первого мержа на шаге 5 (ветка без коммитов впереди main не позволяет открыть PR), помеченный как закрывающий спеку и тикеты.
 
-4. Use a fresh **implementer subagent** for each ticket, each in its own worktree on its own branch. Each implementer subagent:
-   - confirms its worktree is based on the integration branch before starting, and resets onto it if not;
-   - calls the Skill tool with `tdd` to build the ticket;
-   - merges the integration branch tip into its own branch before reporting done
+4. Для каждого тикета используй свежего **субагента-реализатора**, каждого в своём worktree и на своей ветке. Каждый субагент-реализатор:
+   - перед началом подтверждает, что его worktree основан на интеграционной ветке, и если нет — сбрасывает его на неё;
+   - вызывает инструмент `skill` с `tdd`, чтобы собрать тикет;
+   - перед отчётом о готовности вливает верхушку интеграционной ветки в свою ветку
 
-5. Once an **implementer subagent** completes, merge its work to the integration branch with a **merger subagent**.
+5. Когда **субагент-реализатор** завершил работу, влей его работу в интеграционную ветку с помощью **субагента-мержера**.
 
-6. If this changes the **frontier** of available tickets, kick off more **implementer subagents** to work on the new tickets. This allows for maximum concurrency.
+6. Если это меняет **фронт** доступных тикетов, запусти ещё **субагентов-реализаторов** для новых тикетов. Так достигается максимальная параллельность.
 
-7. Once all tickets are complete, call the Skill tool with `code-review` on the integration branch. Fix all issues raised by the code review in a single fresh **implementer subagent**.
+7. Когда все тикеты завершены, вызови инструмент `skill` с `code-review` на интеграционной ветке. Исправь все замечания код-ревью в одном свежем **субагенте-реализаторе**.
 
-8. If a draft PR exists, mark it ready for review. Otherwise, resolve each ticket the way the issue tracker closes work, and report the integration branch.
+8. Если черновик PR существует, отметь его готовым к ревью. Иначе закрой каждый тикет так, как это делает трекер задач, и сообщи об интеграционной ветке.
 
-9. Clean up all **implementer subagent** worktrees.
+9. Убери все worktree **субагентов-реализаторов**.

@@ -1,84 +1,84 @@
-# Git hosts
+# Git-хосты
 
-> Surveyed 2026-10, and not guaranteed to be up to date. Use it to get oriented, then research the current options yourself: products, prices, limits and betas change fast.
+> Обзор на 2026-10, актуальность не гарантируется. Используйте его, чтобы сориентироваться, а затем исследуйте текущие варианты сами: продукты, цены, лимиты и беты меняются быстро.
 
-## The types
+## Типы
 
-### All-in-one platforms
+### Платформы «всё в одном»
 
-The git host bundled with a ticket tracker, a CI system that serves as orchestrator, and hosted runners, all sharing one event stream and one permission model. One product fills git host, ticket tracker, orchestrator and runner, and its CI run pages often cover the observability platform too. Every PR, review, label and check event is both a webhook and a native trigger, so this type has the richest trigger catalogue.
+Git-хост, идущий в комплекте с трекером задач, CI-системой, которая служит оркестратором, и хостируемыми раннерами, — всё на одном потоке событий и одной модели прав. Один продукт закрывает git-хост, трекер задач, оркестратор и раннер, а его страницы CI-прогонов часто покрывают и слот платформы наблюдаемости. Каждое событие PR, ревью, метки и проверки — одновременно вебхук и нативный триггер, поэтому у этого типа самый богатый каталог триггеров.
 
-**Pick it when** the factory starts small, the code already lives there, or the user wants one bill and one login. This is the "All on GitHub" design in [SKILL.md](SKILL.md). The vendors also ship their own agents, which either compete with the user's runs or slot in as one of them.
+**Берите, когда** фабрика стартует с малого, код уже там живёт или пользователь хочет один счёт и один логин. Это дизайн «All on GitHub» в [SKILL.md](SKILL.md). Вендоры также выпускают собственных агентов, которые либо конкурируют с прогонами пользователя, либо встраиваются как один из них.
 
-- [GitHub](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api): the default; Issues, Actions, Apps and the largest integration ecosystem.
-- [GitLab](https://about.gitlab.com/pricing/): issues, merge requests, CI/CD and runners in one product, SaaS or self-managed.
+- [GitHub](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api): вариант по умолчанию; Issues, Actions, Apps и крупнейшая экосистема интеграций.
+- [GitLab](https://about.gitlab.com/pricing/): issues, merge requests, CI/CD и раннеры в одном продукте, SaaS или self-managed.
 
-### Suite git hosts
+### Git-хосты из состава suite
 
-A git host sold as one module of a wider suite, where the ticket tracker is a sibling product (Jira, Azure Boards) joined by links and webhooks. Tracker events arrive on a second stream, so the orchestrator joins two event sources.
+Git-хост, продаваемый как один модуль более широкого suite, где трекер задач — родственный продукт (Jira, Azure Boards), связанный ссылками и вебхуками. События трекера приходят вторым потоком, поэтому оркестратор сводит два источника событий.
 
-**Pick it when** the organisation already runs the suite and its humans live in Jira or Azure Boards. The factory inherits that tracker as its human interface.
+**Берите, когда** организация уже использует этот suite и её люди живут в Jira или Azure Boards. Фабрика наследует этот трекер как свой человеческий интерфейс.
 
-- [Bitbucket Cloud](https://support.atlassian.com/bitbucket-cloud/docs/api-request-limits/): Atlassian's git host, paired with Jira and Bitbucket Pipelines.
-- [Azure DevOps (Azure Repos)](https://learn.microsoft.com/en-us/azure/devops/integrate/concepts/rate-limits): Repos, Boards, Pipelines and Entra identities in one organisation, so it fills all four slots.
-- [AWS CodeCommit](https://aws.amazon.com/blogs/devops/aws-codecommit-returns-to-general-availability/): a bare git host with IAM identities; pair it with an external tracker and CI.
+- [Bitbucket Cloud](https://support.atlassian.com/bitbucket-cloud/docs/api-request-limits/): git-хост Atlassian в паре с Jira и Bitbucket Pipelines.
+- [Azure DevOps (Azure Repos)](https://learn.microsoft.com/en-us/azure/devops/integrate/concepts/rate-limits): Repos, Boards, Pipelines и идентичности Entra в одной организации, поэтому он закрывает все четыре слота.
+- [AWS CodeCommit](https://aws.amazon.com/blogs/devops/aws-codecommit-returns-to-general-availability/): голый git-хост с идентичностями IAM; ставьте его в пару с внешним трекером и CI.
 
-### Self-hosted git hosts
+### Git-хосты с самостоятельным хостингом
 
-A git host the user runs on their own infrastructure, often beside the orchestrator and runners on the same network. The operator sets the rate limits, so the ceiling is the hardware. The user owns upgrades, backups and uptime for every slot it fills.
+Git-хост, который пользователь запускает на своей инфраструктуре, часто рядом с оркестратором и раннерами в той же сети. Лимиты задаёт оператор, так что потолок — это железо. Пользователь владеет обновлениями, бэкапами и аптаймом для каждого слота, который тот закрывает.
 
-**Pick it when** code must stay on-premises or air-gapped, the user wants zero per-seat cost, or a SaaS API budget throttles a busy factory. Forgejo and Gitea suit small teams and bundle issues plus GitHub-Actions-compatible CI; GitLab self-managed and GitHub Enterprise Server suit organisations and keep their Apps and service accounts.
+**Берите, когда** код должен оставаться on-premises или в изолированном контуре, пользователь хочет нулевую стоимость за место или бюджет на SaaS-API душит нагруженную фабрику. Forgejo и Gitea подходят небольшим командам и включают issues плюс CI, совместимый с GitHub Actions; GitLab self-managed и GitHub Enterprise Server подходят организациям и сохраняют свои Apps и служебные аккаунты.
 
-- [Forgejo](https://forgejo.org/2026-10-release-v17-0/): community-governed, lightweight, with Forgejo Actions.
-- [Gitea](https://about.gitea.com/): lightweight with Gitea Actions; also sold managed.
-- [GitLab self-managed](https://about.gitlab.com/install/) and [GitHub Enterprise Server](https://docs.github.com/en/enterprise-server@latest): the full platforms on the user's own infrastructure.
+- [Forgejo](https://forgejo.org/2026-10-release-v17-0/): управляется сообществом, лёгкий, с Forgejo Actions.
+- [Gitea](https://about.gitea.com/): лёгкий, с Gitea Actions; продаётся и как managed.
+- [GitLab self-managed](https://about.gitlab.com/install/) и [GitHub Enterprise Server](https://docs.github.com/en/enterprise-server@latest): полные платформы на инфраструктуре пользователя.
 
-### Review-first and decentralised git hosts
+### Git-хосты с ревью в первую очередь и децентрализованные
 
-Git hosts whose review model departs from the branch-and-PR shape: per-commit patchsets with voted labels, or repositories federated across user-run nodes. Most factory tooling assumes PRs, so expect to build more of the glue. In Gerrit, an automated check run votes `Verified` from a bot account and a human votes `Code-Review`.
+Git-хосты, модель ревью которых расходится с формой «ветка и PR»: патчсеты по коммитам с голосуемыми метками или репозитории, федеративные между узлами, которые держат пользователи. Большинство инструментов фабрики предполагает PR, так что будьте готовы писать больше клея. В Gerrit автотест голосует `Verified` от имени бот-аккаунта, а человек голосует `Code-Review`.
 
-**Pick it when** the user's team already reviews this way, or values federation over ecosystem.
+**Берите, когда** команда пользователя уже ревьюит так или ценит федерацию выше экосистемы.
 
-- [Gerrit](https://www.gerritcodereview.com/): patchset review with label votes; the Android and Chromium model.
-- [Tangled](https://blog.tangled.org/ci/): git hosting on the AT Protocol with stacked PRs and its own CI runner.
+- [Gerrit](https://www.gerritcodereview.com/): ревью патчсетов с голосами по меткам; модель Android и Chromium.
+- [Tangled](https://blog.tangled.org/ci/): git-хостинг на AT Protocol со стекированными PR и собственным CI-раннером.
 
-### Agent-native git hosts
+### Git-хосты, нативные для агентов
 
-New git hosts built around agents as the main authors: high commit throughput, server-side reads in place of clones, and per-agent attribution. The whole type is early (as of 2026-10), so gates and rate limits may be unpublished: ask the vendor.
+Новые git-хосты, построенные вокруг агентов как основных авторов: высокая пропускная способность по коммитам, чтение на стороне сервера вместо клонов и атрибуция по каждому агенту. Весь тип ранний (по состоянию на 2026-10), поэтому гейты и лимиты могут быть не опубликованы: спросите вендора.
 
-**Pick it when** the factory runs many concurrent runs against one large repository and clone time or API limits dominate. Pilot one on a mirror of a single repository, keeping GitHub as the fallback.
+**Берите, когда** фабрика гоняет много параллельных прогонов по одному большому репозиторию и время клонирования или лимиты API доминируют. Пилотьте один на зеркале одного репозитория, держа GitHub как запасной вариант.
 
-- [Cursor Origin](https://cursor.com/origin): from the Graphite team, with GitHub sync and signed PR, review and push webhooks.
-- [GitLab next-gen SCM](https://about.gitlab.com/blog/gitlab-next-gen-scm/): rebuilt GitLab backend with clone-free agent APIs.
+- [Cursor Origin](https://cursor.com/origin): от команды Graphite, с синхронизацией с GitHub и подписанными вебхуками PR, ревью и пуша.
+- [GitLab next-gen SCM](https://about.gitlab.com/blog/gitlab-next-gen-scm/): перестроенный бэкенд GitLab с API для агентов без клонирования.
 
-### Git storage for runs
+### Git-хранилища для прогонов
 
-Headless, API-first git repositories created by the thousand: branches, commits and diffs, with no PRs, reviews or gates. They fill half the slot, with short-lived per-repository tokens minted per run.
+Безголовые git-репозитории с API-первым подходом, создаваемые тысячами: ветки, коммиты и диффы без PR, ревью и гейтов. Они закрывают половину слота, с короткоживущими токенами на репозиторий, выпускаемыми под каждый прогон.
 
-**Pick it when** runs need cheap per-run scratch repositories or forks (a fork per ticket, an agent's working state) and the PR still lands on a full git host from the types above.
+**Берите, когда** прогонам нужны дешёвые черновые репозитории или форки на прогон (форк на тикет, рабочее состояние агента), а PR всё равно приземляется на полноценный git-хост из типов выше.
 
-- [Cloudflare Artifacts](https://www.cloudflare.com/product/artifacts/): git-compatible storage on Workers; fork a baseline per task.
-- [Pierre code.storage](https://code.storage/docs): white-label git API with ephemeral branches.
+- [Cloudflare Artifacts](https://www.cloudflare.com/product/artifacts/): git-совместимое хранилище на Workers; форкайте базовую линию под каждую задачу.
+- [Pierre code.storage](https://code.storage/docs): white-label git-API с эфемерными ветками.
 
-## Researching further
+## Что исследовать дальше
 
-Check each candidate against these questions:
+Проверьте каждого кандидата по этим вопросам:
 
-1. **Triggers**: which events (PR opened, push, review submitted, label added, check finished) reach the orchestrator as webhooks, and are deliveries signed?
-2. **Identity**: can a run act as a dedicated bot or app identity? That keeps runs attributable, lets an automated review run approve a PR another identity authored, and decides whether a run's own pushes trigger the next run.
-3. **Gates**: are required checks, required approvals and branch protection available on the user's plan and repository visibility, and can a bot sit on a bypass list?
-4. **Rate limits**: what API budget does every run on every runner share, per what unit (installation, token, user, workspace), and how does it scale?
-5. **Slots filled**: which of ticket tracker, orchestrator, runner and observability platform does the same product cover?
+1. **Триггеры**: какие события (PR открыт, пуш, ревью отправлено, метка добавлена, проверка завершена) доходят до оркестратора как вебхуки и подписаны ли доставки?
+2. **Идентичность**: может ли прогон действовать как выделенный бот или идентичность приложения? Это сохраняет атрибуцию прогонов, позволяет автоматическому ревью-прогону одобрить PR, который создала другая идентичность, и решает, запускают ли пуши самого прогона следующий прогон.
+3. **Гейты**: доступны ли обязательные проверки, обязательные одобрения и защита веток на тарифе и видимости репозитория пользователя и может ли бот быть в списке обхода?
+4. **Лимиты запросов**: какой бюджет API делят все прогоны на всех раннерах, в расчёте на какую единицу (установка, токен, пользователь, workspace), и как он масштабируется?
+5. **Какие слоты закрыты**: какие из слотов трекера задач, оркестратора, раннера и платформы наблюдаемости покрывает один и тот же продукт?
 
-Find the answers in primary sources: the REST API and webhook reference, the rate-limit page, the pricing and plan comparison page, the access-token or app docs, and the changelog or release notes.
+Ищите ответы в первоисточниках: справочник REST API и вебхуков, страница лимитов, страница цен и сравнения тарифов, документация по access-токенам или приложениям, changelog или release notes.
 
-The fastest to go stale: beta and preview status (the whole agent-native and git-storage types), rate-limit numbers, which plan unlocks gates, and availability after acquisitions, shutdowns and reopenings. As of 2026-10, for example, AWS CodeCommit had reopened to new customers and Bitbucket Data Center was sold only as a hybrid licence with Cloud.
+Быстрее всего устаревает: статус беты и превью (весь тип agent-native и тип git-хранилищ), цифры лимитов, то, какой тариф открывает гейты, и доступность после поглощений, закрытий и перезапусков. Например, по состоянию на 2026-10 AWS CodeCommit снова был открыт для новых клиентов, а Bitbucket Data Center продавался только как гибридная лицензия с Cloud.
 
-## Durable gotchas
+## Устойчивые подводные камни
 
-Verify each still holds before the design relies on it.
+Проверьте, что каждое ещё в силе, прежде чем дизайн будет на это опираться.
 
-- **GitHub `GITHUB_TOKEN` ends chains.** Events caused by the built-in Actions token start no new workflow runs (except `workflow_dispatch` and `repository_dispatch`), so a run pushing with it silently stops the next run. Give runs a GitHub App identity from day one.
-- **Gates often sit behind a paid plan.** As of 2026-10, GitHub rulesets on private repositories need Pro, Team or Enterprise, GitLab approval rules need Premium, and enforced Bitbucket merge checks need Premium.
-- **Rate limits are per identity, and the bot's type changes them.** As of 2026-10, a GitHub App installation gets 5,000 requests/hour against 1,000 for `GITHUB_TOKEN`; Bitbucket user tokens stay at the base rate while access tokens scale; Azure DevOps raises a bot's budget with its access level.
-- **Suite trackers mean two event streams.** The orchestrator joins git host and ticket tracker events itself.
+- **`GITHUB_TOKEN` в GitHub обрывает цепочки.** События, вызванные встроенным токеном Actions, не запускают новые прогоны workflow (кроме `workflow_dispatch` и `repository_dispatch`), поэтому прогон, пушнувший с ним, молча останавливает следующий. Давайте прогонам идентичность GitHub App с первого дня.
+- **Гейты часто сидят за платным тарифом.** По состоянию на 2026-10 правила rulesets в GitHub для приватных репозиториев требуют Pro, Team или Enterprise, правила одобрения в GitLab требуют Premium, а принудительные merge checks в Bitbucket требуют Premium.
+- **Лимиты запросов считаются на идентичность, и тип бота их меняет.** По состоянию на 2026-10 установка GitHub App получает 5 000 запросов/час против 1 000 для `GITHUB_TOKEN`; пользовательские токены Bitbucket остаются на базовой ставке, а access-токены масштабируются; Azure DevOps повышает бюджет бота вместе с его уровнем доступа.
+- **Трекеры из состава suite означают два потока событий.** Оркестратор сводит события git-хоста и трекера задач сам.

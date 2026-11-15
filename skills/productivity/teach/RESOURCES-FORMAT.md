@@ -1,8 +1,8 @@
-# RESOURCES.md Format
+# Формат RESOURCES.md
 
-`RESOURCES.md` is the curated set of trusted sources for this topic. Knowledge for explainers should be drawn from here, not from parametric guesses. Wisdom comes from the communities listed here.
+`RESOURCES.md` — выверенный набор заслуживающих доверия источников по теме. Знания для объяснений должны черпаться отсюда, а не из параметрических догадок. Мудрость приходит из сообществ, перечисленных здесь.
 
-## Structure
+## Структура
 
 ```md
 # {Topic} Resources
@@ -22,11 +22,11 @@
   Use for: real-time coaching feedback on lifts.
 ```
 
-## Rules
+## Правила
 
-- **High-trust only.** Prefer primary sources, recognised experts, peer-reviewed work, and communities with strong moderation. If a resource is marketing dressed as education, leave it out.
-- **Annotate every entry.** A bare link is useless in three months. Add one line: what it covers and when to reach for it.
-- **Group by Knowledge / Wisdom.** Mirrors the philosophy in [SKILL.md](./SKILL.md). It is fine for a resource to appear in only one group.
-- **Surface gaps explicitly.** If no good resource exists for an area the mission needs, write a `## Gaps` section listing what is missing. This drives future search.
-- **Prune ruthlessly.** A resource that turned out to be wrong, shallow, or off-mission should be removed, not buried. Better five sharp sources than thirty mediocre ones.
-- **Record community preferences.** If the user has opted out of joining communities, note it here so future sessions don't keep proposing them.
+- **Только высокое доверие.** Предпочитайте первичные источники, признанных экспертов, рецензируемые работы и сообщества с сильной модерацией. Если ресурс — маркетинг, переодетый в обучение, не включайте его.
+- **Аннотируйте каждую запись.** Голая ссылка через три месяца бесполезна. Добавьте строку: что она покрывает и когда к ней обращаться.
+- **Группируйте по Knowledge / Wisdom.** Это отражает философию в [SKILL.md](./SKILL.md). Ничего страшного, если ресурс появляется только в одной группе.
+- **Явно выявляйте пробелы.** Если для области, нужной миссии, нет хорошего ресурса, напишите раздел `## Gaps` со списком того, чего не хватает. Это направляет будущий поиск.
+- **Безжалостно вычищайте.** Ресурс, который оказался неверным, поверхностным или не по миссии, следует удалить, а не закапывать. Лучше пять острых источников, чем тридцать посредственных.
+- **Записывайте предпочтения по сообществам.** Если пользователь отказался вступать в сообщества, отметьте это здесь, чтобы будущие сессии не предлагали их снова.

@@ -1,7 +1,7 @@
 ---
 name: grill-me
-description: A relentless interview to sharpen a plan or design.
+description: Безжалостное интервью, чтобы отточить план или дизайн.
 disable-model-invocation: true
 ---
 
-Call the Skill tool with "grilling".
+Вызови скилл grilling через инструмент skill.

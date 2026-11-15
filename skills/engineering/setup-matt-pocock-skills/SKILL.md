@@ -1,89 +1,88 @@
 ---
 name: setup-matt-pocock-skills
-description: "Configure this repo for the engineering skills: set up its issue tracker, triage label vocabulary, and domain doc layout. Run once before first use of the other engineering skills."
+description: "Настраивает репозиторий для инженерных скиллов: трекер задач, словарь меток триажа и структуру доменной документации. Запусти один раз перед первым использованием остальных инженерных скиллов."
 disable-model-invocation: true
 ---
 
-# Setup Matt Pocock's Skills
+# Настройка скиллов Мэтта Покока
 
-Scaffold the per-repo configuration that the engineering skills assume:
+Создай для репозитория каркас конфигурации, на которую рассчитывают инженерные скиллы:
 
-- **Issue tracker**: where issues live (GitHub by default; local markdown is also supported out of the box)
-- **Triage labels**: the strings used for the five canonical triage roles
-- **Domain docs**: where `GLOSSARY.md` and ADRs live, and the consumer rules for reading them
+- **Трекер задач**: где живут задачи (по умолчанию GitHub; локальный markdown тоже поддерживается из коробки)
+- **Метки триажа**: строки, используемые для пяти канонических ролей триажа
+- **Доменная документация**: где живут `GLOSSARY.md` и ADR, а также правила их чтения для потребителей
 
-This is a prompt-driven skill, not a deterministic script. Explore, present what you found, confirm with the user, then write.
+Это скилл, управляемый промптом, а не детерминированный скрипт. Исследуй, покажи найденное, подтверди у пользователя, а затем пиши.
 
-## Process
+## Процесс
 
-### 1. Explore
+### 1. Исследование
 
-Look at the current repo to understand its starting state. Read whatever exists; don't assume:
+Посмотри на текущий репозиторий, чтобы понять его исходное состояние. Читай то, что есть; ничего не предполагай:
 
-- `git remote -v` and `.git/config`: is this a GitHub repo? Which one?
-- `AGENTS.md` and `CLAUDE.md` at the repo root: does either exist? Is there already an `## Agent skills` section in either?
-- `GLOSSARY.md` and `GLOSSARY-MAP.md` at the repo root, and the legacy `CONTEXT.md` / `CONTEXT-MAP.md`. If a legacy file exists, offer to `git mv` it to its `GLOSSARY` name and rewrite those names in `docs/agents/domain.md`.
-- `docs/adr/` and any `src/*/docs/adr/` directories
-- `docs/agents/`: does this skill's prior output already exist?
-- `.scratch/`: a sign that a local-markdown issue tracker convention is already in use
-- Is the `triage` skill installed? (a `triage` skill folder alongside this one, or `triage` in your available skills.) This decides whether Section B runs at all.
-- Monorepo signals: a `pnpm-workspace.yaml`, a `workspaces` field in `package.json`, or a populated `packages/*` with its own `src/`. These are present only in a genuinely large multi-package repo; their absence means single-context, which is almost every repo.
+- `git remote -v` и `.git/config`: это GitHub-репозиторий? Какой именно?
+- `AGENTS.md` в корне репозитория: существует ли он? Есть ли в нём уже раздел `## Agent skills`?
+- `GLOSSARY.md` и `GLOSSARY-MAP.md` в корне репозитория, а также устаревшие `CONTEXT.md` / `CONTEXT-MAP.md`. Если устаревший файл существует, предложи переименовать его через `git mv` в имя с `GLOSSARY` и переписать эти имена в `docs/agents/domain.md`.
+- `docs/adr/` и любые каталоги `src/*/docs/adr/`
+- `docs/agents/`: существует ли уже вывод предыдущего запуска этого скилла?
+- `.scratch/`: признак того, что соглашение о локальном markdown-трекере задач уже используется
+- Установлен ли скилл `triage`? (папка скилла `triage` рядом с этой или `triage` среди доступных тебе скиллов.) От этого зависит, будет ли вообще выполняться раздел B.
+- Признаки монорепозитория: `pnpm-workspace.yaml`, поле `workspaces` в `package.json` или заполненный `packages/*` со своим `src/`. Они встречаются только в действительно большом многопакетном репозитории; их отсутствие означает единственный контекст, а это почти любой репозиторий.
 
-### 2. Present findings and ask
+### 2. Покажи находки и спроси
 
-Summarise what's present and what's missing. Then take the sections in order. One section, one answer, then the next.
+Кратко перечисли, что есть и чего не хватает. Затем проходи разделы по порядку. Один раздел — один ответ, потом следующий.
 
-Lead each section with the recommended answer so the user can accept it in a word. Give a one-line explainer only when the choice genuinely branches; skip the section entirely when exploration already settled it (Section B when `triage` isn't installed, Section C when there's no monorepo).
+Начинай каждый раздел с рекомендованного ответа, чтобы пользователь мог согласиться одним словом. Однострочное пояснение давай только тогда, когда выбор действительно разветвляется; пропускай раздел целиком, если исследование уже всё решило (раздел B, когда `triage` не установлен, раздел C, когда монорепозитория нет).
 
-**Section A: Issue tracker.**
+**Раздел A: Трекер задач.**
 
-> Explainer: The "issue tracker" is where issues live for this repo. Skills like `to-tickets`, `triage`, and `to-spec` read from and write to it. They need to know whether to call `gh issue create`, write a markdown file under `.scratch/`, or follow some other workflow you describe. Pick the place you actually track work for this repo.
+> Пояснение: «трекер задач» — это то место, где живут задачи этого репозитория. Скиллы вроде `to-tickets`, `triage` и `to-spec` читают из него и пишут в него. Им нужно знать, вызывать ли `gh issue create`, писать markdown-файл в `.scratch/` или следовать какому-то другому описанному тобой рабочему процессу. Выбери место, где ты на самом деле отслеживаешь работу по этому репозиторию.
 
-Default posture: these skills were designed for GitHub. If a `git remote` points at GitHub, propose that. If a `git remote` points at GitLab (`gitlab.com` or a self-hosted host), propose GitLab. Otherwise (or if the user prefers), offer:
+Исходная установка: эти скиллы спроектированы под GitHub. Если `git remote` указывает на GitHub, предложи его. Если `git remote` указывает на GitLab (`gitlab.com` или самостоятельно размещённый хост), предложи GitLab. В остальных случаях (или если пользователь предпочитает) предложи:
 
-- **GitHub**: issues live in the repo's GitHub Issues (uses the `gh` CLI)
-- **GitLab**: issues live in the repo's GitLab Issues (uses the [`glab`](https://gitlab.com/gitlab-org/cli) CLI)
-- **Local markdown**: issues live as files under `.scratch/<feature>/` in this repo (good for solo projects or repos without a remote)
-- **Other** (Jira, Linear, etc.): ask the user to describe the workflow in one paragraph; the skill will record it as freeform prose
+- **GitHub**: задачи живут в GitHub Issues репозитория (используется CLI `gh`)
+- **GitLab**: задачи живут в GitLab Issues репозитория (используется CLI [`glab`](https://gitlab.com/gitlab-org/cli))
+- **Локальный markdown**: задачи живут как файлы в `.scratch/<feature>/` этого репозитория (подходит для сольных проектов или репозиториев без remote)
+- **Другое** (Jira, Linear и т. п.): попроси пользователя описать рабочий процесс одним абзацем; скилл запишет его как свободный текст
 
-Record the choice in `docs/agents/issue-tracker.md`. The GitHub and GitLab templates carry a "PRs as a request surface" flag, defaulted **off**. Leave it off and don't raise it: a user who wants external PRs in the triage queue can flip the flag in the file later.
+Запиши выбор в `docs/agents/issue-tracker.md`. Шаблоны GitHub и GitLab содержат флаг «PR как поверхность запросов», по умолчанию **выключенный**. Оставь его выключенным и не поднимай этот вопрос: пользователь, который хочет видеть внешние PR в очереди триажа, может переключить флаг в файле позже.
 
-A GitHub or GitLab tracker needs a reachable repo. When the user picks one and no `git remote` points at that host, get the repo URL from them and wire it up (`git init` if needed, `git remote add origin <url>`) before going further. Done when `gh repo view` / `glab repo view` prints the project from inside this directory; if it can't, stop and tell the user what's missing.
+Трекеру GitHub или GitLab нужен достижимый репозиторий. Если пользователь выбрал один из них, а ни один `git remote` не указывает на этот хост, возьми у него URL репозитория и подключи его (`git init`, если нужно, `git remote add origin <url>`) прежде чем идти дальше. Готово, когда `gh repo view` / `glab repo view` печатает проект изнутри этого каталога; если не печатает, остановись и скажи пользователю, чего не хватает.
 
-**Section B: Triage label vocabulary.** Skip this section entirely if the `triage` skill isn't installed (exploration told you), since an uninstalled skill needs no labels.
+**Раздел B: Словарь меток триажа.** Пропусти этот раздел целиком, если скилл `triage` не установлен (об этом тебе сказало исследование), поскольку неустановленному скиллу метки не нужны.
 
-If it is installed, ask exactly one question:
+Если он установлен, задай ровно один вопрос:
 
-> Do you want to keep the default triage labels? (recommended: **yes**)
+> Хочешь оставить метки триажа по умолчанию? (рекомендуется: **да**)
 
-The defaults are the five canonical roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. On **yes**, write them as-is. Only if the user says no, usually because their tracker already uses other names (e.g. `bug:triage` for `needs-triage`), collect the overrides so `triage` applies existing labels instead of creating duplicates.
+По умолчанию используются пять канонических ролей, каждая строка метки равна своему имени: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. При ответе **да** запиши их как есть. Только если пользователь сказал нет, обычно потому что в его трекере уже используются другие имена (например, `bug:triage` для `needs-triage`), собери переопределения, чтобы `triage` применял существующие метки, а не создавал дубликаты.
 
-**Section C: Domain docs.** Default to **single-context** (one `GLOSSARY.md` + `docs/adr/` at the repo root). This fits almost every repo; write it without asking.
+**Раздел C: Доменная документация.** По умолчанию — **единственный контекст** (один `GLOSSARY.md` + `docs/adr/` в корне репозитория). Это подходит почти любому репозиторию; пиши так, не спрашивая.
 
-Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSSARY.md` files) only when exploration found monorepo signals. Then confirm which layout they want.
+Предлагай **несколько контекстов** (корневой `GLOSSARY-MAP.md`, указывающий на `GLOSSARY.md` каждого контекста) только если исследование нашло признаки монорепозитория. Тогда уточни, какую структуру они хотят.
 
-### 3. Confirm and edit
+### 3. Подтверди и отредактируй
 
-Show the user a draft of:
+Покажи пользователю черновик:
 
-- The `## Agent skills` block to add to whichever of `CLAUDE.md` / `AGENTS.md` is being edited (see step 4 for selection rules)
-- The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, and `docs/agents/triage-labels.md` (the last only when `triage` is installed)
+- Блок `## Agent skills`, который нужно добавить в редактируемый файл инструкций для агентов (о правилах выбора см. шаг 4)
+- Содержимое `docs/agents/issue-tracker.md`, `docs/agents/domain.md` и `docs/agents/triage-labels.md` (последний — только когда установлен `triage`)
 
-Let them edit before writing.
+Дай им возможность отредактировать до записи.
 
-### 4. Write
+### 4. Запись
 
-**Pick the file to edit:**
+**Выбери файл для редактирования:**
 
-- If `CLAUDE.md` exists, edit it.
-- Else if `AGENTS.md` exists, edit it.
-- If neither exists, ask the user which one to create; don't pick for them.
+- Если `AGENTS.md` существует, редактируй его.
+- Если его нет, спроси пользователя, создавать ли `AGENTS.md`; не выбирай за него.
 
-Never create `AGENTS.md` when `CLAUDE.md` already exists (or vice versa); always edit the one that's already there.
+Если файл инструкций для агентов уже существует, всегда редактируй его и никогда не создавай второй такой файл.
 
-If an `## Agent skills` block already exists in the chosen file, update its contents in-place rather than appending a duplicate. Don't overwrite user edits to the surrounding sections.
+Если блок `## Agent skills` уже существует в выбранном файле, обнови его содержимое на месте, а не дописывай дубликат. Не перезаписывай пользовательские правки в окружающих разделах.
 
-The block:
+Блок:
 
 ```markdown
 ## Agent skills
@@ -101,20 +100,20 @@ The block:
 [one-line summary of layout: "single-context" or "multi-context"]. See `docs/agents/domain.md`.
 ```
 
-Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted.
+Включай подблок `### Triage labels` и пиши `docs/agents/triage-labels.md` только когда `triage` установлен и раздел B выполнялся. Когда нет — оба пропускаются.
 
-When Section B ran on GitHub or GitLab, create each configured label the tracker lacks (`gh label create` / `glab label create`).
+Когда раздел B выполнялся на GitHub или GitLab, создай каждую настроенную метку, которой не хватает в трекере (`gh label create` / `glab label create`).
 
-Then write the docs files using the seed templates in this skill folder as a starting point:
+Затем напиши файлы документации, взяв за отправную точку шаблоны-заготовки в папке этого скилла:
 
-- [issue-tracker-github.md](./issue-tracker-github.md): GitHub issue tracker
-- [issue-tracker-gitlab.md](./issue-tracker-gitlab.md): GitLab issue tracker
-- [issue-tracker-local.md](./issue-tracker-local.md): local-markdown issue tracker
-- [triage-labels.md](./triage-labels.md): label mapping (only if `triage` is installed)
-- [domain.md](./domain.md): domain doc consumer rules + layout
+- [issue-tracker-github.md](./issue-tracker-github.md): трекер задач GitHub
+- [issue-tracker-gitlab.md](./issue-tracker-gitlab.md): трекер задач GitLab
+- [issue-tracker-local.md](./issue-tracker-local.md): локальный markdown-трекер задач
+- [triage-labels.md](./triage-labels.md): сопоставление меток (только если установлен `triage`)
+- [domain.md](./domain.md): правила чтения доменной документации для потребителей + структура
 
-For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
+Для «других» трекеров задач напиши `docs/agents/issue-tracker.md` с нуля, исходя из описания пользователя.
 
-### 5. Done
+### 5. Готово
 
-Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later; re-running this skill is only necessary if they want to switch issue trackers or restart from scratch.
+Скажи пользователю, что настройка завершена, и какие инженерные скиллы теперь будут читать эти файлы. Упомяни, что он может позже редактировать `docs/agents/*.md` напрямую; повторно запускать этот скилл нужно, только если он хочет сменить трекер задач или начать с нуля.

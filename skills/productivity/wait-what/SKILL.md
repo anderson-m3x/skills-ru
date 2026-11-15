@@ -1,7 +1,7 @@
 ---
 name: wait-what
-description: "Stop. That last message did not land: re-pitch it."
+description: "Стоп. Последнее сообщение не дошло: переподай его."
 disable-model-invocation: true
 ---
 
-Wait, I don't understand where you've got to here. Re-pitch that: give me a little bit of context, talk in ASD-STE100 Simplified Technical English, and use the ubiquitous language from `GLOSSARY.md` (follow `GLOSSARY-MAP.md` to the right one if the repo has more than one).
+Подожди, я не понимаю, к чему ты тут пришёл. Переподай это: дай немного контекста, говори на ASD-STE100 Simplified Technical English и используй ubiquitous language из `GLOSSARY.md` (следуй `GLOSSARY-MAP.md`, чтобы найти нужный, если в репозитории их больше одного).

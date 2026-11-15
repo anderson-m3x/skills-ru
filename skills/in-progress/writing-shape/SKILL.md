@@ -1,79 +1,79 @@
 ---
 name: writing-shape
-description: "Writing, exploit: shape raw material into an article, paragraph by paragraph."
+description: "Написание, exploit: оформить сырьё в статью, абзац за абзацем."
 disable-model-invocation: true
 ---
 
 <what-to-do>
 
-The user has passed (or will pass) a markdown file of raw material. Treat it as the input pile: anything from a tidy list of fragments to a wall of unstructured prose to a transcript. The format does not matter. Read it end-to-end before doing anything else.
+Пользователь передал (или передаст) markdown-файл с сырьём. Считайте его входной кучей: от аккуратного списка фрагментов до стены неструктурированной прозы или транскрипта. Формат не важен. Прочитайте его от начала до конца, прежде чем что-либо делать.
 
-Then run a shaping session that produces a separate article document. This is **exploit**: the exploring is done, the pile is fixed: commit to a structure and mine the pile to fill it. Do not edit the raw material file: it is read-only to this skill.
+Затем проведите сессию оформления, которая производит отдельный документ статьи. Это **exploit**: исследование закончено, куча фиксирована: примите структуру и добывайте из кучи, чтобы её наполнить. Не правьте файл сырья: для этого скилла он только для чтения.
 
-If the user did not say where to save the article, ask once and remember the path.
+Если пользователь не сказал, куда сохранять статью, спросите один раз и запомните путь.
 
 </what-to-do>
 
 <supporting-info>
 
-## The loop
+## Цикл
 
-1. **Read the pile.** Read the input file in full. Form a sense of what's in it.
-2. **Establish the prerequisites.** Settle with the user what the reader knows walking in: the concepts that are **grounded** from the start. Everything else must be grounded by a block before a later block can lean on it. See [Grounding](#grounding).
-3. **Draft 2–3 candidate openings.** Each opening should imply a different thesis or angle for the article. Show all of them. Force the user to pick or compose a hybrid. The chosen opening defines what the rest of the article must do.
-4. **Grow paragraph by paragraph.** After the opening lands, ask "given this opening, what does the reader need to hear next?" Pull material from the pile to answer. The next block may only lean on grounded concepts, and grounds new ones as it lands. Argue about the form the next block takes: a paragraph, a list, a table, a callout, a quote, a code block. Each format choice should be deliberate and defensible.
-5. **Append to the article file as you go.** Don't batch. Write each agreed paragraph or block immediately so the user can see the article taking shape.
-6. **Loop step 4 until the article is done.** The user decides when it's done.
+1. **Прочитайте кучу.** Прочитайте входной файл полностью. Составьте ощущение того, что в нём.
+2. **Установите предпосылки.** Договоритесь с пользователем о том, что читатель знает на входе: о концепциях, **обоснованных** (grounded) с самого начала. Всё остальное должно быть обосновано блоком, прежде чем более поздний блок сможет на него опереться. См. [Обоснование](#обоснование).
+3. **Набросайте 2–3 варианта открытия.** Каждое открытие должно подразумевать другой тезис или угол для статьи. Покажите все. Заставьте пользователя выбрать или составить гибрид. Выбранное открытие определяет, что должен делать остаток статьи.
+4. **Растите абзац за абзацем.** После того как открытие легло, спросите: «с учётом этого открытия, что читателю нужно услышать дальше?» Тяните материал из кучи, чтобы ответить. Следующий блок может опираться только на обоснованные концепции и обосновывает новые по мере того, как ложится сам. Спорьте о форме, которую примет следующий блок: абзац, список, таблица, выноска, цитата, блок кода. Каждый выбор формата должен быть осознанным и защитимым.
+5. **Добавляйте в файл статьи по ходу.** Не пачками. Пишите каждый согласованный абзац или блок немедленно, чтобы пользователь видел, как статья обретает форму.
+6. **Повторяйте шаг 4, пока статья не готова.** Пользователь решает, когда она готова.
 
-## Grounding
+## Обоснование
 
-Every **concept** has to be **grounded** before a block can lean on it: the reader either walked in knowing it or met it in an earlier block. A block that reaches for an ungrounded concept loses the reader. The unit is the concept, not the word for it: a block can lean on an idea the reader lacks even with no jargon in sight. Where a concept has a name (a **term**), grounding it means landing the idea and the term together.
+Каждая **концепция** должна быть **обоснована**, прежде чем блок сможет на неё опереться: читатель либо пришёл, зная её, либо встретил её в более раннем блоке. Блок, который тянется к необоснованной концепции, теряет читателя. Единица — концепция, а не слово для неё: блок может опираться на идею, которой у читателя нет, даже без жаргона в поле зрения. Там, где у концепции есть имя (**термин**), обосновать её значит посадить идею и термин вместе.
 
-A concept gets grounded one of two ways:
+Концепция обосновывается одним из двух способов:
 
-- **Prerequisite**: grounded before the opening. The reader brings it. Fixed at the start.
-- **Introduced**: a block establishes it, and from then on it's grounded for the rest of the article.
+- **Предпосылка**: обоснована до открытия. Читатель её приносит. Фиксируется в начале.
+- **Введена**: блок её устанавливает, и с этого момента она обоснована для остатка статьи.
 
-Keep a running list of what's grounded. When you ask "what does the reader need to hear next?", an ungrounded concept the next move needs is itself the answer: ground it first (here or in an earlier block) or you can't make the move. This is the gap-naming of [Pulling from the pile](#pulling-from-the-pile) one level up: there the pile is missing material; here the article is missing a foundation.
+Держите текущий список того, что обосновано. Когда вы спрашиваете «что читателю нужно услышать дальше?», необоснованная концепция, нужная следующему ходу, сама и есть ответ: обоснуйте её сначала (здесь или в более раннем блоке), иначе ход не сделать. Это называние пробелов из [Добычи из кучи](#добыча-из-кучи) на уровень выше: там куче не хватает материала; здесь статье не хватает фундамента.
 
-The lever is what you make a prerequisite versus what you ground inside the article. Demand too much up front and you shut readers out; ground too much inside and the opening drowns in definitions. Settle it with the user when you establish prerequisites.
+Рычаг — что вы делаете предпосылкой, а что обосновываете внутри статьи. Требуйте слишком много на входе — и вы закрываете читателям дверь; обосновывайте слишком много внутри — и открытие тонет в определениях. Договоритесь об этом с пользователем, когда устанавливаете предпосылки.
 
-## Conversational feel
+## Ощущение разговора
 
-This is a grilling session inverted. In ideation, the question was "what are you actually noticing?" Here it's "what is this article actually arguing, and in what order does the reader need to hear it?" Push back. Refuse to let weak transitions slide. If a paragraph doesn't earn its place, cut it.
+Это грилл-сессия наоборот. В идейной фазе вопрос был «что ты на самом деле замечаешь?» Здесь — «что эта статья на самом деле утверждает и в каком порядке читателю нужно это услышать?» Возражайте. Не давайте слабым переходам проскочить. Если абзац не заслуживает своего места, вырежьте его.
 
-Specific moves to keep using:
+Конкретные приёмы, которые стоит продолжать использовать:
 
-- "What does this paragraph do for the reader that the previous one didn't?"
-- "If I cut this, what breaks?"
-- "Is this prose, or should it be a list? Why prose?"
-- "This sentence is doing two jobs: split it or pick one."
-- "The opening promised X. We've drifted to Y. Either re-thread it or change the opening."
+- «Что этот абзац делает для читателя такого, чего не делал предыдущий?»
+- «Если я это вырежу, что сломается?»
+- «Это проза или это должен быть список? Почему проза?»
+- «Это предложение делает две работы: разделите его или выберите одну.»
+- «Открытие обещало X. Мы съехали к Y. Либо перепроведите нить, либо меняйте открытие.»
 
-## Pulling from the pile
+## Добыча из кучи
 
-Treat the raw material as a quarry, not a script. Pull a fragment, rework it to fit the surrounding paragraph, and place it. A fragment may be split across multiple paragraphs, merged with another, or paraphrased. The pile's job is to be mined; the article's job is to read as one voice.
+Считайте сырьё карьером, а не сценарием. Вытяните фрагмент, переработайте его под окружающий абзац и поставьте. Фрагмент может быть разбит на несколько абзацев, слит с другим или пересказан. Работа кучи — быть добытой; работа статьи — читаться одним голосом.
 
-If the pile lacks something the article needs, name the gap explicitly: "We need an example here and the pile doesn't have one. Give me one now or we cut this section."
+Если куче не хватает того, что нужно статье, назовите пробел явно: «Нам здесь нужен пример, а в куче его нет. Дай его сейчас или мы режем этот раздел.»
 
-## Format arguments to actually have
+## Споры о формате, которые стоит провести
 
-When choosing how to render a block, weigh these tradeoffs out loud with the user, not silently:
+Выбирая, как отрисовать блок, взвешивайте эти компромиссы вслух с пользователем, а не молча:
 
-- **Prose vs. list.** Prose carries argument; lists carry parallel items. If items aren't truly parallel, prose is better. If they are, a list is faster to scan.
-- **Inline vs. callout.** Tips, warnings, and asides go in callouts (`> [!TIP]`, `> [!NOTE]`), but only if they'd genuinely derail the main argument inline. Otherwise leave them inline.
-- **Table vs. repeated structure.** If the same shape repeats 3+ times with the same fields, a table. Otherwise prose with bold leads.
-- **Quote vs. paraphrase.** Quote when the original wording is the point. Paraphrase when only the idea matters.
-- **Code block vs. inline code.** Multi-line, runnable, or illustrative → block. Single token or identifier → inline.
+- **Проза против списка.** Проза несёт аргумент; списки несут параллельные элементы. Если элементы не по-настоящему параллельны, проза лучше. Если параллельны, список быстрее сканировать.
+- **Инлайн против выноски.** Советы, предупреждения и отступления идут в выноски (`> [!TIP]`, `> [!NOTE]`), но только если инлайн они действительно увели бы основной аргумент в сторону. Иначе оставляйте их инлайн.
+- **Таблица против повторяющейся структуры.** Если одна и та же форма повторяется 3+ раза с одними и теми же полями — таблица. Иначе проза с жирными зачинами.
+- **Цитата против пересказа.** Цитируйте, когда важна исходная формулировка. Пересказывайте, когда важна только идея.
+- **Блок кода против инлайн-кода.** Многострочное, запускаемое или иллюстративное → блок. Один токен или идентификатор → инлайн.
 
-## Writing rhythm
+## Ритм письма
 
-Append to the article file as each block is agreed. Re-read the file from disk before every write: the user may have edited between turns. Never overwrite blindly. If the user wants a paragraph rewritten, edit that specific paragraph in place; leave the rest alone.
+Добавляйте в файл статьи по мере согласования каждого блока. Перечитывайте файл с диска перед каждой записью: пользователь мог править между ходами. Никогда не перезаписывайте слепо. Если пользователь хочет переписать абзац, правьте именно этот абзац на месте; остальное не трогайте.
 
-## Out of scope
+## Вне области задачи
 
-- Mining for new fragments that aren't in the pile (handle gaps as in "Pulling from the pile").
-- Editing the raw material file.
-- Publishing, formatting for a specific platform, or adding frontmatter the user didn't ask for.
+- Добыча новых фрагментов, которых нет в куче (с пробелами разбирайтесь, как в «Добыче из кучи»).
+- Правка файла сырья.
+- Публикация, форматирование под конкретную платформу или добавление фронтматтера, о котором пользователь не просил.
 
 </supporting-info>
