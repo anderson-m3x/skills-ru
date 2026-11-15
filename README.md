@@ -23,7 +23,10 @@ DSH сканирует `~/.dsh/skills` и следит за каталогом: 
 
 ```powershell
 & $py C:\Users\New\Documents\skills-ru\tools\validate_skills.py
+& $py C:\Users\New\Documents\skills-ru\tools\scan_untranslated.py   # ищет оставшуюся английскую прозу
 ```
+
+**Кто видит скилл.** Upstream делит скиллы на user-invoked и model-invoked через флаги фронтматтера, DSH понимает их так же: скиллы с `disable-model-invocation: true` (24 штуки — `grill-me`, `triage`, `to-spec`, `teach` и т. п.) не попадают в каталог модели и вызываются человеком, а model-invoked (15 штук — `tdd`, `code-review`, `diagnosing-bugs` и т. п.) агент подхватывает сам. Если нужен скилл из первой группы, зовите его явно.
 
 Ручная альтернатива без junction — скопировать папки:
 
