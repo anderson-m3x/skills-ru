@@ -36,7 +36,7 @@ Copy-Item .\skills\*\* $env:USERPROFILE\.dsh\skills\ -Recurse
 
 ## Состав
 
-Категории как в upstream. `user-invoked` — вызываются человеком и оркестрируют; `model-invoked` — их может подхватить агент сам.
+Категории как в upstream. `user-invoked` — вызываются человеком и оркестрируют; `model-invoked` — их может подхватить агент сам. Полные описания логики, примеры и грабли — в [DOC/](DOC/README.md); ссылку имеет каждый скилл, у которого страница уже готова.
 
 ### Engineering — код и инженерные практики
 
@@ -47,19 +47,19 @@ Copy-Item .\skills\*\* $env:USERPROFILE\.dsh\skills\ -Recurse
 | `triage` | user | Проводит issues через конечный автомат ролей триажа |
 | `improve-codebase-architecture` | user | Скан кодовой базы на «углубления», HTML-отчёт, затем грилл выбранного кандидата |
 | `setup-matt-pocock-skills` | user | Настройка репозитория (трекер, метки, доменные доки) — один раз на проект |
-| `to-spec` | user | Разговор → спека, публикуется в трекер |
-| `to-tickets` | user | План/спека → tracer-bullet тикеты с блокирующими связями |
-| `implement` | user | Реализация по спеке/тикетам через `tdd` и `code-review` |
+| [`to-spec`](DOC/engineering/to-spec.md) | user | Разговор → спека, публикуется в трекер |
+| [`to-tickets`](DOC/engineering/to-tickets.md) | user | План/спека → tracer-bullet тикеты с блокирующими связями |
+| [`implement`](DOC/engineering/implement.md) | user | Реализация по спеке/тикетам через `tdd` и `code-review` |
 | `implement-spec` | user | Спека целиком в одной ветке, субагенты на «готовом фронте» задач |
 | `wayfinder` | user | Карта решенческих тикетов для объёма больше одной сессии |
 | `retro` | user | Улучшения окружения агента после сессии, самое критичное — первым |
 | `prototype` | model | Одноразовый прототип: HTML для логики/состояния или варианты UI |
-| `diagnosing-bugs` | model | Цикл диагностики: красная петля → минимизация → гипотезы → фикс → регрессия |
+| [`diagnosing-bugs`](DOC/engineering/diagnosing-bugs.md) | model | Цикл диагностики: красная петля → минимизация → гипотезы → фикс → регрессия |
 | `research` | model | Исследование по первоисточникам, результат — markdown со ссылками |
-| `tdd` | model | Red-green-refactor, вертикальными слайсами |
+| [`tdd`](DOC/engineering/tdd.md) | model | Red-green-refactor, вертикальными слайсами |
 | `domain-modeling` | model | Достраивание доменной модели, глоссарий и ADR |
-| `codebase-design` | model | Дисциплина «глубоких модулей» и чистых швов |
-| `code-review` | model | Ревью диффа по двум осям: Standards и Spec, параллельными субагентами |
+| [`codebase-design`](DOC/engineering/codebase-design.md) | model | Дисциплина «глубоких модулей» и чистых швов |
+| [`code-review`](DOC/engineering/code-review.md) | model | Ревью диффа по двум осям: Standards и Spec, параллельными субагентами |
 | `pr` | model | Форма тела PR: сводка, доказательства «до/после», оценка опасности мержа |
 | `wizard` | model | Интерактивный bash-визард для шагов, доступных только человеку |
 
@@ -67,12 +67,12 @@ Copy-Item .\skills\*\* $env:USERPROFILE\.dsh\skills\ -Recurse
 
 | Скилл | Вызов | Назначение |
 |---|---|---|
-| `grill-me` | user | Безжалостное интервью по плану до закрытия всех веток решений |
-| `handoff` | user | Сжать разговор в handoff-документ для другого агента |
+| [`grill-me`](DOC/productivity/grill-me.md) | user | Безжалостное интервью по плану до закрытия всех веток решений |
+| [`handoff`](DOC/productivity/handoff.md) | user | Сжать разговор в handoff-документ для другого агента |
 | `teach` | user | Обучение навыку за несколько сессий, текущая папка — учебное пространство |
 | `to-questionnaire` | user | Решение, которое нельзя принять одному → markdown-опросник |
 | `wait-what` | user | «Не дошло»: переобъяснение с недостающим контекстом и словарём |
-| `grilling` | model | Примитив интервью — движок под grill-me, triage, wayfinder и др. |
+| [`grilling`](DOC/productivity/grilling.md) | model | Примитив интервью — движок под grill-me, triage, wayfinder и др. |
 | `writing-for-agents` | model | Как писать документы для агентов: скиллы, `AGENTS.md`, указатели |
 
 ### Misc — редкие утилиты

@@ -219,5 +219,88 @@
     "skills/productivity/writing-for-agents/SKILL.md": {
       "upstreamBlob": "a37608daf6e835e767deecfb498facecaaba82ba"
     }
+  },
+  "docs": {
+    "docs/engineering/ask-matt.md": {
+      "upstreamBlob": "d5e2830bd75078dd91754a0f7f426541e7a3ced8"
+    },
+    "docs/engineering/code-review.md": {
+      "upstreamBlob": "12283d7f86d73f91030f6ff6ffe1c5ad6c5831e8"
+    },
+    "docs/engineering/codebase-design.md": {
+      "upstreamBlob": "bf2fa9d0e31c63e5faf655c4b13f85f650c979d5"
+    },
+    "docs/engineering/diagnosing-bugs.md": {
+      "upstreamBlob": "a92bd56a0fcf7485e954958d46a5bf34573ca33d"
+    },
+    "docs/engineering/domain-modeling.md": {
+      "upstreamBlob": "35fba8e211ae704c4110c3ec26d81cd8d9fcf3f1"
+    },
+    "docs/engineering/grill-with-docs.md": {
+      "upstreamBlob": "9ba50958efc3928cde01662701c53b7935cdbb1e"
+    },
+    "docs/engineering/implement-spec.md": {
+      "upstreamBlob": "771a7ca285be1c474e91014d384b748b36f99709"
+    },
+    "docs/engineering/implement.md": {
+      "upstreamBlob": "b08985c7fcc951ad3ec0812914073852e2449210"
+    },
+    "docs/engineering/improve-codebase-architecture.md": {
+      "upstreamBlob": "974ae0aa708f66d90a7acd1ceed181836e276a04"
+    },
+    "docs/engineering/pr.md": {
+      "upstreamBlob": "368394b2dbbb0930a7fdf5c4ff3a19142dd54a76"
+    },
+    "docs/engineering/prototype.md": {
+      "upstreamBlob": "c6e23539b47ff40f8405e3163d5e42711f99d1b6"
+    },
+    "docs/engineering/research.md": {
+      "upstreamBlob": "29ab8d3dbd2ff838d50f3c637e5c32ceee3fe6ce"
+    },
+    "docs/engineering/retro.md": {
+      "upstreamBlob": "442599e9c42cc5fd86ea474eb800e9664eb902fd"
+    },
+    "docs/engineering/setup-matt-pocock-skills.md": {
+      "upstreamBlob": "4b255af85948cad4caab93484a186b0ed05edf4c"
+    },
+    "docs/engineering/tdd.md": {
+      "upstreamBlob": "6fd8a5c722c75de1207b30d66874e969b65b5a30"
+    },
+    "docs/engineering/to-spec.md": {
+      "upstreamBlob": "824cd18204f4a39c50ada128c27675b35bc59b7e"
+    },
+    "docs/engineering/to-tickets.md": {
+      "upstreamBlob": "8b93a6d4c56e4c398e6ab3defd6da1552c784599"
+    },
+    "docs/engineering/triage.md": {
+      "upstreamBlob": "0b20a8eee7f3472ef664f7f8a7569608dd5bc8e0"
+    },
+    "docs/engineering/wayfinder.md": {
+      "upstreamBlob": "607f6556d56bc1b96b86baba442cc9cda451ba93"
+    },
+    "docs/engineering/wizard.md": {
+      "upstreamBlob": "b4e76b686379507717f05caf41f3dfa73924bd79"
+    },
+    "docs/productivity/grill-me.md": {
+      "upstreamBlob": "65aec2448e4c27187455965336bd3b767b8ffa47"
+    },
+    "docs/productivity/grilling.md": {
+      "upstreamBlob": "eff7c56a3eb64285f17dd0759aadd27ca23ae82a"
+    },
+    "docs/productivity/handoff.md": {
+      "upstreamBlob": "d106b37e9fcb0ef9e7765be5a62f28451ac62fc8"
+    },
+    "docs/productivity/teach.md": {
+      "upstreamBlob": "dac7e1422c9342444e8b40e2757f81c569c69d48"
+    },
+    "docs/productivity/to-questionnaire.md": {
+      "upstreamBlob": "e4f40f4b2370d095fa6987325192eaa2cda2ac2e"
+    },
+    "docs/productivity/wait-what.md": {
+      "upstreamBlob": "38384d7918b151f41ecf5fd731066e2f7c3c6e75"
+    },
+    "docs/productivity/writing-for-agents.md": {
+      "upstreamBlob": "b8604e71aea05be04590690e46af13c620432437"
+    }
   }
 }

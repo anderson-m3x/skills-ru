@@ -18,6 +18,9 @@ from datetime import date
 from pathlib import Path
 
 SKILL_ROOT = "skills"
+DOC_ROOT = "DOC"
+DOC_CATEGORIES = ("engineering", "productivity")
+UPSTREAM_DOC_ROOT = "docs"
 STATE_PATH = "sync/state.json"
 PENDING_PATH = "sync/pending.json"
 RENAMES_PATH = "sync/renames.json"
@@ -79,6 +82,29 @@ def collect_upstream_files(repo: Path, commit: str) -> dict[str, str]:
     return files
 
 
+def collect_docs_files(repo: Path, commit: str, local_skills: set[str]) -> dict[str, str]:
+    """Страницы upstream docs/ для скиллов, которые у нас есть (ключи — пути upstream)."""
+    out = git(repo, "ls-tree", "-r", commit, "--", UPSTREAM_DOC_ROOT + "/")
+    files: dict[str, str] = {}
+    for line in out.splitlines():
+        if not line.strip():
+            continue
+        meta, _, path = line.partition("\t")
+        parts = meta.split()
+        if len(parts) < 3:
+            continue
+        sha, kind, path = parts[2], parts[1], path.strip()
+        if kind != "blob":
+            continue
+        chunks = path.split("/")
+        if len(chunks) != 3 or chunks[1] not in DOC_CATEGORIES or not path.endswith(".md"):
+            continue
+        if chunks[2][:-3] not in local_skills:
+            continue  # страница без парного скилла (например, resolving-merge-conflicts)
+        files[path] = sha
+    return files
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--repo", default=".")
@@ -114,6 +140,14 @@ def main() -> int:
             for row in pending.get("delete", []):
                 if (repo / row["localPath"]).exists():
                     problems.append(f"не удалён: {row['localPath']}")
+            for row in pending.get("docs_changed", []) + pending.get("docs_new", []):
+                local = repo / row["localPath"]
+                if not local.exists():
+                    problems.append(f"страница DOC не готова: {row['localPath']}")
+                    continue
+                text = local.read_text(encoding="utf-8", errors="replace")
+                if f"{UPSTREAM}@{new[:7]}" not in text:
+                    problems.append(f"в {row['localPath']} не проставлен источник @{new[:7]}")
 
     if problems:
         print("Синхронизация не завершена:")
@@ -138,6 +172,8 @@ def main() -> int:
     if extra:
         problems.append("локально есть скиллы, которых нет в upstream: " + ", ".join(extra))
 
+    docs_files = collect_docs_files(repo, new, set(local_skills))
+
     state = {
         "upstream": {
             "repo": UPSTREAM,
@@ -146,6 +182,7 @@ def main() -> int:
             "syncedAt": date.today().isoformat(),
         },
         "files": {path: {"upstreamBlob": sha} for path, sha in sorted(files.items())},
+        "docs": {path: {"upstreamBlob": sha} for path, sha in sorted(docs_files.items())},
     }
 
     if problems:
@@ -156,6 +193,7 @@ def main() -> int:
 
     print(f"upstream-коммит : {new}")
     print(f"файлов скиллов  : {len(files)}")
+    print(f"страниц docs    : {len(docs_files)}")
     print(f"локальных скиллов: {len(local_skills)}")
     if args.dry_run:
         print("(dry-run: state.json не изменён)")

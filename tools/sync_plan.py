@@ -25,6 +25,8 @@ from datetime import date
 from pathlib import Path
 
 SKILL_ROOT = "skills"
+DOC_ROOT = "DOC"
+DOC_CATEGORIES = ("engineering", "productivity")
 STATE_PATH = "sync/state.json"
 PENDING_PATH = "sync/pending.json"
 RENAMES_PATH = "sync/renames.json"
@@ -154,7 +156,38 @@ def main() -> int:
         "copy": copy,
         "delete": delete,
         "skipped": skipped,
+        "docs_changed": [],
+        "docs_new": [],
+        "docs_removed": [],
     }
+
+    # --- документация (DOC/): отдельная, менее приоритетная корзина ---
+    doc_diff = git(repo, "diff", "--name-status", "--no-renames", f"{old}..{new}", "--", "docs/")
+    local_skills = {p.parent.name for p in (repo / SKILL_ROOT).glob("*/*/SKILL.md")}
+    for line in doc_diff.splitlines():
+        if not line.strip():
+            continue
+        status, _, path = line.partition("\t")
+        status, path = status.strip()[0], path.strip()
+        parts = path.split("/")
+        if len(parts) != 3 or parts[1] not in DOC_CATEGORIES or not path.endswith(".md"):
+            skipped.append({"upstreamPath": path, "status": status, "reason": "не страница скилла"})
+            continue
+        skill = parts[2][:-3]
+        if skill not in local_skills:
+            skipped.append({"upstreamPath": path, "status": status, "reason": f"нет скилла {skill}"})
+            continue
+        local = f"{DOC_ROOT}/{parts[1]}/{parts[2]}"
+        if status == "D":
+            if (repo / local).exists():
+                pending["docs_removed"].append({"upstreamPath": path, "localPath": local})
+            continue
+        new_blob = git(repo, "rev-parse", f"{new}:{path}").strip()
+        row = {"upstreamPath": path, "localPath": local, "newBlob": new_blob}
+        if (repo / local).exists():
+            pending["docs_changed"].append(row)
+        else:
+            pending["docs_new"].append(row)
     (repo / PENDING_PATH).write_text(json.dumps(pending, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     if args.apply_copy and copy:
@@ -180,6 +213,13 @@ def main() -> int:
     print(f"  скопировать: {len(copy)}")
     print(f"  удалить    : {len(delete)}")
     print(f"  игнорируется: {len(skipped)}")
+    if pending["docs_changed"] or pending["docs_new"] or pending["docs_removed"]:
+        print(f"  DOC: обновить {len(pending['docs_changed'])}, написать {len(pending['docs_new'])}, "
+              f"источник удалён {len(pending['docs_removed'])}")
+        for key, title in (("docs_changed", "ОБНОВИТЬ"), ("docs_new", "НАПИСАТЬ"), ("docs_removed", "ИСТОЧНИК УДАЛЁН")):
+            print(f"\n{title}:")
+            for row in pending[key]:
+                print(f"  {row['localPath']}  ←  {row['upstreamPath']}")
     for bucket, title in (("translate", "ПЕРЕВЕСТИ"), ("copy", "СКОПИРОВАТЬ"), ("delete", "УДАЛИТЬ")):
         rows = locals()[bucket]
         if rows:
