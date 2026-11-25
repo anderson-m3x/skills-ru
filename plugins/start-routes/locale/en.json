@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Start routes",
+    "description": "Adds task-shaped chips above the composer of a blank session; a chip fills the draft with the matching skill command.",
+    "detail": "docs/DETAIL.md"
+  }
+}

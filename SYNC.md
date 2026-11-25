@@ -90,7 +90,7 @@ git push origin main
 
 ## Что не синхронизируется
 
-Всё, что вне `skills/`: README, `SYNC.md`, `CHANGELOG-ru.md`, `tools/`, `sync/`. В upstream были `docs/`, `scripts/`, `.claude-plugin/`, `.github/`, changesets, `package.json` — они удалены и обратно не тянутся.
+Всё, что вне `skills/`: README, `SYNC.md`, `CHANGELOG-ru.md`, `tools/`, `sync/`, `plugins/`. Плагин `plugins/start-routes` — наша разработка, аналогов в upstream у него нет, поэтому `sync_plan.py` его не видит: сравнение идёт только по путям `skills/`. В upstream были `docs/`, `scripts/`, `.claude-plugin/`, `.github/`, changesets, `package.json` — они удалены и обратно не тянутся.
 
 ## Если upstream переименовал или удалил скилл
 
