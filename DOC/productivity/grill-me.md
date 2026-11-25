@@ -92,13 +92,13 @@ When grilling, ask one question at a time.
 Агент не пишет на диск ничего, а сразу задаёт первый раунд: весь фронт, у каждого вопроса номер и рекомендованный ответ. Формат раунда берётся из `grilling`:
 
 ```
-❓ **Q1** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
+❓ **Вопрос 1** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
 
 ➡️ <your recommended answer>
 
 ---
 
-❓ **Q2** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
+❓ **Вопрос 2** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
 
 ➡️ <your recommended answer>
 ```
